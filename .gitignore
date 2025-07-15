@@ -1,0 +1,28 @@
+# Arquivos de teste
+test-*/
+demo-*/
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# Node modules (para extensão VS Code)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Extensão empacotada
+*.vsix
+
+# Arquivos de backup
+*.backup.*
