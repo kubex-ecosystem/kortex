@@ -6,12 +6,10 @@
   "author": "Rafael Mori <faelmori@gmail.com>",
   "description": "Kortex is a web application for managing MCP (Model Context Protocol) servers and devices, providing a user-friendly interface for configuration and monitoring.",
   "homepage": "https://rafa-mori.dev/kortex",
+  "main": "dist/index.js",
   "displayName": "Kortex",
   "icon": "https://raw.githubusercontent.com/rafa-mori/kortex/main/public/favicon.ico",
   "sideEffects": false,
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
   "enginesStrict": true,
   "repository": {
     "type": "git",
