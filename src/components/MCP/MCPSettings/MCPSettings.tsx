@@ -12,7 +12,7 @@ export const MCPSettings: React.FC<MCPSettingsProps> = ({ onSave, initialConfig 
     place: "local",
     connectionType: "HTTP",
     connectionConfig: {
-      id: randomUUID().toString(),
+      id: Math.random().toString(36).substring(2),
       type: "HTTP",
       baseURL: "localhost:8080",
       wsUrl: "localhost:8080",
@@ -25,7 +25,7 @@ export const MCPSettings: React.FC<MCPSettingsProps> = ({ onSave, initialConfig 
       retryBackoffMaxDelay: 10000
     } as MCPConnectionConfigType,
     apiProvider: {
-      id: randomUUID().toString(),
+      id: Math.random().toString(36).substring(2),
       name: "Default Provider",
       provider: "Local",
       enabled: false,

@@ -11,6 +11,20 @@
   "icon": "https://raw.githubusercontent.com/rafa-mori/kortex/main/public/favicon.ico",
   "sideEffects": false,
   "enginesStrict": true,
+  "type": "module",
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "markdown": "github",
+  "categories": [
+    "AI",
+    "Azure",
+    "Machine Learning",
+    "Visualization",
+    "Other"
+  ],
+  "devEngines": {
+    "node": ">=18.0.0",
+    "yarn": ">=1.22.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/rafa-mori/kortex.git"
@@ -31,13 +45,35 @@
     "monitoring",
     "react"
   ],
+  "yarn": {
+    "install": {
+      "ignoreScripts": false
+    },
+    "publish": {
+      "ignoreScripts": false
+    },
+    "checkCache": {
+      "ignoreScripts": false
+    },
+    "postinstall": "husky install"
+  },
+  "bundleDependencies": true,
+  "module": "auto",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "readme": "README.md",
+  "publisher": "mori",
   "scripts": {
     "prepare": "husky install",
     "precommit": "lint-staged",
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "setup": "husky install && husky add .husky/pre-commit 'yarn lint-staged' && husky add .husky/pre-push 'yarn test'",
+    "setup": "yarn install && husky add .husky/pre-commit 'yarn lint-staged' && husky add .husky/pre-push 'yarn test'",
     "dev": "next dev",
     "build": "next build",
     "export": "next export",
@@ -48,13 +84,24 @@
     "clean:environment": "rm -rf ./node_modules ./yarn.lock ./package-lock.json ./.next ./out ./coverage || true",
     "build:old": "react-scripts build",
     "start:old": "react-scripts start",
-    "test:old": "react-scripts test",
-    "test:old-coverage": "react-scripts test --coverage",
-    "test:old-watch": "react-scripts test --watchAll",
-    "test:old-coverage-watch": "react-scripts test --coverage --watchAll",
-    "test:old-e2e": "react-scripts test --env=jsdom",
-    "test:old-e2e-watch": "react-scripts test --env=jsdom --watchAll",
-    "test:old-coverage-e2e": "react-scripts test --env=jsdom --coverage"
+    "test:old": "jest",
+    "test:old-coverage": "jest --coverage",
+    "test:old-watch": "jest --watch",
+    "test:old-coverage-watch": "jest --coverage --watch",
+    "test:old-e2e": "jest --env=jsdom",
+    "test:old-e2e-watch": "jest --env=jsdom --watch",
+    "test:old-coverage-e2e": "jest --env=jsdom --coverage",
+    "test:old-coverage-html": "jest --coverage --coverageReporters=html",
+    "test:old-coverage-json": "jest --coverage --coverageReporters=json",
+    "test:old-coverage-text": "jest --coverage --coverageReporters=text",
+    "test:old-coverage-clover": "jest --coverage --coverageReporters=clover",
+    "test:old-coverage-lcov": "jest --coverage --coverageReporters=lcov",
+    "test:old-coverage-summary": "jest --coverage --coverageReporters=summary",
+    "test:old-coverage-text-summary": "jest --coverage --coverageReporters=text-summary",
+    "test:old-coverage-json-summary": "jest --coverage --coverageReporters=json-summary",
+    "test:old-coverage-verbose": "jest --coverage --coverageReporters=verbose",
+    "test:old-coverage-lcovonly": "jest --coverage --coverageReporters=lcovonly",
+    "test:old-coverage-cobertura": "jest --coverage --coverageReporters=cobertura"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -148,8 +195,32 @@
     "not op_mini all"
   ],
   "engines": {
+    "vscode": "^1.22.0",
     "node": ">=18.0.0",
     "yarn": ">=1.22.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "next/core-web-vitals",
+      "plugin:react/recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier"
+    ],
+    "plugins": [
+      "react",
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "react/react-in-jsx-scope": "off",
+      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+      "no-console": "warn",
+      "react/prop-types": "off"
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    }
   },
   "publishConfig": {
     "access": "public"
@@ -188,5 +259,59 @@
     "CODE_OF_CONDUCT.md",
     "SECURITY.md",
     "docs"
-  ]
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    },
+    "release-it": {
+      "git": {
+        "requireCleanWorkingDir": true,
+        "requireUpstream": true,
+        "tag": true,
+        "push": true
+      },
+      "github": {
+        "release": true
+      },
+      "npm": {
+        "publish": true
+      }
+    }
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+    },
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "ts",
+      "tsx",
+      "json",
+      "node"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/build/",
+      "/dist/",
+      "/out/",
+      "/coverage/",
+      "/public/",
+      "/next.config.js",
+      "/postcss.config.js",
+      "/tailwind.config.js",
+      "/babel.config.js",
+      "/jest.config.js",
+      "/cypress.config.js",
+      "/cypress/",
+      "/scripts/",
+      "/tests/",
+      "/docs/"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/tests/jest.setup.js"
+    ] 
+  }
 }

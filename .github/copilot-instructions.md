@@ -88,4 +88,22 @@ The app is designed to interface with Model Context Protocol servers:
 - Log aggregation and real-time updates
 - Settings management for MCP providers
 
-When working on this codebase, pay special attention to type safety, the context pattern for state management, and the modular component architecture.
+## TypeScript Craftsmanship Standards
+
+1. **Type Safety**: Always prefer using TypeScript types and interfaces over `any`. Leverage the power of TypeScript to catch errors at compile time.
+
+2. **Context Pattern**: Utilize the React Context API for managing global state. Define context types clearly and use them consistently throughout the application.
+
+3. **Modular Architecture**: Organize components into reusable modules. Each component should have a single responsibility and be easy to test in isolation.
+
+4. **Consistent Naming**: Follow a consistent naming convention for files, components, and variables. Use descriptive names that convey the purpose of the item.
+
+5. **Documentation**: Document complex components and hooks with comments and examples. Use TypeScript's JSDoc support to provide type information in your documentation.
+
+6. **Testing**: Write unit tests for components and hooks using a testing framework like Jest or Vitest. Ensure that tests cover both functionality and edge cases.
+
+7. **Error Handling**: Implement robust error handling in asynchronous operations. Use try/catch blocks and consider using custom error classes for better clarity.
+
+## working with Kortex
+
+When working on the Kortex codebase, adhere to the TypeScript Craftsmanship Standards outlined above. Focus on maintaining type safety, leveraging the context pattern for state management, and ensuring modularity in component design. 
