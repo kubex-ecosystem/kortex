@@ -1,6 +1,5 @@
 import React from 'react';
 import { CheckCircle, XCircle, Clock, Loader2, Wifi, WifiOff, AlertTriangle } from 'lucide-react';
-import { Span } from 'next/dist/trace';
 
 interface StatusBadgeProps {
   status: string;

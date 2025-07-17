@@ -1,6 +1,5 @@
-import React, { use } from 'react';
-import { useContext } from 'react';
-import {AppProvider, useApp } from '../context/AppContext';
+import React from 'react';
+import { useApp } from '../context/AppContext';
 import { 
   Calendar, 
   Download, 
@@ -16,29 +15,28 @@ import { StatusBadge } from '../components/UI/StatusBadge';
 import { JSX } from 'react/jsx-runtime';
 import { LogEntry, Task } from '../types';
 
-const newLocal = useApp();
-const { servers } = newLocal;
-const { tasks, logs } = newLocal;
-
-
 export const AnalyticsPage = (): JSX.Element => {
   // Destructure analytics data
-  const { tasks, servers, logs } = newLocal;
+  const { tasks, servers, logs } = useApp();
    
   // Define the analytics data structure
   const analytics = {
-    totalTasks: tasks.length,
-    completedToday: tasks.filter(task => task.status === 'Completed').length,
-    avgExecutionTime: tasks.reduce((acc, task) => acc + (task.duration || 0), 0) / tasks.length || 0,
-    successRate: (tasks.filter(task => task.status === 'Completed').length / tasks.length) * 100 || 0,
-    topModels: Array.from(new Set(tasks.map(task => task.model))).slice(0, 5),
-    serverStats: servers.map(server => ({
+    totalTasks: tasks?.length || 0,
+    completedToday: tasks?.filter(task => task.status === 'Completed')?.length || 0,
+    avgExecutionTime: tasks?.reduce((acc, task) => acc + (task.duration || 0), 0) / (tasks?.length || 1) || 0,
+    successRate: ((tasks?.filter(task => task.status === 'Completed')?.length || 0) / (tasks?.length || 1)) * 100 || 0,
+    topModels: [
+      { name: 'GPT-4', usage: 45, requests: 156 },
+      { name: 'Claude', usage: 30, requests: 98 },
+      { name: 'Gemini', usage: 25, requests: 67 }
+    ],
+    serverStats: servers?.map(server => ({
       name: server.name,
-      totalTasks: tasks.filter(task => task.serverId === server.id).length,
+      totalTasks: tasks?.filter(task => task.serverId === server.id)?.length || 0,
       processed: server.totalProcessed,
       successRate: server.successRate,
       avgResponse: server.avgResponseTime
-    }))
+    })) || []
   };
 
   // Render the analytics page
@@ -56,30 +54,6 @@ export const AnalyticsPage = (): JSX.Element => {
       </div>
     </div>
   );
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission logic here
-  };
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Handle input changes here
-  };
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    // Handle select changes here
-  };
-  const [config, setConfig] = React.useState({
-    baseUrl: 'http://localhost:8080',
-    apiKey: '',
-    timeout: 5000
-  });
-  const initialConfig = {
-    baseUrl: 'http://localhost:8080',
-    apiKey: '',
-    timeout: 5000
-  };
-  const onSave = (newConfig: typeof config) => {
-    setConfig(newConfig);
-    // Save the new configuration, e.g., to local storage or a backend service
-  };
 
   return (
     <div className="space-y-6">
@@ -100,10 +74,10 @@ export const AnalyticsPage = (): JSX.Element => {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { title: 'Total Tasks', value: analytics.totalTasks.toLocaleString(), change: '+12%', icon: <Target className="h-8 w-8 text-blue-600" /> },
-          { title: 'Completed Today', value: analytics.completedToday, change: '+8%', icon: <CheckCircle className="h-8 w-8 text-green-600" /> },
-          { title: 'Avg Execution', value: analytics.avgExecutionTime, change: '-15%', icon: <Timer className="h-8 w-8 text-purple-600" /> },
-          { title: 'Success Rate', value: `${analytics.successRate}%`, change: '+2%', icon: <TrendingUp className="h-8 w-8 text-orange-600" /> }
+          { title: 'Total Tasks', value: analytics.totalTasks.toString(), change: '+12%', icon: <Target className="h-8 w-8 text-blue-600" /> },
+          { title: 'Completed Today', value: analytics.completedToday.toString(), change: '+8%', icon: <CheckCircle className="h-8 w-8 text-green-600" /> },
+          { title: 'Avg Execution', value: `${analytics.avgExecutionTime.toFixed(1)}ms`, change: '-15%', icon: <Timer className="h-8 w-8 text-purple-600" /> },
+          { title: 'Success Rate', value: `${analytics.successRate.toFixed(1)}%`, change: '+2%', icon: <TrendingUp className="h-8 w-8 text-orange-600" /> }
         ].map((kpi, i) => (
           <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
             <div className="flex items-center justify-between">
@@ -132,16 +106,16 @@ export const AnalyticsPage = (): JSX.Element => {
             {analytics.topModels.map((model, i) => (
               <div key={i}>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">{model?.name}</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{model?.usage}%</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">{model.name}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{model.usage}%</span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div 
                     className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${model?.usage}%` }}
+                    style={{ width: `${model.usage}%` }}
                   />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{model?.requests} requests</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{model.requests} requests</p>
               </div>
             ))}
           </div>
