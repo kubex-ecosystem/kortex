@@ -1,4 +1,4 @@
-import { ContactForm } from '../../types';
+import { ContactForm } from '../types';
 import { translations } from './translations';
 
 export const emailService = {

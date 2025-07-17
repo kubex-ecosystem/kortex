@@ -1,29 +1,17 @@
-import { Task, TaskState } from './TaskTypes';
-import { LogEntry } from './LogTypes';
-import { NotificationType } from './NotificationTypes';
-import { ServerStatus } from './ServerTypes';
-import { ConnectionStatus } from './SettingsTypes';
+import { Task, TaskState } from '../TaskTypes';
+import { LogEntry } from '../LogTypes';
+import { NotificationType } from '../NotificationTypes';
+import { MCPNotificationType } from './Notification';
+import { ServerStatus } from '../ServerTypes';
+import { ConnectionStatus } from '../SettingsTypes';
 
 export type MCPPlaceType = 'local' | 'remote' | 'cloud';
-export type MCPConnectionType = 'WebSocket' | 'HTTP' | 'REST';
+export type MCPConnectionType = 'WebSocket' | 'HTTP' | 'HTTPS' | 'REST';
 export type MCPLogEntryType = 'task' | 'server' | 'error' | 'info';
-export type MCPTaskType = 'analysis' | 'processing' | 'training' | 'inference';
+
 export type MCPAPIProvider = 'OpenAI' | 'Google' | 'Azure' | 'Local';
 export type MCPStatisticType = 'tasks' | 'servers' | 'logs' | 'notifications';
 export type MCPStatusType = 'idle' | 'active' | 'error' | 'maintenance';
-
-export interface MCPServerType {
-  id: string;
-  name: string;
-  hostname: string;
-  status: ServerStatus;
-  capacity: number;
-  currentTasks: number;
-  avgResponseTime: number;
-  uptime: string;
-  totalProcessed: number;
-  successRate: number;
-}
 
 export interface MCPStateType {
   tasks: TaskState[];
@@ -49,37 +37,36 @@ export interface MCPServiceConfigType {
   apiKey?: string;
 }
 
+export interface MCPModelType {
+  id: string;
+  name: string;
+  version?: string;
+  maxTokens: number;
+  description: string;
+  costPerRequest?: number;
+  monthlyLimit?: number;
+}
+
 export interface MCPAPIProviderConfigType {
   id: string;
   name: string;
+  description?: string;
   provider: MCPAPIProvider;
-  keyPreview: string;
-  status: ConnectionStatus;
-  lastTested: string;
-  requestsToday: number;
-  monthlyLimit: number;
-  costPerRequest: number;
+  enabled: boolean;
+  status?: ConnectionStatus;
+  models?: MCPModelType[];
+  activeModel: MCPModelType | null;
+  apiKey?: string;
+  apiUrl?: string;
+  wsUrl?: string;
+  lastTested?: string;
+  connectionSettings?: MCPConnectionConfigType;
+  keyPreview?: string;
+  requestsToday?: number;
+  monthlyLimit?: number;
+  costPerRequest?: number;
 }
 
-export interface MCPNotificationType {
-  id: string;
-  type: NotificationType;
-  title: string;
-  message: string;
-  timestamp: string;
-  read: boolean;
-}
-
-export interface MCPSettingsType {
-  language: string;
-  timezone: string;
-  autoReload: boolean;
-  defaultTheme: string;
-  notifications: boolean;
-  emailReports: boolean;
-  logRetentionDays: number;
-  refreshInterval: number;
-}
 
 export interface MCPContextType {
   servers: MCPServerType[];
@@ -120,18 +107,42 @@ export interface MCPProviderConfigType {
   costPerRequest: number;
 }
 
-export interface MCPConnectionConfigType {
-  type: MCPConnectionType;
+export interface MCPRequestType {
+  id: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
   url: string;
+  body?: Record<string, any>;
+  params?: Record<string, string>;
   headers?: Record<string, string>;
   retryInterval?: number;
-  maxRetries?: number;
   timeout?: number;
-  autoReconnect?: boolean;
+  retryOnFailure?: boolean;
+  retryDelay?: number;
+  maxRetries?: number;
+  retryBackoff?: boolean;
+  retryBackoffFactor?: number;
+  retryBackoffMaxDelay?: number;
+}
+
+export interface MCPConnectionConfigType {
+  id: string;
+  name?: string;
+  type: MCPConnectionType;
+  baseURL: string;
+  wsUrl: string;
+  apiKey: string;
+  enableWebSocket: boolean;
+  autoReconnect: boolean;
   connectionTimeout?: number;
   keepAlive?: boolean;
   pingInterval?: number;
   pingTimeout?: number;
+  retryOnFailure: boolean;
+  retryDelay?: number;
+  maxRetries?: number;
+  retryBackoff: boolean;
+  retryBackoffFactor?: number;
+  retryBackoffMaxDelay?: number;
 }
 
 export interface MCPLogType {
@@ -143,3 +154,25 @@ export interface MCPLogType {
   serverId?: string;
   details?: Record<string, any>;
 }
+
+export interface MCPSettingsType {
+  id?: string;
+  place: MCPPlaceType;
+  connectionType: MCPConnectionType;
+  connectionConfig: MCPConnectionConfigType;
+  apiProvider: MCPAPIProviderConfigType;
+}
+
+export interface MCPServerType {
+  id: string;
+  name: string;
+  hostname: string;
+  status: ServerStatus;
+  config: MCPSettingsType;
+  lastUpdated: Date;
+  tasks: Task[];
+  logs: LogEntry[];
+  notifications: MCPNotificationType[];
+  stats: MCPStatsType;
+}
+

@@ -1,8 +1,8 @@
 import React from 'react';
 import { X, Play, Eye, Server } from 'lucide-react';
-import { type Task, type TaskStatus } from '../../../types';
-import { StatusBadge } from '../ui/StatusBadge';
-import { ProgressBar } from '../ui/ProgressBar';
+import { type Task, type TaskStatus } from '../../types';
+import { StatusBadge } from '../UI/StatusBadge';
+import { ProgressBar } from '../UI/ProgressBar';
 
 interface TaskCardProps {
   task: Task;

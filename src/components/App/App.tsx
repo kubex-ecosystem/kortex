@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { AppProvider } from '../../context/AppContext';
 import { useTheme } from '../../hooks/useTheme';
-import { Header } from '../../components/layout/Header';
-import { Sidebar } from '../../components/layout/Sidebar';
+import { Header } from '../../components/Layout/Header';
+import { Sidebar } from '../../components/Layout/Sidebar';
 import { DashboardPage } from '../../pages/DashboardPage';
 import { MonitorPage } from '../../pages/MonitorPage';
 import { AnalyticsPage } from '../../pages/AnalyticsPage';
+import { MCPSettings } from '../../components/MCP/MCPSettings/MCPSettings';
+import { MCPSettingsType } from '../../types';
 
 const App: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
@@ -29,7 +31,9 @@ const App: React.FC = () => {
           <p>API configuration panel coming soon...</p>
         </div>
       );
-      case 'settings': return <MCPSettings />;
+      case 'settings': return <MCPSettings onSave={function (config: MCPSettingsType): void {
+        throw new Error('Function not implemented.');
+      } } />;
       default: return <DashboardPage />;
     }
   };

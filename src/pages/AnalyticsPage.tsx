@@ -1,5 +1,6 @@
-import React from 'react';
-import { useApp } from '../context/AppContext';
+import React, { use } from 'react';
+import { useContext } from 'react';
+import {AppProvider, useApp } from '../context/AppContext';
 import { 
   Calendar, 
   Download, 
@@ -11,29 +12,73 @@ import {
   BarChart3,
   FileText
 } from 'lucide-react';
-import { StatusBadge } from '../components/ui/StatusBadge';
+import { StatusBadge } from '../components/UI/StatusBadge';
 import { JSX } from 'react/jsx-runtime';
+import { LogEntry, Task } from '../types';
 
 const newLocal = useApp();
+const { servers } = newLocal;
+const { tasks, logs } = newLocal;
+
+
 export const AnalyticsPage = (): JSX.Element => {
-  const { servers } = newLocal;
-  
+  // Destructure analytics data
+  const { tasks, servers, logs } = newLocal;
+   
+  // Define the analytics data structure
   const analytics = {
-    totalTasks: 2847,
-    completedToday: 142,
-    avgExecutionTime: '2.3s',
-    successRate: 94.2,
-    topModels: [
-      { name: 'Claude', usage: 45, requests: 1247 },
-      { name: 'GPT-4', usage: 32, requests: 892 },
-      { name: 'Gemini', usage: 23, requests: 654 }
-    ],
-    serverStats: servers.map(s => ({
-      name: s.name,
-      processed: s.totalProcessed,
-      successRate: s.successRate,
-      avgResponse: s.avgResponseTime
+    totalTasks: tasks.length,
+    completedToday: tasks.filter(task => task.status === 'Completed').length,
+    avgExecutionTime: tasks.reduce((acc, task) => acc + (task.duration || 0), 0) / tasks.length || 0,
+    successRate: (tasks.filter(task => task.status === 'Completed').length / tasks.length) * 100 || 0,
+    topModels: Array.from(new Set(tasks.map(task => task.model))).slice(0, 5),
+    serverStats: servers.map(server => ({
+      name: server.name,
+      totalTasks: tasks.filter(task => task.serverId === server.id).length,
+      processed: server.totalProcessed,
+      successRate: server.successRate,
+      avgResponse: server.avgResponseTime
     }))
+  };
+
+  // Render the analytics page
+  const renderKPI = (title: string, value: string, change: string, icon: JSX.Element) => (
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">{value}</p>
+          <p className={`text-sm ${change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
+            {change} vs last month
+          </p>
+        </div>
+        {icon}
+      </div>
+    </div>
+  );
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Handle form submission logic here
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Handle input changes here
+  };
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    // Handle select changes here
+  };
+  const [config, setConfig] = React.useState({
+    baseUrl: 'http://localhost:8080',
+    apiKey: '',
+    timeout: 5000
+  });
+  const initialConfig = {
+    baseUrl: 'http://localhost:8080',
+    apiKey: '',
+    timeout: 5000
+  };
+  const onSave = (newConfig: typeof config) => {
+    setConfig(newConfig);
+    // Save the new configuration, e.g., to local storage or a backend service
   };
 
   return (
@@ -87,16 +132,16 @@ export const AnalyticsPage = (): JSX.Element => {
             {analytics.topModels.map((model, i) => (
               <div key={i}>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">{model.name}</span>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{model.usage}%</span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">{model?.name}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{model?.usage}%</span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                   <div 
                     className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${model.usage}%` }}
+                    style={{ width: `${model?.usage}%` }}
                   />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{model.requests} requests</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{model?.requests} requests</p>
               </div>
             ))}
           </div>

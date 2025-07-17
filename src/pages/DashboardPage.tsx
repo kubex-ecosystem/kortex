@@ -1,14 +1,14 @@
 import React, { JSX } from 'react';
 import { LayoutDashboard, Play, CheckCircle, XCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { TaskCard } from '../components/dashboard/TaskCard';
-import { Task } from '../../types';
+import { TaskCard } from '../components/Dashboard/TaskCard';
+import { Task } from '../types';
 
 export const DashboardPage = (): JSX.Element => {
   const { tasks } = useApp();
   
-  const statusCounts = tasks.reduce((acc, task) => {
-    acc[task.status] = (acc[task.status] || 0) + 1;
+  const statusCounts = tasks.reduce((acc, task:Task) => {
+    acc[task.status || 'Unknown'] = (acc[task.status || 'Unknown'] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 

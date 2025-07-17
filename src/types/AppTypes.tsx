@@ -1,5 +1,5 @@
 import { Timezone, Theme } from ".";
-import { Language } from "../src/lib/translations";
+import { Language } from "./SettingsTypes";
 
 export interface AppSettings {
   language: Language;

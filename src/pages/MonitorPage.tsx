@@ -11,8 +11,8 @@ import {
   Loader2
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { LogEntry } from '../../types';
-import { StatusBadge } from '../components/ui/StatusBadge';
+import { LogEntry } from '../types';
+import { StatusBadge } from '../components/UI/StatusBadge';
 
 export const MonitorPage: React.FC = () => {
   const { addNotification } = useApp();
@@ -50,12 +50,14 @@ export const MonitorPage: React.FC = () => {
       
       return {
         id: Date.now().toString(),
+        level: status === 'failed' ? 'error' : 'info',
+        message: `${taskId} is ${status}`,
         timestamp: new Date().toLocaleTimeString(),
         taskId,
         model: models[Math.floor(Math.random() * models.length)],
         status,
-        server: servers[Math.floor(Math.random() * servers.length)],
-        duration: status === 'completed' ? `${Math.floor(Math.random() * 60) + 1}s` : undefined
+        serverId: servers[Math.floor(Math.random() * servers.length)],
+        duration: Math.floor(Math.random() * 5000) + 1000 // Random duration between 1s and 6s
       };
     };
 
@@ -69,11 +71,11 @@ export const MonitorPage: React.FC = () => {
   const filteredLogs = logs.filter(log => {
     const matchesStatus = filters.status === 'all' || log.status === filters.status;
     const matchesModel = filters.model === 'all' || log.model === filters.model;
-    const matchesServer = filters.server === 'all' || log.server === filters.server;
+    const matchesServer = filters.server === 'all' || log.serverId === filters.server;
     const matchesSearch = searchTerm === '' || 
-      log.taskId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.model.toLowerCase().includes(searchTerm.toLowerCase());
-    
+      log.taskId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.model?.toLowerCase().includes(searchTerm.toLowerCase());
+
     return matchesStatus && matchesModel && matchesServer && matchesSearch;
   });
 
@@ -81,7 +83,7 @@ export const MonitorPage: React.FC = () => {
     const csv = [
       'Timestamp,Task ID,Model,Status,Server,Duration',
       ...filteredLogs.map(log => 
-        `${log.timestamp},${log.taskId},${log.model},${log.status},${log.server || ''},${log.duration || ''}`
+        `${log.timestamp},${log.taskId},${log.model},${log.status},${log.serverId || ''},${log.duration || ''}`
       )
     ].join('\n');
     
@@ -214,10 +216,10 @@ export const MonitorPage: React.FC = () => {
                       <span className="text-sm text-gray-900 dark:text-white">{log.taskId}</span>
                       <span className="text-xs text-gray-500 dark:text-gray-400">|</span>
                       <span className="text-sm text-blue-600 dark:text-blue-400">{log.model}</span>
-                      {log.server && (
+                      {log.serverId && (
                         <>
                           <span className="text-xs text-gray-500 dark:text-gray-400">|</span>
-                          <span className="text-sm text-purple-600 dark:text-purple-400">{log.server}</span>
+                          <span className="text-sm text-purple-600 dark:text-purple-400">{log.serverId}</span>
                         </>
                       )}
                       {log.duration && <span className="text-xs text-gray-500 dark:text-gray-400">({log.duration})</span>}

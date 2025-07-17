@@ -1,3 +1,4 @@
+import { ModelType } from "./MCP/Model";
 
 export type TaskStatus = 'Running' | 'Completed' | 'Failed' | 'Pending';
 export type TaskPriority = 'Low' | 'Medium' | 'High';
@@ -25,6 +26,7 @@ export interface Task {
   id: string;
   definitionId?: string; // Reference to TaskDef
   definition?: TaskDef; // Full definition object
+  model?: ModelType; // Model used for the task
   assignedTo?: string; // User ID
   createdAt?: string;
   updatedAt?: string;
@@ -34,6 +36,7 @@ export interface Task {
   startedAt?: string; // When the task started
   serverId?: string; // ID of the server processing the task
   result?: TaskResult; // Result message or error
+  duration?: number; // Duration in milliseconds
 }
 
 export interface TaskState {

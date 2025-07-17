@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, Sun, Moon, Bell, Search, User } from 'lucide-react';
 import { useApp } from '../../../src/context/AppContext';
-import { NotificationCenter } from '../ui/NotificationCenter';
+import { NotificationCenter } from '../UI/NotificationCenter';
 
 interface HeaderProps {
   isDark: boolean;
@@ -18,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const { notifications } = useApp();
   const [showNotifications, setShowNotifications] = useState(false);
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications?.filter(n => !n.read).length;
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sticky top-0 z-30">
@@ -55,7 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative"
             >
               <Bell size={20} className="text-gray-600 dark:text-gray-400" />
-              {unreadCount > 0 && (
+              {(unreadCount || 0) > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {unreadCount}
                 </span>
