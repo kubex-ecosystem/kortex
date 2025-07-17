@@ -1,4 +1,4 @@
-import '../styles/globals.css';
+import '../../styles/globals.css';
 import type { AppProps } from 'next/app';
 import { AppProvider } from '../context/AppContext'; // ajusta o path se necessário
 import React from 'react';

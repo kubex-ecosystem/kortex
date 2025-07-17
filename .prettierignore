@@ -1,0 +1,10 @@
+# Prettier ignore file
+*.css
+*.scss
+*.sass
+node_modules/
+.next/
+out/
+dist/
+build/
+coverage/

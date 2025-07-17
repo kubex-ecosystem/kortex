@@ -6,6 +6,8 @@ export default {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  turbopack: {
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -13,4 +15,5 @@ export default {
   images: {
     unoptimized: true,
   },
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
 };

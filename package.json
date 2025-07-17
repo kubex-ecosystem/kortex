@@ -57,8 +57,6 @@
     },
     "postinstall": "husky install"
   },
-  "bundleDependencies": true,
-  "module": "auto",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -78,7 +76,7 @@
     "build": "next build",
     "export": "next export",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint --ignore-path .gitignore",
     "test": "next test",
     "clean": "next clean",
     "clean:environment": "rm -rf ./node_modules ./yarn.lock ./package-lock.json ./.next ./out ./coverage || true",
@@ -195,7 +193,6 @@
     "not op_mini all"
   ],
   "engines": {
-    "vscode": "^1.22.0",
     "node": ">=18.0.0",
     "yarn": ">=1.22.0"
   },
@@ -210,9 +207,20 @@
       "react",
       "@typescript-eslint"
     ],
+    "ignorePatterns": [
+      "src/styles/**/*",
+      "*.css",
+      "*.scss",
+      "*.sass"
+    ],
     "rules": {
       "react/react-in-jsx-scope": "off",
-      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "argsIgnorePattern": "^_"
+        }
+      ],
       "no-console": "warn",
       "react/prop-types": "off"
     },
@@ -312,6 +320,6 @@
     ],
     "setupFilesAfterEnv": [
       "<rootDir>/src/tests/jest.setup.js"
-    ] 
+    ]
   }
 }

@@ -1,7 +1,7 @@
-import '../app/globals.css';
 import type { AppProps } from 'next/app';
 import { AppProvider } from '../context/AppContext';
 import React from 'react';
+import '../../public/styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -14,3 +14,4 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
+ 
