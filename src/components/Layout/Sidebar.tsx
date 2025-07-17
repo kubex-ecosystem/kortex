@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import { 
   X, 
   LayoutDashboard, 
@@ -13,24 +14,28 @@ import {
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
-  currentPage: string;
-  onPageChange: (page: string) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ 
   isOpen, 
-  onClose, 
-  currentPage, 
-  onPageChange 
+  onClose
 }) => {
+  const router = useRouter();
+  const currentPath = router.pathname;
+
   const menuItems = [
-    { icon: <LayoutDashboard size={20} />, label: 'Dashboard', id: 'dashboard' },
-    { icon: <Activity size={20} />, label: 'Live Monitor', id: 'monitor' },
-    { icon: <BarChart3 size={20} />, label: 'Analytics', id: 'analytics' },
-    { icon: <Cpu size={20} />, label: 'Servers', id: 'servers' },
-    { icon: <Database size={20} />, label: 'API Config', id: 'api' },
-    { icon: <Settings size={20} />, label: 'Settings', id: 'settings' },
+    { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
+    { icon: <Activity size={20} />, label: 'Live Monitor', path: '/monitor' },
+    { icon: <BarChart3 size={20} />, label: 'Analytics', path: '/analytics' },
+    { icon: <Cpu size={20} />, label: 'Servers', path: '/servers' },
+    { icon: <Database size={20} />, label: 'API Config', path: '/api' },
+    { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
   ];
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
+    onClose();
+  };
 
   return (
     <>
@@ -65,11 +70,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <nav className="space-y-2">
             {menuItems.map((item) => (
               <button
-                key={item.id}
-                onClick={() => { onPageChange(item.id); onClose(); }}
+                key={item.path}
+                onClick={() => handleNavigation(item.path)}
                 className={`
                   w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-left transform hover:scale-105
-                  ${currentPage === item.id 
+                  ${currentPath === item.path 
                     ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 shadow-md' 
                     : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
                   }

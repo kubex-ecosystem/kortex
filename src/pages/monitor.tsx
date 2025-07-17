@@ -1,11 +1,11 @@
 import React from 'react';
 import { Layout } from '../components/Layout/Layout';
-import { DashboardPage } from './DashboardPage';
+import { MonitorPage } from './MonitorPage';
 
-export default function Home() {
+export default function Monitor() {
   return (
     <Layout>
-      <DashboardPage />
+      <MonitorPage />
     </Layout>
   );
 }

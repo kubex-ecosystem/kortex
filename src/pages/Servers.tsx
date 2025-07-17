@@ -1,11 +1,11 @@
 import React from 'react';
 import { Layout } from '../components/Layout/Layout';
-import { DashboardPage } from './DashboardPage';
+import { ServersPage } from './ServersPage';
 
-export default function Home() {
+export default function Servers() {
   return (
     <Layout>
-      <DashboardPage />
+      <ServersPage />
     </Layout>
   );
 }

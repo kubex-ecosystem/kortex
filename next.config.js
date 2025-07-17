@@ -11,7 +11,6 @@ export default {
   typescript: {
     ignoreBuildErrors: true,
   },
-  output: 'export',
   images: {
     unoptimized: true,
   },

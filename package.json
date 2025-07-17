@@ -21,7 +21,7 @@
     "Visualization",
     "Other"
   ],
-  "devEngines": {
+  "engines": {
     "node": ">=18.0.0",
     "yarn": ">=1.22.0"
   },
@@ -192,10 +192,6 @@
     "not dead",
     "not op_mini all"
   ],
-  "engines": {
-    "node": ">=18.0.0",
-    "yarn": ">=1.22.0"
-  },
   "eslintConfig": {
     "extends": [
       "next/core-web-vitals",
