@@ -1,4 +1,5 @@
 import React from 'react';
+import { useApp } from '../context/AppContext';
 import { 
   Calendar, 
   Download, 
@@ -10,11 +11,12 @@ import {
   BarChart3,
   FileText
 } from 'lucide-react';
-import { useApp } from '../context/AppContext';
 import { StatusBadge } from '../components/ui/StatusBadge';
+import { JSX } from 'react/jsx-runtime';
 
-export const AnalyticsPage: React.FC = () => {
-  const { servers } = useApp();
+const newLocal = useApp();
+export const AnalyticsPage = (): JSX.Element => {
+  const { servers } = newLocal;
   
   const analytics = {
     totalTasks: 2847,
@@ -157,3 +159,5 @@ export const AnalyticsPage: React.FC = () => {
     </div>
   );
 };
+
+export default AnalyticsPage;

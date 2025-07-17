@@ -1,17 +1,22 @@
 import React from 'react';
 import { X, XCircle, CheckCircle, Bell } from 'lucide-react';
+import { LogEntry, Notification, Task } from '../../../types';
 import { useApp } from '../../context/AppContext';
+import { Server } from 'http';
 
-interface NotificationCenterProps {
+interface NotificationCenter {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, onClose }) => {
+export const NotificationCenter: React.FC<NotificationCenter> = ({ isOpen, onClose }) => {
   const { notifications, markNotificationRead } = useApp();
-  const unreadCount = notifications.filter(n => !n.read).length;
 
+  const unreadCount = notifications.filter((n) => !n.read).length;
+  if (!notifications || notifications.length === 0) return null;
+  if (notifications.length === 0) return <div className="p-4 text-center text-gray-500">No notifications</div>;
   if (!isOpen) return null;
+  if (!notifications || notifications.length === 0) return null;
 
   return (
     <div className="absolute right-0 top-12 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50">
@@ -20,7 +25,10 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({ isOpen, 
           <h3 className="font-semibold text-gray-900 dark:text-white">
             Notifications ({unreadCount} unread)
           </h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+          <button 
+            onClick={onClose} className="text-gray-400 hover:text-gray-600"
+            title='Close Notification Center'
+          >
             <X size={16} />
           </button>
         </div>

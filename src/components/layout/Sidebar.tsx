@@ -54,6 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               LookAt<span className="text-blue-600">ni</span>
             </h2>
             <button 
+              title='Close Sidebar'
               onClick={onClose} 
               className="lg:hidden p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >

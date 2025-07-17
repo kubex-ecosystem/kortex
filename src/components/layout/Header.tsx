@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, Sun, Moon, Bell, Search, User } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import { useApp } from '../../../src/context/AppContext';
 import { NotificationCenter } from '../ui/NotificationCenter';
 
 interface HeaderProps {
@@ -25,6 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button 
+            title='Menu'
             onClick={onMenuClick} 
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >

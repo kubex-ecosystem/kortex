@@ -1,8 +1,0 @@
-# LookAtni Generated Code v3.0
-# Generated on: Thu Jul 10 04:53:53 PM -03 2025
-# Source directory: ./test-lookatni
-# Total files: 6
-# Total size: 2211 bytes
-#
-# Usage: ./extract-files.sh test-code.txt ./extracted
-# Format: /// file/path ///

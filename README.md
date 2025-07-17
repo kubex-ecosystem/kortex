@@ -1,49 +1,92 @@
-# LookAtni Demo
+# LookAtni Dashboard
 
-Este é um exemplo do sistema LookAtni em ação!
+Sistema de monitoramento para tarefas AI executadas em servidores MCP.
 
-## Arquivos incluídos:
-- hello.js - Script JavaScript
-- style.css - Folha de estilos
-- README.md - Este arquivo
+## 🚀 Quick Start
 
-## Como usar:
 ```bash
-./extract-files.sh demo-code.txt ./demo-extracted
+# Instalar dependências
+npm install
+
+# Executar em desenvolvimento
+npm run dev
+
+# Build para produção
+npm run build
 ```
 
-Incrível, não é? 🚀
-EOF
+## 📁 Estrutura do Projeto
 
-echo "📄 Arquivo demo criado: demo-code.txt"
-echo ""
+```
+src/
+├── components/
+│   ├── layout/
+│   │   ├── Header.tsx
+│   │   └── Sidebar.tsx
+│   ├── ui/
+│   │   ├── StatusBadge.tsx
+│   │   ├── ProgressBar.tsx
+│   │   └── NotificationCenter.tsx
+│   └── dashboard/
+│       └── TaskCard.tsx
+├── pages/
+│   ├── DashboardPage.tsx
+│   ├── MonitorPage.tsx
+│   └── AnalyticsPage.tsx
+├── context/
+│   └── AppContext.tsx
+├── hooks/
+│   └── useTheme.ts
+├── types/
+│   └── index.ts
+└── App.tsx
+```
 
-echo "🔍 Marcadores encontrados:"
-grep '^///' demo-code.txt
-echo ""
+## 🎯 Funcionalidades
 
-echo "📤 Extraindo arquivos..."
-./extract-files.sh demo-code.txt ./demo-extracted --stats
-echo ""
+- ✅ Dashboard com estatísticas em tempo real
+- ✅ Live Monitor com logs simulados e filtros
+- ✅ Analytics com KPIs e gráficos
+- ✅ Sistema de notificações integrado
+- ✅ Context API para estado global
+- ✅ Tema claro/escuro
+- ✅ Layout 100% responsivo
+- ✅ Animações e microinterações
 
-echo "🗂️ Estrutura criada:"
-tree ./demo-extracted 2>/dev/null || find ./demo-extracted -type f | sort
-echo ""
+## 🛠️ Extração de Arquivos
 
-echo "📖 Conteúdo dos arquivos:"
-echo ""
-echo "=== hello.js ==="
-cat ./demo-extracted/hello.js
-echo ""
-echo "=== style.css ==="
-cat ./demo-extracted/style.css
-echo ""
-echo "=== README.md ==="
-cat ./demo-extracted/README.md
-echo ""
+Para extrair os arquivos deste código, use o script de extração v2.0:
 
-echo "🎉 DEMO CONCLUÍDA - LookAtni funcionando perfeitamente!"
-echo ""
-echo "💡 Agora você pode usar o sistema em seus próprios projetos:"
-echo "   ./generate-markers.sh ./meu-projeto meu-codigo.txt"
-echo "   ./extract-files.sh meu-codigo.txt ./destino"
+```bash
+# Listar todos os arquivos
+grep "^///" codigo.txt | sed 's/^\/\/m\/ \(.*\) \/m\/\/$/\1/'
+
+# Extrair com o script v2.0 (fornecido separadamente)
+./extract-files.sh codigo.txt ./meu-projeto
+```
+
+⚠️ **Formato dos marcadores**: `/// caminho/arquivo ///`
+
+## 🚀 Deploy
+
+O projeto está configurado para build estático com Next.js:
+
+```bash
+npm run build
+# Os arquivos estarão em ./out/
+```
+
+## 🧩 Tecnologias
+
+- **Next.js 14** - Framework React
+- **TypeScript** - Tipagem estática
+- **Tailwind CSS** - Estilização
+- **Lucide React** - Ícones
+- **Context API** - Estado global
+
+## 🔧 Sistema de Marcadores v2.0
+
+Este projeto usa marcadores únicos para decomposição:
+- **Formato**: `/// caminho/arquivo ///`
+- **Vantagem**: Nunca conflita com código JavaScript/TypeScript
+- **Compatível**: grep, sed, awk e ferramentas Unix

@@ -11,7 +11,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { LogEntry } from '../types';
+import { LogEntry } from '../../types';
 import { StatusBadge } from '../components/ui/StatusBadge';
 
 export const MonitorPage: React.FC = () => {
@@ -112,7 +112,9 @@ export const MonitorPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <label className="text-sm text-gray-600 dark:text-gray-400">Speed:</label>
+            < >
             <select 
+              aria-label="Speed Control"
               value={speed} 
               onChange={(e) => setSpeed(Number(e.target.value))}
               className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -121,6 +123,7 @@ export const MonitorPage: React.FC = () => {
               <option value={2000}>Normal</option>
               <option value={5000}>Slow</option>
             </select>
+            </>
           </div>
           
           <button
@@ -161,6 +164,7 @@ export const MonitorPage: React.FC = () => {
           
           <div className="flex gap-3">
             <select 
+              aria-label="Status Filter"
               value={filters.status} 
               onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -173,6 +177,7 @@ export const MonitorPage: React.FC = () => {
             </select>
             
             <select 
+              aria-label="Model Filter"
               value={filters.model} 
               onChange={(e) => setFilters(prev => ({ ...prev, model: e.target.value }))}
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
@@ -268,3 +273,5 @@ export const MonitorPage: React.FC = () => {
     </div>
   );
 };
+
+export default MonitorPage;

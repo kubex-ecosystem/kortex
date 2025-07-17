@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import { LayoutDashboard, Play, CheckCircle, XCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { TaskCard } from '../components/dashboard/TaskCard';
+import { Task } from '../../types';
 
-export const DashboardPage: React.FC = () => {
+export const DashboardPage = (): JSX.Element => {
   const { tasks } = useApp();
   
   const statusCounts = tasks.reduce((acc, task) => {
@@ -42,8 +43,10 @@ export const DashboardPage: React.FC = () => {
     console.log(`Action '${action}' executed on task ${taskId}`);
   };
 
-  return (
-    <div className="space-y-6">
+  return <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+        Dashboard
+      </h1>
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {statsCards.map((stat, index) => (
@@ -68,16 +71,29 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Recent Tasks */}
-      <div>
+      < >
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
           Recent Tasks
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {tasks.slice(0, 6).map(task => (
-            <TaskCard key={task.id} task={task} onAction={handleTaskAction} />
-          ))}
+          {tasks.slice(0, 6).map((task: Task) => {
+            const completeTask: Task = {
+              ...task,
+              definitionId: task.definitionId || '',
+              createdAt: task.createdAt || new Date().toISOString(),
+              updatedAt: task.updatedAt || new Date().toISOString(),
+            };
+            return (
+              <TaskCard
+                key={completeTask.id}
+                task={completeTask}
+                onAction={handleTaskAction} />
+            );
+          })}
         </div>
-      </div>
+      </>
     </div>
-  );
+  ;
 };
+
+export default DashboardPage;

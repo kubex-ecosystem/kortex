@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { AppProvider } from './context/AppContext';
-import { useTheme } from './hooks/useTheme';
-import { Header } from './components/layout/Header';
-import { Sidebar } from './components/layout/Sidebar';
-import { DashboardPage } from './pages/DashboardPage';
-import { MonitorPage } from './pages/MonitorPage';
-import { AnalyticsPage } from './pages/AnalyticsPage';
+import { AppProvider } from '../../context/AppContext';
+import { useTheme } from '../../hooks/useTheme';
+import { Header } from '../../components/layout/Header';
+import { Sidebar } from '../../components/layout/Sidebar';
+import { DashboardPage } from '../../pages/DashboardPage';
+import { MonitorPage } from '../../pages/MonitorPage';
+import { AnalyticsPage } from '../../pages/AnalyticsPage';
 
 const App: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();
@@ -29,12 +29,7 @@ const App: React.FC = () => {
           <p>API configuration panel coming soon...</p>
         </div>
       );
-      case 'settings': return (
-        <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-          <h2 className="text-2xl font-bold mb-4">Settings</h2>
-          <p>Settings panel coming soon...</p>
-        </div>
-      );
+      case 'settings': return <MCPSettings />;
       default: return <DashboardPage />;
     }
   };
