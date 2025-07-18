@@ -16,4 +16,7 @@ export interface MCPServerType {
   logs: LogEntry[];
   notifications: MCPNotificationType[];
   stats: MCPStatsType;
+  totalProcessed: number;
+  successRate: number;
+  avgResponseTime: number;
 }

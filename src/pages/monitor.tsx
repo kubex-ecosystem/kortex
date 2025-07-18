@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout } from '../components/Layout/Layout';
-import { MonitorPage } from './MonitorPage';
+import { MonitorPage } from '../components/Pages/MonitorPage';
 
 export default function Monitor() {
   return (

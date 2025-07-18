@@ -10,9 +10,9 @@ import {
   Clock,
   Loader2
 } from 'lucide-react';
-import { useApp } from '../context/AppContext';
-import { LogEntry } from '../types';
-import { StatusBadge } from '../components/UI/StatusBadge';
+import { useApp } from '../../context/AppContext';
+import { LogEntry } from '../../types';
+import { StatusBadge } from '../UI/StatusBadge';
 
 export const MonitorPage: React.FC = () => {
   const { addNotification } = useApp();

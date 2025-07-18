@@ -1,5 +1,5 @@
 import React from 'react';
-import { useApp } from '../context/AppContext';
+import { useApp } from '../../context/AppContext';
 import { 
   Calendar, 
   Download, 
@@ -11,9 +11,9 @@ import {
   BarChart3,
   FileText
 } from 'lucide-react';
-import { StatusBadge } from '../components/UI/StatusBadge';
+import { StatusBadge } from '../UI/StatusBadge';
 import { JSX } from 'react/jsx-runtime';
-import { LogEntry, Task } from '../types';
+import { LogEntry, Task } from '../../types';
 
 export const AnalyticsPage = (): JSX.Element => {
   // Destructure analytics data

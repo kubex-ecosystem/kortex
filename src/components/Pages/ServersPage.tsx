@@ -12,10 +12,10 @@ import {
   AlertCircle,
   Eye
 } from 'lucide-react';
-import { useApp } from '../context/AppContext';
-import { MCPServerType } from '../types/MCP/Server';
-import { ServerStatus } from '../types/ServerTypes';
-import { ServerModal } from '../components/Servers/ServerModal';
+import { useApp } from '../../context/AppContext';
+import { MCPServerType } from '../../types/MCP/Server';
+import { ServerStatus } from '../../types/ServerTypes';
+import { ServerModal } from '../Servers/ServerModal';
 
 export const ServersPage: React.FC = () => {
   const { servers, addServer, updateServer, removeServer } = useApp();

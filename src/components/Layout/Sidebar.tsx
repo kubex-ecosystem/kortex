@@ -28,7 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { icon: <Activity size={20} />, label: 'Live Monitor', path: '/monitor' },
     { icon: <BarChart3 size={20} />, label: 'Analytics', path: '/analytics' },
     { icon: <Cpu size={20} />, label: 'Servers', path: '/servers' },
-    { icon: <Database size={20} />, label: 'API Config', path: '/api' },
+    { icon: <Database size={20} />, label: 'API Config', path: '/api-config' },
     { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
   ];
 

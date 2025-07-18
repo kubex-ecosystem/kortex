@@ -1,6 +1,6 @@
 import React from 'react';
 import { Layout } from '../components/Layout/Layout';
-import { ServersPage } from './ServersPage';
+import { ServersPage } from '../components/Pages/ServersPage';
 
 export default function Servers() {
   return (

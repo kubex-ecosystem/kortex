@@ -19,7 +19,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       '/monitor': 'Live Monitor',
       '/analytics': 'Analytics',
       '/servers': 'Servers',
-      '/api': 'API Config',
+      '/api-config': 'API Config',
       '/settings': 'Settings'
     };
     return titles[router.pathname] || 'Dashboard';
