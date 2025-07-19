@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { MCPAPIProviderConfigType, MCPAPIProvider, MCPModelType } from '../../../types';
+import { MCPAPIProviderConfigType, MCPAPIProvider, APIProvider } from '../../../types';
+import { ModelType } from '../../../types/MCP/Model';
+import { useAPIManager } from '../../../hooks/useAPIManager';
+import APIConnectionStatus from '../../UI/APIConnectionStatus';
 
 interface MCPProviderSettingsProps {
   provider: MCPAPIProviderConfigType;
   onUpdate: (provider: MCPAPIProviderConfigType) => void;
-  availableModels: MCPModelType[];
+  availableModels: ModelType[];
 }
 
 export const MCPProviderSettings: React.FC<MCPProviderSettingsProps> = ({

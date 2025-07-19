@@ -57,7 +57,7 @@ export interface MemoryEntry {
 export class MCPServerService {
   private baseURL: string;
 
-  constructor(baseURL: string = 'http://127.0.0.1:3002') {
+  constructor(baseURL: string = '/api/mcp') {
     this.baseURL = baseURL;
   }
 
