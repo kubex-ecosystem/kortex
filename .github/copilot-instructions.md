@@ -88,22 +88,80 @@ The app is designed to interface with Model Context Protocol servers:
 - Log aggregation and real-time updates
 - Settings management for MCP providers
 
-## TypeScript Craftsmanship Standards
+# TypeScript Craftsmanship Standards
 
-1. **Type Safety**: Always prefer using TypeScript types and interfaces over `any`. Leverage the power of TypeScript to catch errors at compile time.
+Use `yarn` with lockfiles committed. Prefer `workspace:` protocol in monorepos. Avoid unnecessary dependencies.
 
-2. **Context Pattern**: Utilize the React Context API for managing global state. Define context types clearly and use them consistently throughout the application.
+Organize code in: `src/`, `src/components/`, `src/hooks/`, `src/pages/`, `src/context/`, `src/lib/`, `src/types/`, `src/interfaces/`, `tests/`, `scripts/`, `bin/`.  
+Main entry: `src/index.ts`. CLI entry: `bin/cli.ts`. Avoid deep folder nesting.
 
-3. **Modular Architecture**: Organize components into reusable modules. Each component should have a single responsibility and be easy to test in isolation.
+Enable strict mode in `tsconfig.json`. Use `paths` and `baseUrl` to simplify imports (e.g., `@core/`, `@utils/`).
 
-4. **Consistent Naming**: Follow a consistent naming convention for files, components, and variables. Use descriptive names that convey the purpose of the item.
+Each module must follow single responsibility. Avoid module-level side effects. Use `index.ts` only for aggregation.
 
-5. **Documentation**: Document complex components and hooks with comments and examples. Use TypeScript's JSDoc support to provide type information in your documentation.
+Use `camelCase` for variables and functions, `PascalCase` for types and classes. Avoid `any`, and prefer safe typing over assertions.
 
-6. **Testing**: Write unit tests for components and hooks using a testing framework like Jest or Vitest. Ensure that tests cover both functionality and edge cases.
+Use `.interface.ts` for interfaces, `.dto.ts` for data transfer types, `.types.ts` for common types, `.spec.ts` for tests.
 
-7. **Error Handling**: Implement robust error handling in asynchronous operations. Use try/catch blocks and consider using custom error classes for better clarity.
+Write tests with `vitest` or `jest`. Test logic, not framework details. Use subprocesses for CLI testing.
+
+Handle async explicitly. No unhandled promises. Use `try/catch`, safe wrappers, or functional patterns like `Result`.
+
+Use dependency injection instead of hardcoded imports. Configs must come from `.env` or be injected — never hardcoded.
+
+All public symbols must have TSDoc. Document params, return types, and usage when needed. Auto-generate docs if possible.
+
+CLIs must support `--help`, `--version`, and `--json` (structured output). Errors go to `stderr`, data to `stdout`.
+
+Use `eslint` with `@typescript-eslint`. Add Prettier. Enforce lint, format, and build on CI. Use Husky to block bad commits.
+
+README must be technical and updated: build, run, test instructions, usage examples, and module explanation. Add diagrams when helpful.
+
+Be declarative. Be typed. Be testable. Be clean. Be TypeScript.
+
+# Markdown Craftsmanship Standards
+
+Use `#` for titles. Maintain hierarchy order (no skipping levels). Only one `#` per file (main title).
+
+Separate paragraphs with blank lines. Avoid long lines (>120 chars). Keep spacing consistent.
+
+Use `-` for unordered lists. Use `1.` only for ordered items. Always insert space after bullet.
+
+Use single backticks for inline code: `` `example` ``. Use triple backticks for code blocks with language annotation:
+
+```ts
+const foo = "bar";
+```
+
+Use **bold** for key terms, *italics* for filenames or soft emphasis. Don’t overformat.
+
+Links should be descriptive: `[Installation Guide](#installation)` — not `[click here]`. Use reference links for footnotes.
+
+Images must include alt text: `![Architecture diagram](./diagram.png)`. Avoid decorative images without context.
+
+Use `>` only for callouts, quotes, or tips. Don’t use them as layout decoration.
+
+Align tables properly. Headers and rows should be readable with padded pipes (`|`).
+
+Avoid disabling linters like `<!-- markdownlint-disable -->` unless truly necessary. Prefer fixing issues.
+
+README files must contain:
+- Clear title and status badges
+- Concise description
+- Table of contents (for long files)
+- How to install, run, and test
+- Usage examples (CLI, API, etc.)
+- License and author info
+
+Separate files for:
+- `CHANGELOG.md`: semantic version entries (`Added`, `Changed`, etc.)
+- `CONTRIBUTING.md`: clear steps to contribute
+- `CODE_OF_CONDUCT.md`: if open source
+
+Use `markdownlint`, `prettier`, or `mdformat` to automate formatting.
+
+Be readable. Be informative. Be clean. Be Markdown.
 
 ## working with Kortex
 
-When working on the Kortex codebase, adhere to the TypeScript Craftsmanship Standards outlined above. Focus on maintaining type safety, leveraging the context pattern for state management, and ensuring modularity in component design. 
+When working on the Kortex codebase, adhere to the TypeScript Craftsmanship Standards outlined above. Focus on maintaining type safety, leveraging the context pattern for state management, and ensuring modularity in component design.
