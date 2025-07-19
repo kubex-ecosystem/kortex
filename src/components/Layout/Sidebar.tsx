@@ -27,6 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
     { icon: <Activity size={20} />, label: 'Live Monitor', path: '/monitor' },
     { icon: <BarChart3 size={20} />, label: 'Analytics', path: '/analytics' },
+    { icon: <Cpu size={20} />, label: 'Tasks', path: '/tasks' },
     { icon: <Cpu size={20} />, label: 'Servers', path: '/servers' },
     { icon: <Database size={20} />, label: 'API Config', path: '/api-config' },
     { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
@@ -87,7 +88,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
           
           <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button className="w-full flex items-center gap-3 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all duration-200 transform hover:scale-105">
+            <button
+              onClick={() => handleNavigation('/tasks')}
+              className="w-full flex items-center gap-3 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all duration-200 transform hover:scale-105"
+            >
               <Plus size={16} />
               <span className="font-medium">New Task</span>
             </button>
