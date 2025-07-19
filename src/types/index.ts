@@ -5,6 +5,7 @@ export * from './AppTypes';
 export * from './ContactTypes';
 export * from './LogTypes';
 export * from './MCPTypes';
+export * from './MCPConfigTypes';
 export * from './NotificationTypes';
 export * from './ServerTypes';
 export * from './SettingsTypes';
