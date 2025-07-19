@@ -81,7 +81,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         completedTasks: 12,
         failedTasks: 1,
         avgResponseTime: 1.8
-      }
+      },
+      totalProcessed: 100,
+      successRate: 95,
+      avgResponseTime: 1.8
     },
     { 
       id: '2', 
@@ -121,7 +124,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         completedTasks: 7,
         failedTasks: 1,
         avgResponseTime: 2.1
-      }
+      },
+      totalProcessed: 50,
+      successRate: 85,
+      avgResponseTime: 2.1
     },
     { 
       id: '3', 
@@ -161,7 +167,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         completedTasks: 4,
         failedTasks: 1,
         avgResponseTime: 2.9
-      }
+      },
+      totalProcessed: 30,
+      successRate: 80,
+      avgResponseTime: 2.9
     }
   ]);
 

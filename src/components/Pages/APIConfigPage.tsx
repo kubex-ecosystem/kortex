@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import { 
   Plus, 
   Search, 
-  Edit, 
+  Edit2, 
   Trash2, 
-  RefreshCw, 
-  Key, 
   CheckCircle, 
   XCircle, 
   AlertCircle,
   Eye,
   EyeOff,
   TestTube,
-  Activity
+  Activity,
+  BarChart3,
+  Users,
+  Zap
 } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
 import { APIProvider } from '../../types/APITypes';
 import { MCPConnectionTest } from '../MCP/MCPConnectionTest';
+import { APIProviderModal } from '../API/APIProviderModal';
 
 export const APIConfigPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,7 +27,7 @@ export const APIConfigPage: React.FC = () => {
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
   const [isConnectedToMCP, setIsConnectedToMCP] = useState(false);
 
-  // Mock data para demonstração
+  // Mock data para demonstração - será substituído por dados reais na próxima sessão
   const [apiProviders, setApiProviders] = useState<APIProvider[]>([
     {
       id: '1',
@@ -34,198 +35,99 @@ export const APIConfigPage: React.FC = () => {
       provider: 'OpenAI',
       keyPreview: 'sk-...J3K',
       status: 'Connected',
-      lastTested: '2 minutes ago',
-      requestsToday: 145,
+      lastTested: '2025-01-18T10:30:00Z',
+      requestsToday: 245,
       monthlyLimit: 10000,
-      costPerRequest: 0.002
+      costPerRequest: 0.002,
     },
     {
-      id: '2',
-      name: 'Google AI Studio',
-      provider: 'Google',
-      keyPreview: 'AIz...9xY',
+      id: '2', 
+      name: 'StatusRafa MCP Local',
+      provider: 'StatusRafa MCP',
+      keyPreview: 'mcp-local',
       status: 'Disconnected',
-      lastTested: '1 hour ago',
-      requestsToday: 67,
-      monthlyLimit: 5000,
-      costPerRequest: 0.001
+      lastTested: '2025-01-18T09:15:00Z',
+      requestsToday: 0,
+      monthlyLimit: 999999,
+      costPerRequest: 0,
+      mcpEndpoint: 'http://127.0.0.1:3002',
+      githubToken: 'ghp_...ABC',
+      azureToken: 'pat_...XYZ',
+      azureOrg: 'rafa-mori',
+      azureProject: 'kubex'
     },
     {
       id: '3',
-      name: 'Azure OpenAI',
-      provider: 'Azure',
-      keyPreview: 'abc...xyz',
-      status: 'Testing',
-      lastTested: '5 minutes ago',
-      requestsToday: 23,
-      monthlyLimit: 8000,
-      costPerRequest: 0.0015
+      name: 'Anthropic Claude',
+      provider: 'Anthropic', 
+      keyPreview: 'sk-ant...9XY',
+      status: 'Connected',
+      lastTested: '2025-01-18T11:45:00Z',
+      requestsToday: 89,
+      monthlyLimit: 5000,
+      costPerRequest: 0.008,
     }
   ]);
 
-  const filteredProviders = apiProviders.filter(provider => 
-    provider.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    provider.provider.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // CRUD Functions
+  const handleAddProvider = (provider: APIProvider) => {
+    setApiProviders(prev => [...prev, provider]);
+    setIsAddModalOpen(false);
+  };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'Connected': return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case 'Disconnected': return <XCircle className="w-4 h-4 text-red-500" />;
-      case 'Testing': return <TestTube className="w-4 h-4 text-yellow-500 animate-pulse" />;
-      default: return <AlertCircle className="w-4 h-4 text-gray-500" />;
+  const handleEditProvider = (provider: APIProvider) => {
+    setApiProviders(prev => prev.map(p => p.id === provider.id ? provider : p));
+    setIsEditModalOpen(false);
+    setSelectedProvider(null);
+  };
+
+  const handleDeleteProvider = (id: string) => {
+    if (window.confirm('Tem certeza que deseja remover este provedor de API?')) {
+      setApiProviders(prev => prev.filter(p => p.id !== id));
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Connected': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
-      case 'Disconnected': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
-      case 'Testing': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300';
-    }
+  const handleOpenEditModal = (provider: APIProvider) => {
+    setSelectedProvider(provider);
+    setIsEditModalOpen(true);
   };
 
   const toggleKeyVisibility = (id: string) => {
     setShowKeys(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  const handleTestConnection = (provider: APIProvider) => {
-    setApiProviders(prev => 
-      prev.map(p => 
-        p.id === provider.id 
-          ? { ...p, status: 'Testing', lastTested: 'Testing...' }
-          : p
+  const testProvider = async (id: string) => {
+    setApiProviders(prev =>
+      prev.map(p =>
+        p.id === id ? { ...p, status: 'Testing' } : p
       )
     );
-    
-    // Simular teste de conexão
+
+    // Simulate API test
     setTimeout(() => {
-      setApiProviders(prev => 
-        prev.map(p => 
-          p.id === provider.id 
-            ? { ...p, status: 'Connected', lastTested: 'Just now' }
+      setApiProviders(prev =>
+        prev.map(p =>
+          p.id === id 
+            ? { ...p, status: Math.random() > 0.3 ? 'Connected' : 'Disconnected', lastTested: new Date().toISOString() }
             : p
         )
       );
     }, 2000);
   };
 
-  const handleDeleteProvider = (providerId: string) => {
-    if (window.confirm('Tem certeza que deseja remover este provedor de API?')) {
-      setApiProviders(prev => prev.filter(p => p.id !== providerId));
-    }
-  };
-
-  const APIProviderCard: React.FC<{ provider: APIProvider }> = ({ provider }) => (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-200">
-      <div className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
-              <Key className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                {provider.name}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {provider.provider}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(provider.status)}`}>
-              {getStatusIcon(provider.status)}
-              <span className="ml-1 capitalize">{provider.status}</span>
-            </span>
-          </div>
-        </div>
-
-        <div className="mt-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500 dark:text-gray-400">API Key</span>
-            <div className="flex items-center space-x-2">
-              <code className="text-sm font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
-                {showKeys[provider.id] ? 'sk-1234567890abcdef1234567890abcdef' : provider.keyPreview}
-              </code>
-              <button
-                onClick={() => toggleKeyVisibility(provider.id)}
-                className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                {showKeys[provider.id] ? 
-                  <EyeOff className="w-4 h-4 text-gray-500" /> : 
-                  <Eye className="w-4 h-4 text-gray-500" />
-                }
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Requests Today</p>
-              <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                {provider.requestsToday.toLocaleString()}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Monthly Limit</p>
-              <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                {provider.monthlyLimit.toLocaleString()}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Last Tested</p>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {provider.lastTested}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Cost/Request</p>
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                ${provider.costPerRequest.toFixed(4)}
-              </p>
-            </div>
-          </div>
-
-          <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => handleTestConnection(provider)}
-                  disabled={provider.status === 'Testing'}
-                  className="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md text-sm font-medium transition-colors duration-200"
-                >
-                  <TestTube className="w-4 h-4 mr-1" />
-                  {provider.status === 'Testing' ? 'Testing...' : 'Test'}
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedProvider(provider);
-                    setIsEditModalOpen(true);
-                  }}
-                  className="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
-                >
-                  <Edit className="w-4 h-4 mr-1" />
-                  Edit
-                </button>
-              </div>
-              <button
-                onClick={() => handleDeleteProvider(provider.id)}
-                className="inline-flex items-center px-3 py-1.5 border border-red-300 dark:border-red-600 rounded-md text-sm font-medium text-red-700 dark:text-red-200 bg-white dark:bg-red-900/20 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors duration-200"
-              >
-                <Trash2 className="w-4 h-4 mr-1" />
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  // Filter providers based on search term
+  const filteredProviders = apiProviders.filter(provider => 
+    provider.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    provider.provider.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Calculate statistics
+  const stats = {
+    total: apiProviders.length,
+    connected: apiProviders.filter(p => p.status === 'Connected').length,
+    totalRequests: apiProviders.reduce((sum, p) => sum + p.requestsToday, 0),
+    totalCost: apiProviders.reduce((sum, p) => sum + (p.requestsToday * p.costPerRequest), 0)
+  };
 
   return (
     <div className="space-y-6">
@@ -254,152 +156,201 @@ export const APIConfigPage: React.FC = () => {
         <MCPConnectionTest onConnectionChange={setIsConnectedToMCP} />
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
-              <Activity className="w-6 h-6 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Active Providers</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {apiProviders.filter(p => p.status === 'Connected').length}
-              </p>
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center">
+            <BarChart3 className="h-8 w-8 text-blue-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Providers</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.total}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
-              <Key className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Total Requests Today</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {apiProviders.reduce((sum, p) => sum + p.requestsToday, 0).toLocaleString()}
-              </p>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center">
+            <CheckCircle className="h-8 w-8 text-green-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Connected</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.connected}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900/20 rounded-lg">
-              <Activity className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center">
+            <Activity className="h-8 w-8 text-orange-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Requests Today</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalRequests}</p>
             </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Avg Cost/Request</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                ${(apiProviders.reduce((sum, p) => sum + p.costPerRequest, 0) / apiProviders.length).toFixed(4)}
-              </p>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center">
+            <Zap className="h-8 w-8 text-purple-600" />
+            <div className="ml-4">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Cost Today</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">${stats.totalCost.toFixed(2)}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Search and Filter */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      {/* Search and Filters */}
+      <div className="flex items-center space-x-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input
             type="text"
-            placeholder="Search API providers..."
+            placeholder="Buscar providers..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
         </div>
-        <button
-          onClick={() => window.location.reload()}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
-        >
-          <RefreshCw className="w-4 h-4 mr-1" />
-          Refresh
-        </button>
       </div>
 
-      {/* API Providers Grid */}
-      {filteredProviders.length === 0 ? (
+      {/* Providers List */}
+      <div className="space-y-4">
+        {filteredProviders.map((provider) => (
+          <div key={provider.id} className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-3">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {provider.name}
+                  </h3>
+                  <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                    {provider.provider}
+                  </span>
+                  <div className={`flex items-center space-x-1 ${
+                    provider.status === 'Connected' ? 'text-green-600' : 
+                    provider.status === 'Testing' ? 'text-yellow-600' : 'text-red-600'
+                  }`}>
+                    {provider.status === 'Connected' ? <CheckCircle className="w-4 h-4" /> :
+                     provider.status === 'Testing' ? <AlertCircle className="w-4 h-4" /> :
+                     <XCircle className="w-4 h-4" />}
+                    <span className="text-sm font-medium">{provider.status}</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">API Key</p>
+                    <div className="flex items-center space-x-2">
+                      <code className="text-sm font-mono text-gray-900 dark:text-white">
+                        {showKeys[provider.id] ? 'sk-1234567890abcdef1234567890abcdef' : provider.keyPreview}
+                      </code>
+                      <button
+                        onClick={() => toggleKeyVisibility(provider.id)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        {showKeys[provider.id] ?
+                          <EyeOff className="w-4 h-4" /> :
+                          <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Requests Today</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {provider.requestsToday.toLocaleString()}/{provider.monthlyLimit.toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Cost/Request</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      ${provider.costPerRequest}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Last Tested</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {new Date(provider.lastTested).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+
+                {/* MCP Specific Info */}
+                {provider.provider === 'StatusRafa MCP' && (
+                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                    <p className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">MCP Configuration</p>
+                    <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div>
+                        <span className="text-blue-600 dark:text-blue-400">Endpoint:</span>
+                        <span className="ml-1 text-blue-800 dark:text-blue-300">{provider.mcpEndpoint}</span>
+                      </div>
+                      <div>
+                        <span className="text-blue-600 dark:text-blue-400">Azure Org:</span>
+                        <span className="ml-1 text-blue-800 dark:text-blue-300">{provider.azureOrg}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => testProvider(provider.id)}
+                  disabled={provider.status === 'Testing'}
+                  className="p-2 text-gray-400 hover:text-blue-600 disabled:opacity-50"
+                  title="Test Connection"
+                >
+                  <TestTube className={`w-4 h-4 ${provider.status === 'Testing' ? 'animate-spin' : ''}`} />
+                </button>
+                <button
+                  onClick={() => handleOpenEditModal(provider)}
+                  className="p-2 text-gray-400 hover:text-green-600"
+                  title="Edit Provider"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleDeleteProvider(provider.id)}
+                  className="p-2 text-gray-400 hover:text-red-600"
+                  title="Delete Provider"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {filteredProviders.length === 0 && (
         <div className="text-center py-12">
-          <Key className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            Nenhum provedor de API encontrado
-          </h3>
-          <p className="text-gray-500 dark:text-gray-400 mb-4">
-            {searchTerm 
-              ? 'Tente ajustar os filtros de busca' 
-              : 'Comece adicionando seu primeiro provedor de API'}
+          <Users className="mx-auto h-12 w-12 text-gray-400" />
+          <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-white">Nenhum provider encontrado</h3>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {searchTerm ? 'Tente uma busca diferente.' : 'Comece adicionando um novo API provider.'}
           </p>
-          {!searchTerm && (
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add First Provider
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {filteredProviders.map((provider) => (
-            <APIProviderCard key={provider.id} provider={provider} />
-          ))}
         </div>
       )}
 
-      {/* Modals - placeholder for now */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-            <h2 className="text-xl font-bold mb-4">Add API Provider</h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              Modal para adicionar novo provedor de API será implementado aqui
-            </p>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
-              >
-                Add Provider
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modals */}
+      <APIProviderModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSave={handleAddProvider}
+        provider={null}
+      />
 
-      {isEditModalOpen && selectedProvider && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-            <h2 className="text-xl font-bold mb-4">Edit API Provider</h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-4">
-              Editando provedor: {selectedProvider.name}
-            </p>
-            <div className="flex space-x-3">
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
-              >
-                Save Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <APIProviderModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedProvider(null);
+        }}
+        onSave={handleEditProvider}
+        provider={selectedProvider}
+      />
     </div>
   );
 };
