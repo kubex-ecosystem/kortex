@@ -57,55 +57,72 @@ export function useAPIManager(): UseAPIManagerReturn {
     setIsClient(true);
   }, []);
 
-  // Initialize with mock data - will be replaced with real API calls
+  // Initialize with real data from storage and detect MCP servers
   useEffect(() => {
     if (!isClient) return; // Skip SSR initialization
 
-    const initializeProviders = () => {
-      const mockProviders: APIProvider[] = [
-        {
-          id: '1',
-          name: 'OpenAI Production',
-          provider: 'OpenAI',
-          keyPreview: 'sk-...J3K',
-          status: 'Connected',
-          lastTested: '2025-01-18T10:30:00Z',
-          requestsToday: 245,
-          monthlyLimit: 10000,
-          costPerRequest: 0.002,
-        },
-        {
-          id: '2', 
-          name: 'StatusRafa MCP Local',
-          provider: 'StatusRafa MCP',
-          keyPreview: 'mcp-local',
-          status: 'Disconnected',
-          lastTested: '2025-01-18T09:15:00Z',
-          requestsToday: 0,
-          monthlyLimit: 999999,
-          costPerRequest: 0,
-          mcpEndpoint: 'http://127.0.0.1:3002',
-          githubToken: 'ghp_...ABC',
-          azureToken: 'pat_...XYZ',
-          azureOrg: 'rafa-mori',
-          azureProject: 'kubex'
-        },
-        {
-          id: '3',
-          name: 'Anthropic Claude',
-          provider: 'Anthropic', 
-          keyPreview: 'sk-ant...9XY',
-          status: 'Connected',
-          lastTested: '2025-01-18T11:45:00Z',
-          requestsToday: 89,
-          monthlyLimit: 5000,
-          costPerRequest: 0.008,
+    const initializeProviders = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // Try to load from storage first
+        const savedProviders = apiManager.getAllProviders();
+        
+        // If no saved providers, try to detect MCP servers automatically
+        if (savedProviders.length === 0) {
+          console.log('🔍 Detecting MCP servers automatically...');
+          
+          // Test StatusRafa MCP Server
+          try {
+            const mcpResponse = await fetch('/api/mcp/api/status');
+            if (mcpResponse.ok) {
+              const statusData = await mcpResponse.json();
+              
+              const mcpProvider: APIProvider = {
+                id: `mcp-${Date.now()}`,
+                name: 'StatusRafa MCP Server',
+                provider: 'StatusRafa MCP',
+                keyPreview: 'auto-detected',
+                status: 'Connected',
+                lastTested: new Date().toISOString(),
+                requestsToday: statusData.metrics?.totalRequests || 0,
+                monthlyLimit: 999999,
+                costPerRequest: 0,
+                mcpEndpoint: 'http://127.0.0.1:3002',
+                githubToken: '***',
+                azureToken: '***',
+                azureOrg: 'detected',
+                azureProject: 'detected'
+              };
+              
+              apiManager.addProvider(mcpProvider);
+              console.log('✅ StatusRafa MCP Server detected and added');
+            }
+          } catch (err) {
+            console.log('❌ StatusRafa MCP Server not available');
+          }
+          
+          // Refresh providers list
+          const updatedProviders = apiManager.getAllProviders();
+          setProviders(updatedProviders);
+          
+          // If still no providers after detection, start with empty array
+          if (updatedProviders.length === 0) {
+            console.log('📋 Starting with empty providers list - user can add manually');
+            setProviders([]);
+          }
+        } else {
+          // Load existing providers
+          setProviders(savedProviders);
         }
-      ];
-
-      // Initialize API manager with mock data (client-side only)
-      mockProviders.forEach(provider => apiManager.addProvider(provider));
-      setProviders(mockProviders);
+      } catch (err) {
+        console.error('❌ Failed to initialize providers:', err);
+        setError('Failed to initialize API providers');
+        setProviders([]);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     initializeProviders();

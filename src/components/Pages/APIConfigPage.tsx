@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { APIProvider } from '../../types';
 import { useAPIManager } from '../../hooks/useAPIManager';
+import { APIProviderModal } from '../API/APIProviderModal';
 import APIConnectionStatus from '../UI/APIConnectionStatus';
 import ClientOnly from '../UI/ClientOnly';
 
@@ -281,70 +282,23 @@ export function APIConfigPage() {
             </div>
           )}
         </div>
-      </ClientOnly>
 
-      {/* Add Provider Modal */}
-      {showAddModal && (
-        <AddProviderModal
-          onAdd={addProvider}
+        {/* Add Provider Modal */}
+        <APIProviderModal
+          isOpen={showAddModal}
           onClose={() => setShowAddModal(false)}
+          onSave={addProvider}
+          provider={null}
         />
-      )}
 
-      {/* Edit Provider Modal */}
-      {selectedProvider && (
-        <EditProviderModal
-          provider={selectedProvider}
-          onUpdate={updateProvider}
+        {/* Edit Provider Modal */}
+        <APIProviderModal
+          isOpen={!!selectedProvider}
           onClose={() => setSelectedProvider(null)}
+          onSave={updateProvider}
+          provider={selectedProvider}
         />
-      )}
-    </div>
-  );
-}
-
-// Mock modals for now - these will be implemented next
-function AddProviderModal({ onAdd, onClose }: { 
-  onAdd: (provider: APIProvider) => void; 
-  onClose: () => void; 
-}) {
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-        <h2 className="text-lg font-semibold mb-4">Adicionar Provider</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
-          Modal de adicionar provider será implementado na próxima etapa
-        </p>
-        <button
-          onClick={onClose}
-          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-        >
-          Fechar
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function EditProviderModal({ provider, onUpdate, onClose }: { 
-  provider: APIProvider; 
-  onUpdate: (provider: APIProvider) => void; 
-  onClose: () => void; 
-}) {
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4">
-        <h2 className="text-lg font-semibold mb-4">Editar {provider.name}</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
-          Modal de editar provider será implementado na próxima etapa
-        </p>
-        <button
-          onClick={onClose}
-          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-        >
-          Fechar
-        </button>
-      </div>
+      </ClientOnly>
     </div>
   );
 }

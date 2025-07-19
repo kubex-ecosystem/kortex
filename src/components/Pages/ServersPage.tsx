@@ -10,15 +10,28 @@ import {
   CheckCircle, 
   XCircle, 
   AlertCircle,
-  Eye
+  Eye,
+  Loader2,
+  Activity
 } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
 import { MCPServerType } from '../../types/MCP/Server';
 import { ServerStatus } from '../../types/ServerTypes';
 import { ServerModal } from '../Servers/ServerModal';
+import { useMCPServers } from '../../hooks/useMCPServers';
 
 export const ServersPage: React.FC = () => {
-  const { servers, addServer, updateServer, removeServer } = useApp();
+  const { 
+    servers, 
+    isLoading, 
+    error,
+    stats,
+    addServer, 
+    updateServer, 
+    removeServer, 
+    refreshServers,
+    testConnection
+  } = useMCPServers();
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<ServerStatus | 'all'>('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -26,12 +39,21 @@ export const ServersPage: React.FC = () => {
   const [selectedServer, setSelectedServer] = useState<MCPServerType | null>(null);
 
   // Filtrar servidores baseado na busca e status
-  const filteredServers = servers.filter(server => {
+  const filteredServers = servers.filter((server: MCPServerType) => {
     const matchesSearch = server.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (server.hostname && server.hostname.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStatus = selectedStatus === 'all' || server.status === selectedStatus;
     return matchesSearch && matchesStatus;
   });
+
+  const handleRefresh = async () => {
+    await refreshServers();
+  };
+
+  const handleTestConnection = async (server: MCPServerType) => {
+    const connected = await testConnection(server);
+    console.log(`Connection test for ${server.name}: ${connected ? 'Success' : 'Failed'}`);
+  };
 
   const getStatusIcon = (status: ServerStatus) => {
     switch (status) {
@@ -119,70 +141,104 @@ export const ServersPage: React.FC = () => {
               Delete
             </button>
           </div>
-          <button className="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors duration-200">
-            <Eye className="w-4 h-4 mr-1" />
-            View Details
+          <button 
+            onClick={() => handleTestConnection(server)}
+            className="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors duration-200"
+          >
+            <Activity className="w-4 h-4 mr-1" />
+            Test Connection
           </button>
         </div>
       </div>
     </div>
   );
 
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            MCP Servers
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400">
-            Gerencie seus servidores Model Context Protocol
-          </p>
-        </div>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Server
-        </button>
-      </div>
-
-      {/* Search and Filter */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search servers..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-        <div className="flex items-center space-x-2">
-          <Filter className="w-4 h-4 text-gray-400" />
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value as ServerStatus | 'all')}
-            className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            title="Filter by status"
+    return (
+      <div className="space-y-6">
+        {/* Header with Stats */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              MCP Servers
+            </h1>
+            <p className="text-gray-500 dark:text-gray-400">
+              Gerencie seus servidores Model Context Protocol
+            </p>
+            
+            {/* Quick Stats */}
+            <div className="mt-3 flex items-center space-x-6">
+              <div className="flex items-center space-x-1 text-sm">
+                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <span className="text-gray-600 dark:text-gray-400">Online: {stats.online}</span>
+              </div>
+              <div className="flex items-center space-x-1 text-sm">
+                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                <span className="text-gray-600 dark:text-gray-400">Offline: {stats.offline}</span>
+              </div>
+              <div className="flex items-center space-x-1 text-sm">
+                <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                <span className="text-gray-600 dark:text-gray-400">Warning: {stats.warning}</span>
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
           >
-            <option value="all">All Status</option>
-            <option value="Online">Online</option>
-            <option value="Offline">Offline</option>
-            <option value="Warning">Warning</option>
-          </select>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Server
+          </button>
         </div>
-        <button
-          onClick={() => window.location.reload()}
-          className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200"
-        >
-          <RefreshCw className="w-4 h-4 mr-1" />
-          Refresh
-        </button>
-      </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <div className="flex items-center">
+              <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Search and Filter */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search servers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Filter className="w-4 h-4 text-gray-400" />
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value as ServerStatus | 'all')}
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              title="Filter by status"
+            >
+              <option value="all">All Status</option>
+              <option value="Online">Online</option>
+              <option value="Offline">Offline</option>
+              <option value="Warning">Warning</option>
+            </select>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={isLoading}
+            className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors duration-200 disabled:opacity-50"
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-1" />
+            )}
+            Refresh
+          </button>
+        </div>
 
       {/* Servers Grid */}
       {filteredServers.length === 0 ? (
@@ -208,7 +264,7 @@ export const ServersPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredServers.map((server) => (
+          {filteredServers.map((server: MCPServerType) => (
             <ServerCard key={server.id} server={server} />
           ))}
         </div>

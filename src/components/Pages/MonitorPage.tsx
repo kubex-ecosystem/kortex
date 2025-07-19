@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Activity, 
   Pause, 
@@ -8,17 +8,24 @@ import {
   CheckCircle,
   XCircle,
   Clock,
-  Loader2
+  Loader2,
+  RefreshCw
 } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
 import { LogEntry } from '../../types';
 import { StatusBadge } from '../UI/StatusBadge';
+import { useMCPLogs } from '../../hooks/useMCPLogs';
 
 export const MonitorPage: React.FC = () => {
-  const { addNotification } = useApp();
-  const [logs, setLogs] = useState<LogEntry[]>([]);
-  const [isMonitoring, setIsMonitoring] = useState(true);
-  const [speed, setSpeed] = useState(2000);
+  const { 
+    logs, 
+    isMonitoring, 
+    setIsMonitoring, 
+    stats, 
+    clearLogs, 
+    exportLogs 
+  } = useMCPLogs();
+
+  const [speed, setSpeed] = useState(3000);
   const [filters, setFilters] = useState({
     status: 'all',
     model: 'all',
@@ -26,47 +33,9 @@ export const MonitorPage: React.FC = () => {
   });
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    if (!isMonitoring) return;
-
-    const generateLog = (): LogEntry => {
-      const models = ['Claude', 'GPT-4', 'Gemini', 'LLaMA'];
-      const servers = ['MCP-01', 'MCP-02', 'MCP-03'];
-      const statuses = ['queued', 'running', 'completed', 'failed'] as const;
-      
-      const taskId = `Task-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-      const status = statuses[Math.floor(Math.random() * statuses.length)];
-      
-      if (status === 'failed') {
-        setTimeout(() => {
-          addNotification({
-            type: 'error',
-            title: 'Task Failed',
-            message: `${taskId} failed to complete`,
-            read: false
-          });
-        }, 500);
-      }
-      
-      return {
-        id: Date.now().toString(),
-        level: status === 'failed' ? 'error' : 'info',
-        message: `${taskId} is ${status}`,
-        timestamp: new Date().toLocaleTimeString(),
-        taskId,
-        model: models[Math.floor(Math.random() * models.length)],
-        status,
-        serverId: servers[Math.floor(Math.random() * servers.length)],
-        duration: Math.floor(Math.random() * 5000) + 1000 // Random duration between 1s and 6s
-      };
-    };
-
-    const interval = setInterval(() => {
-      setLogs(prev => [generateLog(), ...prev.slice(0, 199)]);
-    }, speed);
-
-    return () => clearInterval(interval);
-  }, [isMonitoring, speed, addNotification]);
+  // Get unique values for filters
+  const uniqueModels = Array.from(new Set(logs.map(log => log.model).filter(Boolean)));
+  const uniqueServers = Array.from(new Set(logs.map(log => log.serverId).filter(Boolean)));
 
   const filteredLogs = logs.filter(log => {
     const matchesStatus = filters.status === 'all' || log.status === filters.status;
@@ -74,26 +43,11 @@ export const MonitorPage: React.FC = () => {
     const matchesServer = filters.server === 'all' || log.serverId === filters.server;
     const matchesSearch = searchTerm === '' || 
       log.taskId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.model?.toLowerCase().includes(searchTerm.toLowerCase());
+      log.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      log.message.toLowerCase().includes(searchTerm.toLowerCase());
 
     return matchesStatus && matchesModel && matchesServer && matchesSearch;
   });
-
-  const exportLogs = () => {
-    const csv = [
-      'Timestamp,Task ID,Model,Status,Server,Duration',
-      ...filteredLogs.map(log => 
-        `${log.timestamp},${log.taskId},${log.model},${log.status},${log.serverId || ''},${log.duration || ''}`
-      )
-    ].join('\n');
-    
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `logs-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-  };
 
   const getLogIcon = (status: string) => {
     switch (status) {
@@ -114,19 +68,25 @@ export const MonitorPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <label className="text-sm text-gray-600 dark:text-gray-400">Speed:</label>
-            < >
             <select 
               aria-label="Speed Control"
               value={speed} 
               onChange={(e) => setSpeed(Number(e.target.value))}
               className="px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
-              <option value={500}>Fast</option>
-              <option value={2000}>Normal</option>
+              <option value={1000}>Fast</option>
+              <option value={3000}>Normal</option>
               <option value={5000}>Slow</option>
             </select>
-            </>
           </div>
+          
+          <button
+            onClick={clearLogs}
+            className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+          >
+            <RefreshCw size={16} />
+            Clear Logs
+          </button>
           
           <button
             onClick={exportLogs}
@@ -185,10 +145,21 @@ export const MonitorPage: React.FC = () => {
               className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
             >
               <option value="all">All Models</option>
-              <option value="Claude">Claude</option>
-              <option value="GPT-4">GPT-4</option>
-              <option value="Gemini">Gemini</option>
-              <option value="LLaMA">LLaMA</option>
+              {uniqueModels.map(model => (
+                <option key={model} value={model}>{model}</option>
+              ))}
+            </select>
+            
+            <select 
+              aria-label="Server Filter"
+              value={filters.server} 
+              onChange={(e) => setFilters(prev => ({ ...prev, server: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+            >
+              <option value="all">All Servers</option>
+              {uniqueServers.map(server => (
+                <option key={server} value={server}>{server}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -244,7 +215,7 @@ export const MonitorPage: React.FC = () => {
                     status === 'queued' ? 'text-yellow-600' :
                     status === 'completed' ? 'text-green-600' : 'text-red-600'
                   }`}>
-                    {filteredLogs.filter(l => l.status === status).length}
+                    {stats[status as keyof typeof stats] || 0}
                   </span>
                 </div>
               ))}
@@ -257,16 +228,20 @@ export const MonitorPage: React.FC = () => {
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Success Rate</span>
                 <span className="text-sm font-medium text-green-600">
-                  {logs.length > 0 ? Math.round((logs.filter(l => l.status === 'completed').length / logs.length) * 100) : 0}%
+                  {stats.successRate}%
                 </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Avg Response</span>
-                <span className="text-sm font-medium text-gray-900 dark:text-white">1.8s</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {stats.avgResponseTime}ms
+                </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 dark:text-gray-400">Uptime</span>
-                <span className="text-sm font-medium text-gray-900 dark:text-white">99.9%</span>
+                <span className="text-sm text-gray-600 dark:text-gray-400">System Uptime</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {stats.uptime}%
+                </span>
               </div>
             </div>
           </div>
