@@ -1,6 +1,6 @@
 # LookAtni Dashboard
 
-Sistema de monitoramento para tarefas AI executadas em servidores MCP.
+Sistema de monitoramento e manipulação de tarefas AI executadas em servidores MCP.
 
 ## 🚀 Quick Start
 
