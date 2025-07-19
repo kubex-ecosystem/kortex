@@ -225,7 +225,11 @@ export class MCPServerService extends BaseAPIService {
     try {
       const response = await this.makeRequest('/status');
       const latency = Date.now() - startTime;
-      
+      let version = 'unknown';
+      if (response.data && typeof response.data === 'object' && 'version' in response.data) {
+        version = (response.data as { version: string }).version;
+      }
+
       return {
         connected: response.success,
         latency,
@@ -233,7 +237,7 @@ export class MCPServerService extends BaseAPIService {
         error: response.error,
         metadata: {
           timestamp: new Date().toISOString(),
-          version: response.data?.version
+          version: version
         }
       };
     } catch (error) {
@@ -293,6 +297,8 @@ export class OpenAIService extends BaseAPIService {
     try {
       const response = await this.makeRequest('/models');
       const latency = Date.now() - startTime;
+      let rData = response.data || {};
+      let data = rData as { data: any[] } | any[];
       
       return {
         connected: response.success,
@@ -300,7 +306,8 @@ export class OpenAIService extends BaseAPIService {
         status: response.success ? 'Connected' : 'Disconnected',
         error: response.error,
         metadata: {
-          modelsCount: response.data?.data?.length || 0
+          modelsCount: data instanceof Array ? data.length : Object.keys(data).length,
+          timestamp: new Date().toISOString()
         }
       };
     } catch (error) {

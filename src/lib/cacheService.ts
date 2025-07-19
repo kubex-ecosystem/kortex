@@ -21,7 +21,7 @@ interface CacheEntry<T = any> {
   metadata?: Record<string, any>;
 }
 
-export class CacheService {
+export default class CacheService {
   private static instance: CacheService;
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'KortexCache';
@@ -563,4 +563,4 @@ export class CacheService {
 }
 
 // Singleton export
-export const cacheService = CacheService.getInstance();
+export const cacheService: CacheService = CacheService.getInstance() as CacheService;

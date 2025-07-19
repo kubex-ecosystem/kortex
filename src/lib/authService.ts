@@ -3,7 +3,7 @@
  * Gerencia autenticação da aplicação e tokens de API providers
  */
 
-import { cacheService } from './cacheService';
+import CacheService, {cacheService} from "./cacheService";
 
 export interface AuthToken {
   token: string;
@@ -276,8 +276,8 @@ export class AuthService {
       if (sessionData && typeof sessionData === 'object') {
         this.currentSession = {
           ...sessionData as UserSession,
-          expiresAt: new Date(sessionData.expiresAt),
-          lastActivity: new Date(sessionData.lastActivity)
+          expiresAt: new Date((sessionData as UserSession).expiresAt),
+          lastActivity: new Date((sessionData as UserSession).lastActivity)
         };
       }
 
