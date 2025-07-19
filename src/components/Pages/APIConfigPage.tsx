@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { APIProvider } from '../../types/APITypes';
+import { MCPConnectionTest } from '../MCP/MCPConnectionTest';
 
 export const APIConfigPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,6 +24,7 @@ export const APIConfigPage: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState<APIProvider | null>(null);
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
+  const [isConnectedToMCP, setIsConnectedToMCP] = useState(false);
 
   // Mock data para demonstração
   const [apiProviders, setApiProviders] = useState<APIProvider[]>([
@@ -244,6 +246,12 @@ export const APIConfigPage: React.FC = () => {
           <Plus className="w-4 h-4 mr-2" />
           Add API Provider
         </button>
+      </div>
+
+      {/* MCP Server Connection Test */}
+      <div>
+        <h2 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">Status do MCP Server</h2>
+        <MCPConnectionTest onConnectionChange={setIsConnectedToMCP} />
       </div>
 
       {/* Stats Cards */}
