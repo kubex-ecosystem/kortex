@@ -37,8 +37,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   
   // Extrair path da URL
   const { path: pathArray = [] } = req.query;
-  const mcpPath = Array.isArray(pathArray) ? pathArray.join('/') : pathArray;
-  
+
+  let mcpPath = Array.isArray(pathArray) ? pathArray.join('/') : pathArray;
+  if (mcpPath.indexOf('api/') >= 0) {
+    mcpPath = mcpPath.replace(/^api\//, '');
+  }
+
   // Construir URL target - limpar parâmetros duplicados
   let targetUrl = `${CONFIG.baseURL}/api/${mcpPath}`;
   
