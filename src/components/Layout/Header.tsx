@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Menu, Sun, Moon, Bell, Search, User } from 'lucide-react';
+import { Menu, Sun, Moon, Bell, Search, User, Wifi, WifiOff, AlertCircle } from 'lucide-react';
 import { useApp } from '../../../src/context/AppContext';
 import { NotificationCenter } from '../UI/NotificationCenter';
+import { useWebSocket } from '../../hooks/useWebSocket';
 
 interface HeaderProps {
   isDark: boolean;
@@ -17,8 +18,10 @@ export const Header: React.FC<HeaderProps> = ({
   currentPage 
 }) => {
   const { notifications } = useApp();
+  const { isConnected, alerts } = useWebSocket('ws://127.0.0.1:3002/ws');
   const [showNotifications, setShowNotifications] = useState(false);
   const unreadCount = notifications?.filter(n => !n.read).length;
+  const hasActiveAlerts = alerts.length > 0;
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sticky top-0 z-30">
@@ -47,6 +50,34 @@ export const Header: React.FC<HeaderProps> = ({
               placeholder="Search..." 
               className="bg-transparent text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 outline-none flex-1"
             />
+          </div>
+
+          {/* WebSocket Status Indicator */}
+          <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+              isConnected 
+                ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
+                : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
+            }`}>
+              {isConnected ? (
+                <>
+                  <Wifi size={12} />
+                  <span className="hidden sm:inline">Live</span>
+                </>
+              ) : (
+                <>
+                  <WifiOff size={12} />
+                  <span className="hidden sm:inline">Offline</span>
+                </>
+              )}
+            </div>
+            
+            {hasActiveAlerts && (
+              <div className="flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 animate-pulse">
+                <AlertCircle size={12} />
+                <span className="hidden sm:inline">{alerts.length}</span>
+              </div>
+            )}
           </div>
           
           <div className="relative">

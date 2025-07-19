@@ -19,6 +19,7 @@ interface UseWebSocketReturn {
   alerts: WebSocketMessage[];
   reconnect: () => void;
   clearAlerts: () => void;
+  lastUpdate: Date | null;
 }
 
 export const useWebSocket = (url: string): UseWebSocketReturn => {
@@ -27,6 +28,7 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
   const [rateLimitStatus, setRateLimitStatus] = useState<Record<string, RateLimitStatus>>({});
   const [pollingStatus, setPollingStatus] = useState<PollingControl | null>(null);
   const [alerts, setAlerts] = useState<WebSocketMessage[]>([]);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -41,6 +43,7 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
   const handleMessage = useCallback((event: MessageEvent) => {
     try {
       const message: WebSocketMessage = JSON.parse(event.data);
+      setLastUpdate(new Date()); // Update timestamp
       
       switch (message.type) {
         case 'initial_state':
@@ -193,6 +196,7 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
     pollingStatus,
     alerts,
     reconnect,
-    clearAlerts
+    clearAlerts,
+    lastUpdate
   };
 };
