@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { MCPSettings } from '../MCP/MCPSettings/MCPSettings';
 import { MCPServerConfigPanel } from '../MCP/MCPServerConfigPanel';
+import RealTimeDashboard from '../MCP/RealTimeDashboard';
 import { MCPSettingsType, MCPServerConfig } from '../../types';
 import { useMCPServers } from '../../hooks/useMCPServers';
-import { Settings, Server, Database, Sliders } from 'lucide-react';
+import { Settings, Server, Database, Sliders, Activity } from 'lucide-react';
 
 export function SettingsPage() {
-  const [activeTab, setActiveTab] = useState('general');
+  const [activeTab, setActiveTab] = useState('realtime');
   const [selectedServerId, setSelectedServerId] = useState<string>('statusrafa-mcp');
   const { servers } = useMCPServers();
 
@@ -21,6 +22,7 @@ export function SettingsPage() {
   };
 
   const tabs = [
+    { id: 'realtime', label: 'Real-Time Dashboard', icon: Activity },
     { id: 'general', label: 'General Settings', icon: Settings },
     { id: 'servers', label: 'MCP Servers', icon: Server },
     { id: 'rate-limits', label: 'Rate Limits & Polling', icon: Database },
@@ -57,6 +59,16 @@ export function SettingsPage() {
 
       {/* Tab Content */}
       <div className="bg-white border border-gray-200 rounded-lg">
+        {activeTab === 'realtime' && (
+          <div className="p-6">
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold mb-2">Real-Time Dashboard</h2>
+              <p className="text-gray-600">Monitor your MCP servers and rate limits in real-time</p>
+            </div>
+            <RealTimeDashboard />
+          </div>
+        )}
+
         {activeTab === 'general' && (
           <div className="p-6">
             <h2 className="text-lg font-semibold mb-4">General Configuration</h2>

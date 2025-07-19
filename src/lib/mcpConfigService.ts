@@ -9,7 +9,7 @@ import {
 
 // MCP Configuration Service
 class MCPConfigurationService {
-  private baseUrl = '/api/mcp';
+  private baseUrl = 'http://127.0.0.1:3002/api';
   private eventListeners: ((event: ConfigurationEvent) => void)[] = [];
   
   // Default rate limit configurations

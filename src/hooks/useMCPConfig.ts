@@ -128,29 +128,32 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
   // Initial load and periodic refresh
   useEffect(() => {
     loadData();
-    
+  }, [serverId, loadData]);
+
+  // Separate effect for periodic refresh to avoid infinite loop
+  useEffect(() => {
+    if (!config) return;
+
     // Refresh rate limit status every 5 minutes
     const refreshInterval = setInterval(() => {
-      if (config) {
-        // Refresh rate limits for enabled providers
-        Object.entries(config.providers).forEach(async ([provider, providerConfig]) => {
-          if (providerConfig?.enabled) {
-            try {
-              const status = await mcpConfigService.getRateLimitStatus(serverId, provider);
-              setRateLimitStatus(prev => ({
-                ...prev,
-                [provider]: status
-              }));
-            } catch (error) {
-              console.warn(`Could not refresh ${provider} rate limit status:`, error);
-            }
+      // Refresh rate limits for enabled providers
+      Object.entries(config.providers).forEach(async ([provider, providerConfig]) => {
+        if (providerConfig?.enabled) {
+          try {
+            const status = await mcpConfigService.getRateLimitStatus(serverId, provider);
+            setRateLimitStatus(prev => ({
+              ...prev,
+              [provider]: status
+            }));
+          } catch (error) {
+            console.warn(`Could not refresh ${provider} rate limit status:`, error);
           }
-        });
-      }
+        }
+      });
     }, 300000); // 5 minutes
 
     return () => clearInterval(refreshInterval);
-  }, [serverId, loadData, config]);
+  }, [config, serverId]);
 
   // Update server configuration
   const updateConfig = useCallback(async (updates: Partial<MCPServerConfig>): Promise<boolean> => {
