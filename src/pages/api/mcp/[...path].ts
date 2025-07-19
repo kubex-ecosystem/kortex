@@ -35,24 +35,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).end();
   }
   
-  // Extrair e limpar o path
-  const mcpPath = req.url?.replace('/api/mcp', '') || '';
-  const cleanPath = mcpPath.replace(/\/+$/, '').replace(/^\/+/, '');
+  // Extrair path da URL
+  const { path: pathArray = [] } = req.query;
+  const mcpPath = Array.isArray(pathArray) ? pathArray.join('/') : pathArray;
   
-  // Construir URL target
-  let targetUrl = `${CONFIG.baseURL}`;
-  if (cleanPath) {
-    // Se não começar com 'api/', adicionar
-    const finalPath = cleanPath.startsWith('api/') ? cleanPath : `api/${cleanPath}`;
-    targetUrl += `/${finalPath}`;
-  } else {
-    targetUrl += '/api/status'; // Default endpoint
-  }
+  // Construir URL target - limpar parâmetros duplicados
+  let targetUrl = `${CONFIG.baseURL}/api/${mcpPath}`;
   
-  // Adicionar query parameters
-  if (req.url && req.url.includes('?')) {
-    const queryString = req.url.split('?')[1];
-    targetUrl += `?${queryString}`;
+  // Adicionar query parameters apenas uma vez
+  const url = new URL(req.url!, `http://localhost:3000`);
+  if (url.search && url.search !== '?') {
+    targetUrl += url.search;
   }
 
   console.log(`🔗 [MCP Proxy] ${method} ${req.url} -> ${targetUrl}`);

@@ -223,7 +223,7 @@ export class MCPServerService extends BaseAPIService {
     const startTime = Date.now();
     
     try {
-      const response = await this.makeRequest('/status');
+      const response = await this.makeRequest('/api/status');
       const latency = Date.now() - startTime;
       let version = 'unknown';
       if (response.data && typeof response.data === 'object' && 'version' in response.data) {
@@ -251,26 +251,26 @@ export class MCPServerService extends BaseAPIService {
   }
 
   async getStatus(): Promise<ServiceResponse<MCPStatus>> {
-    return this.makeRequest<MCPStatus>('/status');
+    return this.makeRequest<MCPStatus>('/api/status');
   }
 
   async getRepos(query?: string): Promise<ServiceResponse<any[]>> {
-    const endpoint = query ? `/repos?q=${encodeURIComponent(query)}` : '/repos';
+    const endpoint = query ? `/api/repos?q=${encodeURIComponent(query)}` : '/api/repos';
     return this.makeRequest<any[]>(endpoint);
   }
 
   async getPullRequests(query?: string): Promise<ServiceResponse<any[]>> {
-    const endpoint = query ? `/prs?q=${encodeURIComponent(query)}` : '/prs';
+    const endpoint = query ? `/api/prs?q=${encodeURIComponent(query)}` : '/api/prs';
     return this.makeRequest<any[]>(endpoint);
   }
 
   async getPipelines(query?: string): Promise<ServiceResponse<any[]>> {
-    const endpoint = query ? `/pipelines?q=${encodeURIComponent(query)}` : '/pipelines';
+    const endpoint = query ? `/api/pipelines?q=${encodeURIComponent(query)}` : '/api/pipelines';
     return this.makeRequest<any[]>(endpoint);
   }
 
   async getMemory(query?: string): Promise<ServiceResponse<any[]>> {
-    const endpoint = query ? `/memory?q=${encodeURIComponent(query)}` : '/memory';
+    const endpoint = query ? `/api/memory?q=${encodeURIComponent(query)}` : '/api/memory';
     return this.makeRequest<any[]>(endpoint);
   }
 }
@@ -295,7 +295,7 @@ export class OpenAIService extends BaseAPIService {
     const startTime = Date.now();
     
     try {
-      const response = await this.makeRequest('/models');
+      const response = await this.makeRequest('/api/models');
       const latency = Date.now() - startTime;
       let rData = response.data || {};
       let data = rData as { data: any[] } | any[];
@@ -320,7 +320,7 @@ export class OpenAIService extends BaseAPIService {
   }
 
   async getStatus(): Promise<ServiceResponse<any>> {
-    return this.makeRequest('/models');
+    return this.makeRequest('/api/models');
   }
 }
 
@@ -345,7 +345,7 @@ export class AnthropicService extends BaseAPIService {
     
     try {
       // Test with a minimal message request
-      const response = await this.makeRequest('/messages', {
+      const response = await this.makeRequest('/api/messages', {
         method: 'POST',
         body: JSON.stringify({
           model: 'claude-3-sonnet-20240229',
@@ -373,7 +373,7 @@ export class AnthropicService extends BaseAPIService {
 
   async getStatus(): Promise<ServiceResponse<any>> {
     // Anthropic doesn't have a direct status endpoint, so we test with a minimal request
-    return this.makeRequest('/messages', {
+    return this.makeRequest('/api/messages', {
       method: 'POST',
       body: JSON.stringify({
         model: 'claude-3-sonnet-20240229',
