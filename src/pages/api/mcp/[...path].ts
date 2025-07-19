@@ -1,57 +1,129 @@
-// Next.js API route para fazer proxy das requisições MCP
+/**
+ * 🔗 MCP Server Proxy API - Enhanced
+ * Conecta o frontend Kortex com o StatusRafa MCP Server Python
+ */
+
 import { NextApiRequest, NextApiResponse } from 'next';
 
-const MCP_BASE_URL = 'http://127.0.0.1:3002';
+interface MCPProxyConfig {
+  baseURL: string;
+  timeout: number;
+  retries: number;
+  corsEnabled: boolean;
+}
+
+const CONFIG: MCPProxyConfig = {
+  baseURL: process.env.MCP_SERVER_URL || 'http://127.0.0.1:3002',
+  timeout: 15000,
+  retries: 3,
+  corsEnabled: true
+};
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { method, url } = req;
+  const { method } = req;
   
-  // Extrair o path depois de /api/mcp
-  const mcpPath = req.url?.replace('/api/mcp', '') || '';
-  // Remove o /api duplicado se existir e barras extras
-  const cleanPath = mcpPath.replace(/\/+$/, ''); // Remove trailing slashes
-  const finalPath = cleanPath.startsWith('/api') ? cleanPath : `/api${cleanPath}`;
-  const targetUrl = `${MCP_BASE_URL}${finalPath}`;
-  
-  console.log(`[MCP Proxy] ${method} ${req.url} -> ${targetUrl}`);
-
-  try {
-    const response = await fetch(targetUrl, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: method !== 'GET' ? JSON.stringify(req.body) : undefined,
-    });
-
-    // Verificar se a resposta é JSON válido
-    const contentType = response.headers.get('content-type');
-    let data;
-    
-    if (contentType && contentType.includes('application/json')) {
-      data = await response.json();
-    } else {
-      // Se não for JSON, retornar erro estruturado
-      const text = await response.text();
-      data = {
-        success: false,
-        error: `Resposta inválida do servidor: ${text}`,
-        message: 'MCP Server não respondeu com JSON válido'
-      };
-    }
-    
-    // Adicionar headers CORS
+  // Adicionar headers CORS primeiro
+  if (CONFIG.corsEnabled) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    
-    res.status(response.status).json(data);
-  } catch (error) {
-    console.error('Erro no proxy MCP:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Erro desconhecido',
-      message: 'Falha ao conectar com MCP Server' 
-    });
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
   }
+
+  // Handle OPTIONS preflight
+  if (method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  // Extrair e limpar o path
+  const mcpPath = req.url?.replace('/api/mcp', '') || '';
+  const cleanPath = mcpPath.replace(/\/+$/, '').replace(/^\/+/, '');
+  
+  // Construir URL target
+  let targetUrl = `${CONFIG.baseURL}`;
+  if (cleanPath) {
+    // Se não começar com 'api/', adicionar
+    const finalPath = cleanPath.startsWith('api/') ? cleanPath : `api/${cleanPath}`;
+    targetUrl += `/${finalPath}`;
+  } else {
+    targetUrl += '/api/status'; // Default endpoint
+  }
+  
+  // Adicionar query parameters
+  if (req.url && req.url.includes('?')) {
+    const queryString = req.url.split('?')[1];
+    targetUrl += `?${queryString}`;
+  }
+
+  console.log(`🔗 [MCP Proxy] ${method} ${req.url} -> ${targetUrl}`);
+
+  let lastError: Error | null = null;
+
+  // Retry logic
+  for (let attempt = 0; attempt < CONFIG.retries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), CONFIG.timeout);
+      
+      const response = await fetch(targetUrl, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'Kortex-MCP-Proxy/1.0.1',
+          'Accept': 'application/json'
+        },
+        body: method !== 'GET' && method !== 'HEAD' ? JSON.stringify(req.body) : undefined,
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+
+      // Parse response
+      const contentType = response.headers.get('content-type') || '';
+      let data;
+      
+      if (contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        // Tentar fazer parse manual se parecer JSON
+        try {
+          data = JSON.parse(text);
+        } catch {
+          data = {
+            success: false,
+            error: 'Invalid response format',
+            message: `MCP Server responded with: ${text.substring(0, 200)}...`,
+            content_type: contentType,
+            raw_response: text.length > 500 ? text.substring(0, 500) + '...' : text
+          };
+        }
+      }
+
+      console.log(`✅ [MCP Proxy] Success: ${method} ${targetUrl} -> ${response.status}`);
+      return res.status(response.status).json(data);
+
+    } catch (error) {
+      lastError = error as Error;
+      console.warn(`🔄 [MCP Proxy] Attempt ${attempt + 1}/${CONFIG.retries} failed:`, error);
+      
+      if (attempt < CONFIG.retries - 1) {
+        // Exponential backoff
+        const delay = Math.pow(2, attempt) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  // All retries failed
+  console.error(`❌ [MCP Proxy] All ${CONFIG.retries} attempts failed:`, lastError);
+  
+  return res.status(502).json({
+    success: false,
+    error: 'MCP Server Unavailable',
+    message: lastError?.message || 'All retry attempts failed',
+    target_url: targetUrl,
+    timestamp: new Date().toISOString(),
+    retries: CONFIG.retries
+  });
 }
