@@ -9,7 +9,7 @@ import {
 
 // MCP Configuration Service
 class MCPConfigurationService {
-  private baseUrl = 'http://127.0.0.1:3002/api';
+  private baseUrl = 'http://localhost:3002/api';
   private eventListeners: ((event: ConfigurationEvent) => void)[] = [];
   
   // Default rate limit configurations
@@ -53,7 +53,7 @@ class MCPConfigurationService {
   // Get server configuration
   async getServerConfig(serverId: string): Promise<MCPServerConfig> {
     try {
-      const response = await fetch(`${this.baseUrl}/config/${serverId}`);
+      const response = await fetch(`${this.baseUrl}/config`); //${serverId}
       if (!response.ok) {
         throw new Error(`Failed to get config: ${response.statusText}`);
       }

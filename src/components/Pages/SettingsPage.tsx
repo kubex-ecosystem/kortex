@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { MCPSettings } from '../MCP/MCPSettings/MCPSettings';
 import { MCPServerConfigPanel } from '../MCP/MCPServerConfigPanel';
 import RealTimeDashboard from '../MCP/RealTimeDashboard';
+import DynamicConfigPanel from '../MCP/DynamicConfigPanel';
 import { MCPSettingsType, MCPServerConfig } from '../../types';
 import { useMCPServers } from '../../hooks/useMCPServers';
-import { Settings, Server, Database, Sliders, Activity } from 'lucide-react';
+import { Settings, Server, Database, Sliders, Activity, Zap } from 'lucide-react';
 
 export function SettingsPage() {
-  const [activeTab, setActiveTab] = useState('realtime');
+  const [activeTab, setActiveTab] = useState('dynamic');
   const [selectedServerId, setSelectedServerId] = useState<string>('statusrafa-mcp');
   const { servers } = useMCPServers();
 
@@ -22,6 +23,7 @@ export function SettingsPage() {
   };
 
   const tabs = [
+    { id: 'dynamic', label: 'Dynamic Configuration', icon: Zap },
     { id: 'realtime', label: 'Real-Time Dashboard', icon: Activity },
     { id: 'general', label: 'General Settings', icon: Settings },
     { id: 'servers', label: 'MCP Servers', icon: Server },
@@ -59,6 +61,19 @@ export function SettingsPage() {
 
       {/* Tab Content */}
       <div className="bg-white border border-gray-200 rounded-lg">
+        {activeTab === 'dynamic' && (
+          <div className="p-6">
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold mb-2">Configuração Dinâmica MCP v2.0</h2>
+              <p className="text-gray-600">
+                Controle completo do servidor MCP com configurações em tempo real, 
+                gerenciamento de secrets criptografados e execução de comandos do sistema.
+              </p>
+            </div>
+            <DynamicConfigPanel />
+          </div>
+        )}
+
         {activeTab === 'realtime' && (
           <div className="p-6">
             <div className="mb-6">
