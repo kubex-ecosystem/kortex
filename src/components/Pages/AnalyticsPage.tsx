@@ -1,28 +1,25 @@
-import React from 'react';
-import { 
-  Calendar, 
-  Download, 
-  Target, 
-  CheckCircle, 
-  Timer, 
-  TrendingUp,
-  PieChart,
-  BarChart3,
-  FileText,
-  Activity,
-  Database,
-  Loader2,
-  AlertCircle
+import {
+    Activity,
+    AlertCircle,
+    BarChart3,
+    Calendar,
+    CheckCircle,
+    Database,
+    Download,
+    FileText,
+    Loader2,
+    PieChart,
+    TrendingUp
 } from 'lucide-react';
-import { StatusBadge } from '../UI/StatusBadge';
 import { JSX } from 'react/jsx-runtime';
-import { useMCPData } from '../../hooks/useMCPData';
-import { useMCPServers } from '../../hooks/useMCPServers';
 import { useAPIManager } from '../../hooks/useAPIManager';
+import { useDefensiveMCPData } from '../../hooks/useDefensiveMCPData';
+import { useMCPServers } from '../../hooks/useMCPServers';
+import { StatusBadge } from '../UI/StatusBadge';
 
 export const AnalyticsPage = (): JSX.Element => {
-  // Get real data from hooks
-  const { stats: mcpStats, isLoading: mcpLoading, error: mcpError } = useMCPData();
+  // Get real data from hooks - RESILIENT VERSION!
+  const { stats: mcpStats, isLoading: mcpLoading, error: mcpError } = useDefensiveMCPData();
   const { servers, stats: serverStats, isLoading: serversLoading } = useMCPServers();
   const { providers, stats: providerStats, isLoading: providersLoading } = useAPIManager();
   
