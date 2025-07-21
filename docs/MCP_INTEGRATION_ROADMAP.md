@@ -3,6 +3,7 @@
 ## 🎯 Visão Geral da Integração
 
 O Kortex Dashboard está - [x] **Dynamic Filtering**: ✅ **Models and servers from actual system data**
+
 - [x] **Error Handling & Loading States**: ✅ **Robust error boundaries and loading indicators**
 
 ### ✅ **Fase 5 - Advanced Configuration & Rate Management** (COMPLETA - 19/07/2025)
@@ -74,28 +75,34 @@ O Kortex Dashboard está - [x] **Dynamic Filtering**: ✅ **Models and servers f
 3. **✅ Dual MCP Interface**: HTTP + FastMCP SSE ready
 4. **✅ Cross-Project Integration**: Kortex + Kortex + TimeCraft AI ecosystem
 5. **✅ Performance Optimized**: 93% improvement in response times
-6. **✅ Dynamic Statistics**: Real-time calculated metrics from system datagraph TD
+6. **✅ Dynamic Statistics**: Real-time calculated metrics from live data
+
+### 🏗️ Arquitetura da Integração
+
+```mermaid
+system datagraph TD
     A[Kortex Dashboard - Next.js :3000] --> B[API Proxy /api/mcp/*]
     B --> C[StatusRafa HTTP API :3002 ✅]
     B --> D[StatusRafa MCP Server :3001]
-    
+
     C --> E[GitHub Integration ✅]
-    C --> F[Azure DevOps Integration ✅] 
+    C --> F[Azure DevOps Integration ✅]
     C --> G[Memory System ✅]
-    
+
     H[TimeCraft AI] --> C
     I[Kortex] --> C
     J[Other Projects] --> C
-    
+
     K[Kubex Ecosystem] --> A
     K --> H
     K --> I
     K --> J
-    
+
     L[ClientOnly Components ✅] --> A
     M[SSR Protection ✅] --> A
     N[Cache Layer ✅] --> A
     O[Auth Service ✅] --> A
+
 ```
 
 ## 🚀 **Real-Time WebSocket System Architecture (19/07/2025)**
@@ -105,6 +112,7 @@ O Kortex Dashboard está - [x] **Dynamic Filtering**: ✅ **Models and servers f
 Esta sessão implementou um **sistema completo de WebSocket** para atualizações em tempo real, elevando o Kortex de um dashboard estático para uma **plataforma de monitoramento live**.
 
 #### **📡 WebSocket Backend (Python)**
+
 - ✅ **WebSocketManager**: Gerenciamento completo de conexões WebSocket
 - ✅ **Real-Time Monitoring**: Monitoramento ativo de rate limits por provider
 - ✅ **Auto-Pause Intelligence**: Pausa automática quando limites são atingidos
@@ -112,6 +120,7 @@ Esta sessão implementou um **sistema completo de WebSocket** para atualizaçõe
 - ✅ **Live Broadcasting**: Broadcast para todos os clientes conectados
 
 #### **🔌 WebSocket Frontend (React)**
+
 - ✅ **useWebSocket Hook**: Hook React para gerenciamento de estado WebSocket
 - ✅ **RealTimeDashboard**: Dashboard completo com charts e indicadores ao vivo
 - ✅ **Live Alerts**: Sistema de alertas em tempo real para eventos críticos
@@ -119,6 +128,7 @@ Esta sessão implementou um **sistema completo de WebSocket** para atualizaçõe
 - ✅ **Real-Time Updates**: Atualizações instantâneas de status e métricas
 
 #### **⚡ Live Features Implemented**
+
 - ✅ **Rate Limit Monitoring**: Percentual de uso atualizado a cada 5 segundos
 - ✅ **Polling Status**: Status de providers e schedule em tempo real
 - ✅ **Auto-Pause Alerts**: Notificações quando providers são pausados automaticamente
@@ -126,15 +136,17 @@ Esta sessão implementou um **sistema completo de WebSocket** para atualizaçõe
 - ✅ **Visual Indicators**: Progress bars, status icons, connection state
 
 #### **🛡️ Production Ready Features**
+
 - ✅ **Error Resilience**: Tratamento robusto de erros e reconexão
 - ✅ **Memory Management**: WeakSet para conexões, cleanup automático
 - ✅ **Performance**: Updates eficientes, broadcasting otimizado
 - ✅ **Security**: Validação de mensagens, sanitização de dados
 - ✅ **Monitoring**: Logs detalhados de conexões e eventos
 
-### � **WebSocket System Architecture**
+### 🎛️ **WebSocket System Architecture**
 
-```
+```plaintext
+
 WebSocket Real-Time Flow:
 ┌─────────────────┐    WS://127.0.0.1:3002/ws    ┌──────────────────┐
 │ React Frontend  │ ◄─────────────────────────► │ Python Backend   │
@@ -151,6 +163,7 @@ GitHub    ─┐
 Azure     ─┘        │                              │
                     ├─► Auto-pause Logic           ├─► Live Dashboard
                     └─► Performance Tracking       └─► Real-time Alerts
+
 ```
 
 ### 🎮 **Live Monitoring Capabilities**
@@ -308,24 +321,28 @@ Rate Limiting System:
 ### 🎛️ **Key Features Implemented**
 
 #### **🔧 Remote Server Configuration**
+
 - **Token Management**: Secure storage and editing of GitHub/Azure tokens
 - **Real-time Validation**: Config validation before applying changes
 - **Multi-Server Support**: Configure multiple MCP servers from single interface
 - **Health Checks**: Automatic server connectivity and health monitoring
 
 #### **⏰ Smart Rate Limiting**  
+
 - **Dynamic Intervals**: Auto-calculated polling intervals based on API quotas
 - **Provider-Specific**: Different configs for GitHub (5000/hr) vs Azure DevOps
 - **Usage Tracking**: Real-time monitoring of API usage percentages  
 - **Auto-Pause**: Automatic pausing when approaching rate limits (80% threshold)
 
 #### **🎮 Polling Control**
+
 - **Play/Pause System**: Manual control over API polling per provider
 - **Selective Control**: Start/pause individual providers or all at once
 - **Schedule Monitoring**: Visual display of next polling times and frequencies
 - **Background Status**: Real-time indication of polling activity
 
 #### **🛡️ Production-Ready Features**
+
 - **Configuration Events**: Real-time notifications for all config changes
 - **Error Handling**: Robust error boundaries and validation
 - **TypeScript Safety**: Complete type coverage for all configuration
@@ -414,6 +431,7 @@ curl http://127.0.0.1:3002/api/rate-limit/statusrafa-mcp/github
 **Objetivo**: Finalizar a integração do RealTimeDashboard na UI e adicionar features avançadas.
 
 **Estado Atual**:
+
 - ✅ WebSocket backend funcionando (127.0.0.1:3002/ws)
 - ✅ useWebSocket hook criado
 - ✅ RealTimeDashboard component criado (incompleto)
@@ -445,7 +463,7 @@ curl http://127.0.0.1:3002/api/rate-limit/statusrafa-mcp/github
 
 ### 🔧 **Files to Focus On**
 
-```
+```plaintext
 Priority Files for Next Session:
 ├── /srv/apps/LIFE/KUBEX/kortex/src/
 │   ├── components/MCP/RealTimeDashboard.tsx     ← Fix and complete
@@ -484,6 +502,7 @@ curl http://127.0.0.1:3002/api/status
 Esta sessão completou com sucesso a **Fase 7**, transformando o dashboard em uma **interface de monitoramento em tempo real totalmente polida**:
 
 #### **🎨 UI/UX Achievements**
+
 - ✅ **RealTimeDashboard Enhancement**: Dashboard completamente redesenhado com visual moderno
 - ✅ **Animated Progress Bars**: Progress bars com animações, thresholds visuais e cores dinâmicas
 - ✅ **WebSocket Status Header**: Indicator de conexão WebSocket integrado no header principal
@@ -492,6 +511,7 @@ Esta sessão completou com sucesso a **Fase 7**, transformando o dashboard em um
 - ✅ **Toast Notification System**: Sistema completo de notificações com ToastProvider
 
 #### **🔌 Real-Time Features**
+
 - ✅ **Live Timestamp Tracking**: Tracking do último update do WebSocket
 - ✅ **Connection Health Indicators**: Visual feedback de conexão/desconexão
 - ✅ **Alert System Integration**: Alertas em tempo real para rate limits e auto-pause
@@ -499,6 +519,7 @@ Esta sessão completou com sucesso a **Fase 7**, transformando o dashboard em um
 - ✅ **Auto-Refresh Components**: Components que se atualizam automaticamente via WebSocket
 
 #### **💻 Technical Implementation**
+
 - ✅ **ToastNotification Component**: Sistema de toast com 4 tipos (success, error, warning, info)
 - ✅ **ToastProvider Context**: Provider React para gerenciamento global de toasts
 - ✅ **Enhanced useWebSocket Hook**: Hook atualizado com tracking de timestamp
@@ -526,7 +547,7 @@ Esta sessão completou com sucesso a **Fase 7**, transformando o dashboard em um
 
 ### 🎮 **Live Features Now Available**
 
-```
+```plaintext
 Real-Time Dashboard Features:
 ┌─────────────────────────────────────────┐
 │ ✅ WebSocket Connection Status          │
@@ -543,6 +564,7 @@ Real-Time Dashboard Features:
 ### 🚀 **Sistema Completo e Funcional**
 
 O Kortex Dashboard agora é uma **plataforma de monitoramento em tempo real completa** com:
+
 - **Backend WebSocket**: Monitoramento inteligente de rate limits
 - **Frontend Real-Time**: Interface moderna que se atualiza automaticamente
 - **Sistema de Alertas**: Notificações proativas para eventos críticos
@@ -557,13 +579,15 @@ O Kortex Dashboard agora é uma **plataforma de monitoramento em tempo real comp
 
 Esta foi uma **sessão transformadora** que elevou o Kortex de configuração estática para **monitoramento em tempo real**:
 
-#### **🔧 Phase 5 Completion - Advanced Configuration** 
+#### **🔧 Phase 5 Completion - Advanced Configuration**
+
 - ✅ **Remote Configuration System**: Complete MCP server management via UI
 - ✅ **Intelligent Rate Limiting**: Auto-pause before hitting API quotas  
 - ✅ **Secure Token Management**: Safe storage and editing of sensitive tokens
 - ✅ **Real-time Validation**: Live config validation and health monitoring
 
 #### **📡 Phase 6 Breakthrough - Real-Time WebSocket System**
+
 - ✅ **WebSocket Backend**: Complete Python WebSocket server with monitoring
 - ✅ **Real-Time Monitoring**: Live rate limit tracking every 5 seconds
 - ✅ **Auto-Pause Intelligence**: Smart provider pausing at threshold levels
@@ -580,7 +604,7 @@ Esta foi uma **sessão transformadora** que elevou o Kortex de configuração es
 | **Monitoring** | Basic status checks | ✅ Live metrics + performance | Full visibility |
 | **Control** | No rate control | ✅ Play/pause per provider | Granular control |
 
-### 🎯 **Business Value Delivered**
+### 🎯**Business Value Delivered**
 
 1. **💰 Cost Protection**: Rate limiting prevents API quota exhaustion
 2. **⚡ Real-Time Intelligence**: Instant visibility into system health
@@ -590,7 +614,7 @@ Esta foi uma **sessão transformadora** que elevou o Kortex de configuração es
 
 ### 🔌 **System Architecture Evolution**
 
-```
+```plaintext
 FROM: Static Dashboard          TO: Real-Time Monitoring Platform
       ↓                             ↓
 ┌─────────────────┐            ┌─────────────────┐
@@ -723,7 +747,7 @@ src/
 - [ ] Error handling robusto implementado
 - [ ] UX fluida e responsiva
 
-## 💡 Innovation Highlights
+## 💡Innovation Highlights
 
 ### Unique Features
 
