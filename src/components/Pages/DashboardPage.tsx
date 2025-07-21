@@ -1,16 +1,17 @@
-import React, { JSX } from 'react';
-import { LayoutDashboard, Play, CheckCircle, XCircle, GitBranch, Database, Server, Activity } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
-import { TaskCard } from '../Dashboard/TaskCard';
+import { Activity, Database, GitBranch, Server, XCircle } from 'lucide-react';
+import { JSX } from 'react';
+import { useResilientApp } from '../../context/ResilientAppContext';
+import { useDefensiveMCPData } from '../../hooks/useDefensiveMCPData';
 import { Task } from '../../types';
-import { useMCPData } from '../../hooks/useMCPData';
+import { TaskCard } from '../Dashboard/TaskCard';
 
 export const DashboardPage = (): JSX.Element => {
-  const { tasks } = useApp();
-  const { stats, isLoading, isConnected, error, lastUpdated } = useMCPData();
+  const { tasks } = useResilientApp();
+  const { stats, isLoading, isConnected, error, lastUpdated } = useDefensiveMCPData();
   
-  const statusCounts = tasks.reduce((acc, task:Task) => {
-    acc[task.status || 'Unknown'] = (acc[task.status || 'Unknown'] || 0) + 1;
+  const statusCounts = (tasks || []).reduce((acc, task) => {
+    const status = (task as any)?.status || (task as any)?.definition?.status || 'Unknown';
+    acc[status] = (acc[status] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
@@ -122,7 +123,7 @@ export const DashboardPage = (): JSX.Element => {
           Recent Tasks
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {tasks.slice(0, 6).map((task: Task) => {
+          {(tasks || []).slice(0, 6).map((task: any) => {
             const completeTask: Task = {
               ...task,
               definitionId: task.definitionId || '',
