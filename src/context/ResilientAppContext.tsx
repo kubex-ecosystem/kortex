@@ -320,7 +320,7 @@ export const ResilientAppProvider = ({ children }: { children: ReactNode }) => {
     clearError,
     isDataFresh,
     isUsingFallback,
-    canRetry
+    canRetry: state.connectionStatus !== 'checking' ? (canRetry !== false) : false
   };
 
   return (

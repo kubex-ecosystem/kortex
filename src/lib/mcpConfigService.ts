@@ -1,10 +1,10 @@
-import { 
-  MCPServerConfig, 
-  RateLimitConfig, 
-  PollingControl, 
+import {
+  ConfigurationEvent,
   ConfigValidationResult,
-  RateLimitStatus,
-  ConfigurationEvent
+  MCPServerConfig,
+  PollingControl,
+  RateLimitConfig,
+  RateLimitStatus
 } from '../types';
 
 // MCP Configuration Service
@@ -51,13 +51,17 @@ class MCPConfigurationService {
   };
 
   // Get server configuration
-  async getServerConfig(serverId: string): Promise<MCPServerConfig> {
+  async getServerConfig(serverId: unknown): Promise<MCPServerConfig> {
+    if (!fetch) {
+      throw new Error('Fetch API is not available');
+    }
+
     try {
-      const response = await fetch(`${this.baseUrl}/config`); //${serverId}
+      const response: Response | undefined = await fetch(`${this.baseUrl}/config/${serverId}`);
       if (!response.ok) {
+        console.error('Failed to get config:', response.statusText);
         throw new Error(`Failed to get config: ${response.statusText}`);
       }
-      
       return await response.json();
     } catch (error) {
       console.error('Error getting server config:', error);

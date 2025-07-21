@@ -103,7 +103,7 @@ class ResilientMCPService {
         console.info('✅ MCP Service back online');
       }
 
-      return response;
+      return response as ServiceResponse<T>;
     } catch (error) {
       console.warn(`🔴 Request failed for ${endpoint}:`, error);
       
