@@ -1,0 +1,175 @@
+/// CODE_OF_CONDUCT.md ///
+
+# Código de Conduta
+
+Todos os colaboradores devem manter um ambiente respeitoso, inclusivo e profissional. Não será tolerada discriminação de qualquer tipo. Para mais detalhes, consulte a política completa no site oficial do projeto.
+
+
+/// CONTRIBUTING.md ///
+
+# Como Contribuir
+
+1. Fork o repositório
+2. Crie sua branch (`git checkout -b minha-feature`)
+3. Commit suas mudanças (`git commit -am 'Minha feature'`)
+4. Push para a branch (`git push origin minha-feature`)
+5. Abra um Pull Request
+
+Revise os testes e siga os padrões de codificação definidos no repositório. Obrigado por contribuir!
+
+
+/// LICENSE ///
+
+MIT License
+
+Copyright (c) 2025 Rafael Mori
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction...
+
+
+/// README.md ///
+
+# 🧠 Kortex: AI-Driven Cloud Orchestration Interface
+
+O Kortex é a camada de interface inteligente do ecossistema Kubex. Ele se comunica com MCPs locais/remotos, provê dashboards, interações com clusters Kubernetes e integrações com ferramentas DevOps modernas. 100% modular e com suporte a extensões.
+
+## Principais recursos
+- Painel de controle unificado
+- Integração com múltiplos MCPs
+- Conectores com Horizon, Kosmos, Synex
+- Suporte a webhooks e controle assíncrono
+
+## Objetivo
+Tornar a gestão de infra, devops e AI orquestration simples e acessível para qualquer perfil técnico.
+
+
+/// SECURITY.md ///
+
+# Política de Segurança
+
+Se você encontrar qualquer vulnerabilidade de segurança, por favor reporte imediatamente por e-mail (contato@rafa.dev) ou abra uma issue marcada como "security". Atualizações críticas terão prioridade máxima e serão auditadas cuidadosamente.
+
+
+/// helm/api/helm_routes.py ///
+
+from fastapi import APIRouter
+from typing import Dict
+from ..services.helm_service import HelmService
+
+router = APIRouter()
+
+@router.get("/helm/releases")
+def list_helm_releases():
+    return HelmService.list_releases()
+
+@router.post("/helm/install")
+def install_helm_release(data: Dict):
+    return HelmService.install_release(data)
+
+@router.delete("/helm/release/{name}")
+def delete_helm_release(name: str):
+    return HelmService.delete_release(name)
+
+
+/// helm/services/helm_service.py ///
+
+import subprocess
+
+class HelmService:
+    @staticmethod
+    def list_releases():
+        try:
+            result = subprocess.check_output(["helm", "list", "-A", "-o", "json"])
+            return result.decode()
+        except Exception as e:
+            return {"error": str(e)}
+
+    @staticmethod
+    def install_release(data):
+        try:
+            release = data["release_name"]
+            chart = data["chart"]
+            ns = data.get("namespace", "default")
+            subprocess.run(["helm", "install", release, chart, "-n", ns], check=True)
+            return {"status": "success"}
+        except Exception as e:
+            return {"error": str(e)}
+
+    @staticmethod
+    def delete_release(name):
+        try:
+            subprocess.run(["helm", "uninstall", name, "-n", "default"], check=True)
+            return {"status": "deleted"}
+        except Exception as e:
+            return {"error": str(e)}
+
+
+/// kortex/pages/helm.tsx ///
+
+import { useEffect, useState } from 'react';
+
+export default function HelmPage() {
+  const [releases, setReleases] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/helm/releases')
+      .then(res => res.json())
+      .then(setReleases)
+      .catch(console.error);
+  }, []);
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Helm Releases</h1>
+      <ul>
+        {releases.map((r, i) => (
+          <li key={i}>{r.name} ({r.namespace})</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+
+/// .github/workflows/lookatni-ci.yml ///
+
+name: LookAtni CI Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  validate-and-extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install LookAtni CLI
+        run: npm install -g lookatni
+
+      - name: Validate Project
+        run: lookatni validate ./project/lookatni-blob.txt
+
+      - name: Extract Files
+        run: lookatni extract ./project/lookatni-blob.txt ./project/build
+
+      - name: Run Tests (optional)
+        run: |
+          cd ./project/build
+          npm install
+          npm test
+
+      - name: Deploy if Main
+        if: github.ref == 'refs/heads/main'
+        run: echo "Deploy logic here... (could be GH Pages, FTP, Docker build, etc)"

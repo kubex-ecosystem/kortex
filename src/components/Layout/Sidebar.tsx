@@ -1,12 +1,13 @@
 import {
-  Activity,
-  BarChart3,
-  Cpu,
-  Database,
-  LayoutDashboard,
-  Plus,
-  Settings,
-  X
+    Activity,
+    BarChart3,
+    Cpu,
+    Database,
+    LayoutDashboard,
+    Package,
+    Plus,
+    Settings,
+    X
 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -27,6 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
     { icon: <Activity size={20} />, label: 'Live Monitor', path: '/monitor' },
     { icon: <BarChart3 size={20} />, label: 'Analytics', path: '/analytics' },
+    { icon: <Package size={20} />, label: 'Helm Charts', path: '/helm' },
     { icon: <Cpu size={20} />, label: 'Servers', path: '/servers' },
     { icon: <Database size={20} />, label: 'API Config', path: '/api-config' },
     { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },

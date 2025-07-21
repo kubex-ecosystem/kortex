@@ -1,5 +1,5 @@
-import React, { useState } from 'react'; 
 import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 import { useTheme } from '../../hooks/useTheme';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
@@ -18,6 +18,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       '/': 'Dashboard',
       '/monitor': 'Live Monitor',
       '/analytics': 'Analytics',
+      '/helm': 'Helm Charts',
       '/servers': 'Servers',
       '/api-config': 'API Config',
       '/settings': 'Settings'
