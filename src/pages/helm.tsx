@@ -1,12 +1,12 @@
 import { Activity, AlertCircle, CheckCircle, Clock, Package, Play, Server, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import {
-    HelmContextResponse,
-    HelmDeployRequest,
-    HelmDeployResult,
-    HelmRelease,
-    HelmReleasesResponse,
-    HelmSystemContext
+  HelmContextResponse,
+  HelmDeployRequest,
+  HelmDeployResult,
+  HelmRelease,
+  HelmReleasesResponse,
+  HelmSystemContext
 } from '../types';
 
 const HelmPage: React.FC = () => {
@@ -257,6 +257,9 @@ const HelmPage: React.FC = () => {
           </button>
 
           <select
+            title='Filter by Namespace'
+            name="namespace"
+            id="namespace"
             value={selectedNamespace}
             onChange={(e) => setSelectedNamespace(e.target.value)}
             className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
@@ -325,6 +328,7 @@ const HelmPage: React.FC = () => {
                       value={deployForm.namespace}
                       onChange={(e) => setDeployForm({...deployForm, namespace: e.target.value})}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      title='Filter by Namespace'
                     />
                   </div>
 
@@ -337,6 +341,7 @@ const HelmPage: React.FC = () => {
                       value={deployForm.timeout}
                       onChange={(e) => setDeployForm({...deployForm, timeout: parseInt(e.target.value)})}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      title='Set Timeout in Seconds'
                     />
                   </div>
                 </div>
