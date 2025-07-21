@@ -251,6 +251,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
           
           <div className="flex items-center gap-2">
             <button
+              title='Switch to Prompt Crafter'
               onClick={() => setActiveTab('crafter')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeTab === 'crafter' 
@@ -262,6 +263,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
               Prompt Crafter
             </button>
             <button
+              title='Switch to AI Agents'
               onClick={() => setActiveTab('agents')}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 activeTab === 'agents' 
@@ -283,6 +285,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
               <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                   <button
+                    title='Toggle Ideas & Requirements'
                     onClick={() => setIsInputCollapsed(!isInputCollapsed)}
                     className="flex items-center justify-between w-full"
                   >
@@ -298,6 +301,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                     {/* Add New Idea */}
                     <div className="flex gap-2">
                       <input
+                        aria-placeholder='Add your idea or requirement...'
                         type="text"
                         value={currentInput}
                         onChange={(e) => setCurrentInput(e.target.value)}
@@ -306,9 +310,9 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                         onKeyPress={(e) => e.key === 'Enter' && addIdea()}
                       />
                       <button
+                        title="Add idea"
                         onClick={addIdea}
                         className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                        title="Add idea"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -324,16 +328,27 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                           {editingId === idea.id ? (
                             <>
                               <input
+                                aria-placeholder='Edit your idea...'
+                                title='Edit idea'
+                                name='editIdea'
                                 type="text"
                                 value={editingText}
                                 onChange={(e) => setEditingText(e.target.value)}
                                 className="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                                 onKeyPress={(e) => e.key === 'Enter' && saveEdit()}
                               />
-                              <button onClick={saveEdit} className="text-green-600 hover:text-green-700" title="Save edit">
+                              <button  
+                              onClick={saveEdit} 
+                              className="text-green-600 hover:text-green-700" 
+                              title="Save edit"
+                              >
                                 <Check className="w-4 h-4" />
                               </button>
-                              <button onClick={cancelEdit} className="text-red-600 hover:text-red-700" title="Cancel edit">
+                              <button 
+                              onClick={cancelEdit} 
+                              className="text-red-600 hover:text-red-700" 
+                              title="Cancel edit"
+                              >
                                 <Trash2 className="w-4 h-4" />
                               </button>
                             </>
@@ -369,6 +384,8 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                           Purpose
                         </label>
                         <select
+                          id='purpose'
+                          name="purpose"
                           value={purpose}
                           onChange={(e) => setPurpose(e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
@@ -381,16 +398,23 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label 
+                          htmlFor="maxLength"
+                          data-tooltip-id="maxLengthTooltip"
+                          title="Maximum length of the generated prompt"                        
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        >
                           AI Agent (Optional)
                         </label>
                         <select
+                          name="agent"
+                          id="agent"
                           value={selectedAgent}
                           onChange={(e) => setSelectedAgent(e.target.value)}
                           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                           title="Select AI agent"
                         >
-                          <option value="">No agent selected</option>
+                          <option value="" disabled>No agent selected</option>
                           {agents.map(agent => (
                             <option key={agent.id} value={agent.id}>
                               {agent.title}
@@ -402,6 +426,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
 
                     {purpose === 'Outros' && (
                       <input
+                        name='customPurpose'
                         type="text"
                         value={customPurpose}
                         onChange={(e) => setCustomPurpose(e.target.value)}
@@ -416,6 +441,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
               {/* Actions */}
               <div className="flex gap-2">
                 <button
+                  title='Generate prompt'
                   onClick={generatePrompt}
                   disabled={ideas.length === 0 || isGenerating}
                   className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
@@ -429,6 +455,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                 </button>
                 
                 <button
+                  title='Clear all inputs'
                   onClick={clearAll}
                   className="px-4 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
                 >
@@ -442,6 +469,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
               <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                   <button
+                    title='Toggle Generated Prompt'
                     onClick={() => setIsOutputCollapsed(!isOutputCollapsed)}
                     className="flex items-center justify-between w-full"
                   >
@@ -473,6 +501,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                         
                         <div className="flex gap-2">
                           <button
+                            title='Copy generated prompt'
                             onClick={copyToClipboard}
                             className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                           >
@@ -481,6 +510,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                           </button>
                           
                           <button
+                            title='Send prompt to AI'
                             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                           >
                             <Send className="w-4 h-4" />
@@ -509,6 +539,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                 AI Agents Management
               </h2>
               <button
+                title='Create new AI Agent'
                 onClick={() => setShowAgentForm(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
@@ -542,10 +573,15 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <button className="flex-1 px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
+                    <button 
+                      title='Use this agent'
+                    className="flex-1 px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                    >
                       Use Agent
                     </button>
-                    <button className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <button 
+                      title='Edit this agent'
+                    className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                       Edit
                     </button>
                   </div>
@@ -559,6 +595,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                 <h3 className="text-lg font-medium mb-2">No AI Agents Yet</h3>
                 <p className="mb-4">Create specialized AI agents to improve your prompt engineering workflow.</p>
                 <button
+                  title='Create your first agent'
                   onClick={() => setShowAgentForm(true)}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
