@@ -1,4 +1,4 @@
-# LookAtni Dashboard
+# Kortex Dashboard
 
 Sistema de monitoramento e manipulação de tarefas AI executadas em servidores MCP.
 

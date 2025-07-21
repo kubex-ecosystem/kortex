@@ -1,8 +1,8 @@
+import { AlertCircle, Bell, Menu, Moon, Search, Sun, User, Wifi, WifiOff } from 'lucide-react';
 import React, { useState } from 'react';
-import { Menu, Sun, Moon, Bell, Search, User, Wifi, WifiOff, AlertCircle } from 'lucide-react';
 import { useApp } from '../../../src/context/AppContext';
-import { NotificationCenter } from '../UI/NotificationCenter';
 import { useWebSocket } from '../../hooks/useWebSocket';
+import { NotificationCenter } from '../UI/NotificationCenter';
 
 interface HeaderProps {
   isDark: boolean;
@@ -35,7 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Menu size={20} className="text-gray-600 dark:text-gray-400" />
           </button>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            LookAt<span className="text-blue-600">ni</span>
+            Korte<span className="text-blue-600">X</span>
           </h1>
           <span className="hidden md:block text-sm text-gray-500 dark:text-gray-400">
             / {currentPage}

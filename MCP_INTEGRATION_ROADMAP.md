@@ -72,7 +72,7 @@ O Kortex Dashboard está - [x] **Dynamic Filtering**: ✅ **Models and servers f
 1. **✅ 100% Real Data Integration**: Zero mock data across entire dashboard
 2. **✅ Intelligent Log System**: Harmonic log generation with smart frequency control
 3. **✅ Dual MCP Interface**: HTTP + FastMCP SSE ready
-4. **✅ Cross-Project Integration**: Lookatni + Kortex + TimeCraft AI ecosystem
+4. **✅ Cross-Project Integration**: Kortex + Kortex + TimeCraft AI ecosystem
 5. **✅ Performance Optimized**: 93% improvement in response times
 6. **✅ Dynamic Statistics**: Real-time calculated metrics from system datagraph TD
     A[Kortex Dashboard - Next.js :3000] --> B[API Proxy /api/mcp/*]
@@ -84,7 +84,7 @@ O Kortex Dashboard está - [x] **Dynamic Filtering**: ✅ **Models and servers f
     C --> G[Memory System ✅]
     
     H[TimeCraft AI] --> C
-    I[LookAtNi] --> C
+    I[Kortex] --> C
     J[Other Projects] --> C
     
     K[Kubex Ecosystem] --> A
@@ -728,7 +728,7 @@ src/
 ### Unique Features
 
 1. **Dual MCP Interface**: HTTP + FastMCP SSE
-2. **Cross-Project Integration**: Lookatni + Kortex + TimeCraft AI
+2. **Cross-Project Integration**: Kortex + Kortex + TimeCraft AI
 3. **AI-Powered Suggestions**: Context-aware next steps
 4. **Unified Dashboard**: GitHub + Azure DevOps + Custom tools
 5. **Memory Persistence**: Shared context across sessions
