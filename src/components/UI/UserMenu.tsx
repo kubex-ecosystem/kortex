@@ -1,6 +1,6 @@
 import { ChevronDown, LogOut, Settings, User, UserCircle } from 'lucide-react';
 import { useRouter } from 'next/router';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 export const UserMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);

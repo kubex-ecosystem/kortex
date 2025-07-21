@@ -1,5 +1,6 @@
 import { Activity, AlertCircle, CheckCircle, Clock, Package, Play, Server, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { Layout } from '../components/Layout/Layout';
 import {
   HelmContextResponse,
   HelmDeployRequest,
@@ -192,20 +193,25 @@ const HelmPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="p-6">
+    <Layout>
+      <div className="space-y-6">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-3 mb-4">
             <Package className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Helm Chart Manager
-            </h1>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Helm Chart Manager
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                Deploy and manage Kubernetes applications with Helm
+              </p>
+            </div>
           </div>
           
           {/* System Context */}
           {systemContext && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
               <div className="flex items-center gap-2 mb-2">
                 <Server className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                 <h3 className="font-semibold text-gray-900 dark:text-white">System Context</h3>
@@ -468,7 +474,7 @@ const HelmPage: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

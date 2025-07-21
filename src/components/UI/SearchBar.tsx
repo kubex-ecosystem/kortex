@@ -1,5 +1,5 @@
-import { Search, ArrowRight } from 'lucide-react';
-import React, { useRef, useEffect } from 'react';
+import { ArrowRight, Search } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
 import { useSearch } from '../../hooks/useSearch';
 
 export const SearchBar: React.FC = () => {
