@@ -1,20 +1,28 @@
 import { useEffect, useState } from 'react';
 
 export const useTheme = () => {
-  // Detecta tema do sistema e carrega preferência salva
-  const getInitialTheme = () => {
-    if (typeof window === 'undefined') return false;
+  // Start with false to prevent hydration mismatch, then detect client-side
+  const [isDark, setIsDark] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  
+  // Client-side theme detection and initialization
+  useEffect(() => {
+    setIsClient(true);
     
+    // Detecta tema do sistema e carrega preferência salva (apenas no cliente)
     const savedTheme = localStorage.getItem('kortex-theme');
+    let initialTheme = false;
+    
     if (savedTheme) {
-      return savedTheme === 'dark';
+      initialTheme = savedTheme === 'dark';
+    } else {
+      // Auto-detecta tema do sistema como fallback
+      initialTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
     }
     
-    // Auto-detecta tema do sistema como fallback
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  };
-  
-  const [isDark, setIsDark] = useState(getInitialTheme);
+    setIsDark(initialTheme);
+    document.documentElement.classList.toggle('dark', initialTheme);
+  }, []);
   
   const toggleTheme = () => {
     const newTheme = !isDark;
@@ -29,25 +37,23 @@ export const useTheme = () => {
     }
   };
   
-  // Aplica tema inicial
+  // Sistema de escuta para mudanças no tema do sistema (apenas no cliente)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      document.documentElement.classList.toggle('dark', isDark);
-      
-      // Escuta mudanças no tema do sistema
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = (e: MediaQueryListEvent) => {
-        const savedTheme = localStorage.getItem('kortex-theme');
-        if (!savedTheme) {
-          setIsDark(e.matches);
-          document.documentElement.classList.toggle('dark', e.matches);
-        }
-      };
-      
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    }
-  }, [isDark]);
+    if (!isClient) return;
+    
+    // Escuta mudanças no tema do sistema
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      const savedTheme = localStorage.getItem('kortex-theme');
+      if (!savedTheme) {
+        setIsDark(e.matches);
+        document.documentElement.classList.toggle('dark', e.matches);
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [isClient]);
   
   return { isDark, toggleTheme };
 };

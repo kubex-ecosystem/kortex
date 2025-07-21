@@ -1,11 +1,10 @@
-import React from 'react';
 import { Layout } from '../components/Layout/Layout';
-import { AnalyticsPage } from '../components/Pages/AnalyticsPage';
+import { AnalyticsPageOptimized } from '../components/Pages/AnalyticsPageOptimized';
 
 export default function Analytics() {
   return (
     <Layout>
-      <AnalyticsPage />
+      <AnalyticsPageOptimized />
     </Layout>
   );
 }
