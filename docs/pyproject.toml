@@ -2,7 +2,7 @@
 name = "kortex-docs"
 version = "1.0.0"
 description = "Documentation dependencies for Kortex"
-requires-python = ">=3.8"
+requires-python = ">=3.12"
 
 dependencies = [
     "mkdocs>=1.5.3",

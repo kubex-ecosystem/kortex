@@ -1,5 +1,5 @@
 
-# Welcome to Kortex Documentation
+# ![Kortex Banner](assets/images/top_banner.png)
 
 Your comprehensive guide to the Kortex MCP Server Management Dashboard.
 

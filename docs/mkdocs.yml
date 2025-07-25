@@ -168,10 +168,7 @@ nav:
     - Architecture: advanced/architecture.md
     - Development: advanced/development.md
   - Examples:
-    - React Project Sharing: examples/react-sharing.md
-    - Backup & Restore: examples/backup-restore.md
-    - CI/CD Integration: examples/cicd.md
-    - Educational Use: examples/education.md
+    - Integration: examples/integration.md
   - About:
     - Changelog: about/changelog.md
     - Contributing: about/contributing.md
