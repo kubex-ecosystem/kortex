@@ -2,200 +2,28 @@
 
 ## 🎯 Visão Geral da Integração
 
-O Kortex Dashboard está - [x] **Dynamic Filtering**: ✅ **Models and servers from actual system data**
-
-- [x] **Error Handling & Loading States**: ✅ **Robust error boundaries and loading indicators**
-
-### ✅ **Fase 5 - Advanced Configuration & Rate Management** (COMPLETA - 19/07/2025)
-
-- [x] **MCP Configuration Architecture**: ✅ **Complete system for remote server configuration**
-- [x] **Rate Limit Management**: ✅ **Intelligent API rate limiting and monitoring**
-- [x] **Polling Control System**: ✅ **Play/pause mechanisms for API polling**
-- [x] **Configuration Validation**: ✅ **Real-time config validation and health checks**
-- [x] **Settings Page Overhaul**: ✅ **Tabbed interface for all configuration aspects**
-- [x] **MCPServerConfigPanel**: ✅ **Complete UI for server management**
-- [x] **useMCPConfig Hook**: ✅ **React hook for configuration management**
-- [x] **Optimal Interval Calculation**: ✅ **Smart algorithms to prevent rate limit violations**
-- [x] **Configuration Events**: ✅ **Real-time notifications for config changes**
-- [x] **Token Security**: ✅ **Secure token management with show/hide functionality**
-
-### ✅ **Fase 6 - Real-Time WebSocket System** (COMPLETA - 19/07/2025)
-
-- [x] **WebSocket Backend Architecture**: ✅ **Complete WebSocket server with monitoring**
-- [x] **Rate Limit Live Monitoring**: ✅ **Real-time API usage tracking with auto-pause**
-- [x] **Polling Status Broadcasting**: ✅ **Live updates of polling activity**
-- [x] **Connection Management**: ✅ **Auto-reconnect, health checks, ping/pong**
-- [x] **Real-Time Alerts**: ✅ **Live notifications for rate limit warnings and auto-pause**
-- [x] **useWebSocket Hook**: ✅ **React hook for WebSocket state management**
-- [x] **RealTimeDashboard Component**: ✅ **Live dashboard with charts and status indicators**
-- [x] **Intelligent Broadcasting**: ✅ **Smart data simulation and real-time updates**
-- [x] **Auto-Pause Logic**: ✅ **Automatic provider pausing at threshold levels**
-- [x] **Performance Monitoring**: ✅ **Live statistics and response time tracking**
-
-### ✅ **Fase 7 - Real-Time UI Polish & Advanced Features** (COMPLETA - 19/07/2025)
-
-- [x] **RealTimeDashboard Integration**: ✅ **Complete integration with Settings page and enhanced visual design**
-- [x] **Live Charts & Visualizations**: ✅ **Interactive progress bars with thresholds and real-time updates**
-- [x] **WebSocket Status Indicators**: ✅ **Visual connection status in header with live alerts**
-- [x] **Auto-Refresh Components**: ✅ **Smart component updates via WebSocket with timestamp tracking**
-- [x] **Notification Toast System**: ✅ **Complete toast system for WebSocket events with ToastProvider**
-- [x] **Performance Monitoring UI**: ✅ **Live metrics dashboard with animated charts and status cards**
-- [x] **Provider Health Indicators**: ✅ **Visual status for each API provider with color-coded alerts**
-- [x] **Enhanced Progress Bars**: ✅ **Animated progress bars with threshold markers and status badges**
-- [x] **Real-Time Timestamps**: ✅ **Live last-update tracking and connection health monitoring**
-- [x] **Toast Notification System**: ✅ **Production-ready toast system with auto-dismiss and actions**
-
-### � **Fase 8 - Advanced Analytics & Intelligence** (PRÓXIMA SESSÃO - 20/07/2025)
-
-- [ ] **Historical Data Views**: Trend analysis over time with charts
-- [ ] **Alert Configuration**: User-configurable thresholds and notifications
-- [ ] **Dashboard Customization**: Drag-drop widgets and layout preferences
-- [ ] **Machine Learning Insights**: Predictive analytics for API usage patterns
-- [ ] **Anomaly Detection**: Automatic detection of unusual system behavior
-- [ ] **Custom Metrics**: User-defined KPIs and tracking
-- [ ] **Export & Reporting**: PDF/CSV reports of system performance
-- [ ] **Multi-Tenant Support**: Support for multiple organizations/teams
-- [ ] **Advanced Permissions**: Role-based access control for settingso desenvolvido para se integrar perfeitamente com o **StatusRafa MCP Server**, criando um ecossistema completo de monitoramento e gerenciamento de desenvolvimento.
-
-### 🏗️ Arquitetura da Integr### 🎯 **Session Success Criteria (Fase 5)**
-
-- [ ] **Provider Modals**: Todos os modals funcionais e validados
-- [ ] **Memory System**: Interface completa para MCP memory management
-- [ ] **Settings Enhancement**: Configurações avançadas implementadas
-- [ ] **Notification System**: Toast e alert system funcionando
-- [ ] **Performance**: Mantida (< 3s para operações)
-- [ ] **UX Fluida**: Interface responsiva e intuitiva
-
-## 💡 Innovation Highlights
-
-### Unique Features Achieved
-
-1. **✅ 100% Real Data Integration**: Zero mock data across entire dashboard
-2. **✅ Intelligent Log System**: Harmonic log generation with smart frequency control
-3. **✅ Dual MCP Interface**: HTTP + FastMCP SSE ready
-4. **✅ Cross-Project Integration**: Kortex + Kortex + TimeCraft AI ecosystem
-5. **✅ Performance Optimized**: 93% improvement in response times
-6. **✅ Dynamic Statistics**: Real-time calculated metrics from live data
+O Kortex Dashboard está sendo desenvolvido para se integrar perfeitamente com o **StatusRafa MCP Server**, criando um ecossistema completo de monitoramento e gerenciamento de desenvolvimento.
 
 ### 🏗️ Arquitetura da Integração
 
 ```mermaid
-system datagraph TD
-    A[Kortex Dashboard - Next.js :3000] --> B[API Proxy /api/mcp/*]
-    B --> C[StatusRafa HTTP API :3002 ✅]
+graph TD
+    A[Kortex Dashboard - Next.js] --> B[MCP Service Layer]
+    B --> C[StatusRafa HTTP API :3002]
     B --> D[StatusRafa MCP Server :3001]
-
-    C --> E[GitHub Integration ✅]
-    C --> F[Azure DevOps Integration ✅]
-    C --> G[Memory System ✅]
-
+    C --> E[GitHub Integration]
+    C --> F[Azure DevOps Integration] 
+    C --> G[Memory System]
+    
     H[TimeCraft AI] --> C
-    I[Kortex] --> C
+    I[LookAtNi] --> C
     J[Other Projects] --> C
-
+    
     K[Kubex Ecosystem] --> A
     K --> H
     K --> I
     K --> J
-
-    L[ClientOnly Components ✅] --> A
-    M[SSR Protection ✅] --> A
-    N[Cache Layer ✅] --> A
-    O[Auth Service ✅] --> A
-
 ```
-
-## 🚀 **Real-Time WebSocket System Architecture (19/07/2025)**
-
-### 🎯 **Session Achievements - Real-Time Implementation**
-
-Esta sessão implementou um **sistema completo de WebSocket** para atualizações em tempo real, elevando o Kortex de um dashboard estático para uma **plataforma de monitoramento live**.
-
-#### **📡 WebSocket Backend (Python)**
-
-- ✅ **WebSocketManager**: Gerenciamento completo de conexões WebSocket
-- ✅ **Real-Time Monitoring**: Monitoramento ativo de rate limits por provider
-- ✅ **Auto-Pause Intelligence**: Pausa automática quando limites são atingidos
-- ✅ **Connection Health**: Ping/pong, auto-reconnect, graceful shutdown
-- ✅ **Live Broadcasting**: Broadcast para todos os clientes conectados
-
-#### **🔌 WebSocket Frontend (React)**
-
-- ✅ **useWebSocket Hook**: Hook React para gerenciamento de estado WebSocket
-- ✅ **RealTimeDashboard**: Dashboard completo com charts e indicadores ao vivo
-- ✅ **Live Alerts**: Sistema de alertas em tempo real para eventos críticos
-- ✅ **Connection Management**: Reconexão automática com backoff exponencial
-- ✅ **Real-Time Updates**: Atualizações instantâneas de status e métricas
-
-#### **⚡ Live Features Implemented**
-
-- ✅ **Rate Limit Monitoring**: Percentual de uso atualizado a cada 5 segundos
-- ✅ **Polling Status**: Status de providers e schedule em tempo real
-- ✅ **Auto-Pause Alerts**: Notificações quando providers são pausados automaticamente
-- ✅ **Performance Stats**: Métricas de requests, errors e response time ao vivo
-- ✅ **Visual Indicators**: Progress bars, status icons, connection state
-
-#### **🛡️ Production Ready Features**
-
-- ✅ **Error Resilience**: Tratamento robusto de erros e reconexão
-- ✅ **Memory Management**: WeakSet para conexões, cleanup automático
-- ✅ **Performance**: Updates eficientes, broadcasting otimizado
-- ✅ **Security**: Validação de mensagens, sanitização de dados
-- ✅ **Monitoring**: Logs detalhados de conexões e eventos
-
-### 🎛️ **WebSocket System Architecture**
-
-```plaintext
-
-WebSocket Real-Time Flow:
-┌─────────────────┐    WS://127.0.0.1:3002/ws    ┌──────────────────┐
-│ React Frontend  │ ◄─────────────────────────► │ Python Backend   │
-│                 │                              │                  │
-│ useWebSocket    │     Real-time Events:        │ WebSocketManager │
-│ RealTimeDash    │     • rate_limit_update      │ MonitoringTasks  │
-│ Live Charts     │     • polling_status         │ Broadcasting     │
-│ Auto Alerts     │     • auto_pause            │ Health Checks    │
-└─────────────────┘     • initial_state         └──────────────────┘
-
-Rate Limit Monitoring:
-GitHub    ─┐
-           ├─► WebSocketManager ─► Broadcast ─► All Connected Clients
-Azure     ─┘        │                              │
-                    ├─► Auto-pause Logic           ├─► Live Dashboard
-                    └─► Performance Tracking       └─► Real-time Alerts
-
-```
-
-### 🎮 **Live Monitoring Capabilities**
-
-| Feature | Update Frequency | Auto Actions | User Feedback |
-|---------|-----------------|--------------|---------------|
-| **Rate Limits** | Every 5s | Auto-pause @80% | Progress bars + % |
-| **Polling Status** | Every 3s | Provider control | Active/Paused icons |
-| **Performance** | Every 5s | Health tracking | Response time metrics |
-| **Errors** | Real-time | Auto-retry logic | Alert notifications |
-| **Connection** | Every 30s (ping) | Auto-reconnect | Connection status |
-
-### 🎯 **Business Value Delivered**
-
-1. **📈 Proactive Monitoring**: Rate limits monitored before hitting quotas
-2. **🛡️ Automated Protection**: Auto-pause prevents API suspension
-3. **⚡ Real-Time Visibility**: Instant feedback on system health
-4. **🎛️ Live Control**: Immediate response to configuration changes
-5. **📊 Performance Intelligence**: Live metrics for decision making
-
-## �🔧 **Current Architecture Stack (Updated 19/07/2025)**
-
-| Layer | Technology | Status | Performance |
-|-------|------------|--------|-------------|
-| **Frontend** | Next.js 15 + React + TypeScript | ✅ Working | ~1s page load |
-| **Real-Time** | WebSocket + useWebSocket Hook | ✅ Working | ~50ms updates |
-| **API Proxy** | Next.js API Routes | ✅ Working | ~200ms proxy |
-| **Backend API** | Python + aiohttp + CORS | ✅ Working | ~2.2s avg response |
-| **WebSocket** | Python + aiohttp WebSocket | ✅ Working | ~5ms broadcast |
-| **Database** | IndexedDB + localStorage | ✅ Working | ~50ms cache |
-| **Authentication** | JWT + API Keys | ✅ Working | ~100ms validation |
-| **Build System** | Next.js Static Export | ✅ Working | ~30s full build |
 
 ## 📋 Status Atual da Implementação
 
@@ -207,439 +35,66 @@ Azure     ─┘        │                              │
 - [x] Sistema de layout responsivo
 - [x] Páginas base criadas (Dashboard, Monitor, Analytics, Servers, Settings)
 
-### ✅ **Fase 2 - MCP Integration & SSR Fixes** (COMPLETA - 18/07/2025)
+### 🚧 **Fase 2 - MCP Integration Prep** (EM PROGRESSO)
 
 - [x] Tipos para integração MCP definidos
 - [x] Serviço de comunicação HTTP criado (`mcpService.ts`)
 - [x] Componente de teste de conectividade (`MCPConnectionTest`)
 - [x] Interface base para provedores API
-- [x] **API Service Layer Completa** (`apiService.ts`, `authService.ts`, `cacheService.ts`)
-- [x] **SSR/Hydration Issues Resolvidas** (ClientOnly wrapper, environment guards)
-- [x] **Build Process Funcionando** (Next.js static export funcionando)
-- [x] **CORS Backend Implementado** (aiohttp-cors no servidor Python)
-- [x] **Performance Otimizada** (repo_limit, timeout reduzido de 30s para 2.2s)
-- [x] **Proxy API Next.js** (`/api/mcp/[...path].ts` funcionando)
+- [ ] Modais funcionais para CRUD de API providers
+- [ ] Sistema de autenticação e tokens
 
-### ✅ **Fase 3 - Live Integration** (COMPLETA - 18/07/2025)
+### 🎯 **Fase 3 - Live Integration** (PRÓXIMA SESSÃO)
 
-- [x] **Conexão real com StatusRafa HTTP API** (porta 3002) ✅
-- [x] **Integração GitHub**: repositórios com limite configurável ✅
-- [x] **Integração Azure DevOps**: pipelines funcionando ✅
-- [x] **Sistema de parâmetros otimizados** (?repo_limit, ?limit) ✅
-- [x] **Testes de conectividade funcionando** ✅
-- [x] **Frontend ↔ Backend communication estabelecida** ✅
+- [ ] Conexão real com StatusRafa HTTP API (porta 3002)
+- [ ] Integração GitHub: repositórios e PRs
+- [ ] Integração Azure DevOps: pipelines
+- [ ] Sistema de memória compartilhada
+- [ ] Sugestões automáticas de próximos passos
 
-### ✅ **Fase 4 - Mock Data Elimination & Real Data Integration** (COMPLETA - 19/07/2025)
+### 🔮 **Fase 4 - Advanced Features**
 
-- [x] **Complete Mock Data Elimination**: ✅ **100% mock data removed across all pages**
-- [x] **useMCPData Hook**: ✅ **Real-time data fetching from MCP servers**
-- [x] **Dashboard Real Integration**: ✅ **Repository cards, PR stats, pipeline data - all real**
-- [x] **Analytics Real Data**: ✅ **Calculated trends from actual GitHub/Azure data**
-- [x] **API Config Auto-Detection**: ✅ **Real provider discovery and connection status**
-- [x] **Servers Page Real Status**: ✅ **Live server monitoring and statistics**
-- [x] **Monitor Page Overhaul**: ✅ **Real-time system logs with intelligent frequency control**
-- [x] **useMCPLogs Hook**: ✅ **Smart log generation from actual system activity**
-- [x] **Harmonic Log Generation**: ✅ **Intelligent spacing and realistic log patterns**
-- [x] **Performance Statistics**: ✅ **Calculated metrics from real system performance**
-- [x] **Dynamic Filtering**: ✅ **Models and servers from actual system data**
-- [x] **Error Handling & Loading States**: ✅ **Robust error boundaries and loading indicators**
-
-### � **Fase 5 - Advanced Features & Optimizations** (PRÓXIMA - 20/07/2025)
-
-### 🔮 **Fase 6 - WebSocket & Real-Time Features** (FUTURO)
-
-- [ ] **WebSocket Integration**: Atualizações em tempo real via WebSocket
-- [ ] **Live Notifications**: Sistema de notificações push
-- [ ] **Real-Time Dashboard**: Widgets que se atualizam automaticamente
-- [ ] **Collaborative Features**: Multi-user real-time updates
-- [ ] **Advanced Analytics**: Métricas detalhadas e trends temporais
-- [ ] **E2E Testing Suite**: Testes automatizados end-to-end
+- [ ] WebSocket para atualizações em tempo real
+- [ ] Dashboard interativo com widgets
+- [ ] Sistema de notificações avançado
+- [ ] Analytics e métricas detalhadas
 
 ## 🔌 Endpoints do MCP Server Mapeados
 
-| Endpoint | Método | Função Frontend | Status | Performance |
-|----------|--------|-----------------|---------|-------------|
-| `/api/status` | GET | Test connection, server health | ✅ | ~200ms |
-| `/api/repos?limit=N` | GET | List GitHub repositories (default: 50) | ✅ | ~300ms |
-| `/api/prs?repo_limit=N` | GET/POST | Pull requests management (default: 10 repos) | ✅ | ~2.2s |
-| `/api/pipelines` | GET/POST | Azure DevOps pipelines | ✅ | ~1.5s |
-| `/api/memory` | GET/POST | Shared memory system | ✅ | ~100ms |
-| `/api/suggest` | GET | AI-powered suggestions | ✅ | ~500ms |
-| `/api/session` | GET | Session ID generation | ✅ | ~50ms |
+| Endpoint | Método | Função Frontend | Status |
+|----------|--------|-----------------|---------|
+| `/api/status` | GET | Test connection, server health | ✅ |
+| `/api/repos` | GET | List GitHub repositories | 🚧 |
+| `/api/prs` | GET/POST | Pull requests management | 🚧 |
+| `/api/pipelines` | GET/POST | Azure DevOps pipelines | 🚧 |
+| `/api/memory` | GET/POST | Shared memory system | 🚧 |
+| `/api/suggest` | GET | AI-powered suggestions | 🚧 |
+| `/api/session` | GET | Session ID generation | 🚧 |
 
-## 📊 **Real Data Integration Status (19/07/2025)**
+## 🛠️ Comandos de Desenvolvimento
 
-### ✅ **100% Mock Data Elimination Achieved**
-
-| Page | Previous State | Current State | Data Source |
-|------|----------------|---------------|-------------|
-| **Dashboard** | Mock repos, PRs, pipelines | ✅ Real GitHub repos, Azure pipelines | StatusRafa MCP |
-| **Analytics** | Hardcoded trends | ✅ Calculated from real data patterns | Dynamic calculation |
-| **API Config** | Mock providers | ✅ Auto-detected real providers | API discovery |
-| **Servers** | Fake server list | ✅ Real MCP server status | Live monitoring |
-| **Monitor** | Mock log entries | ✅ Real-time system logs | useMCPLogs hook |
-
-### 🎯 **Live Monitor System Architecture**
-
-```typescript
-// Real-time log generation with intelligent frequency control
-useMCPLogs Hook:
-  ├── MCP Data Logs     → Every 12s (was 3s) - Smart operation selection
-  ├── Server Status     → Every 24s (was always) - Only status changes  
-  ├── Provider Activity → Every 18s (was always) - Only active providers
-  ├── System Events     → Every 30-45s - Health checks and errors
-  └── Log Buffer: 150 entries (was 200) - Better performance
-```
-
-## 🏗️ **MCP Configuration & Rate Limiting Architecture (19/07/2025)**
-
-### 🎯 **Problem Statement Solved**
-
-1. **🔧 Centralized Configuration**: Need for remote MCP server configuration instead of local .env files
-2. **⏰ Rate Limit Management**: GitHub/Azure APIs have usage limits that need intelligent management  
-3. **🎛️ Polling Control**: Frontend needs play/pause control for API checking to prevent quota exhaustion
-
-### 🏛️ **Architecture Implementation**
-
-```typescript
-// Complete Configuration Management System
-MCP Configuration Layer:
-  ├── MCPConfigTypes.tsx          → Type definitions for server config & rate limits
-  ├── mcpConfigService.ts         → Service layer for config management  
-  ├── useMCPConfig.ts            → React hook for configuration state
-  ├── MCPServerConfigPanel.tsx    → UI component for server management
-  └── SettingsPage.tsx           → Enhanced settings with tabbed interface
-
-Rate Limiting System:
-  ├── Intelligent Intervals      → Auto-calculated based on API quotas
-  ├── Play/Pause Controls        → Manual control over polling
-  ├── Health Monitoring          → Real-time rate limit status tracking
-  ├── Auto-Optimization          → Suggests optimal intervals
-  └── Event Notifications        → Real-time config change alerts
-```
-
-### 🎛️ **Key Features Implemented**
-
-#### **🔧 Remote Server Configuration**
-
-- **Token Management**: Secure storage and editing of GitHub/Azure tokens
-- **Real-time Validation**: Config validation before applying changes
-- **Multi-Server Support**: Configure multiple MCP servers from single interface
-- **Health Checks**: Automatic server connectivity and health monitoring
-
-#### **⏰ Smart Rate Limiting**  
-
-- **Dynamic Intervals**: Auto-calculated polling intervals based on API quotas
-- **Provider-Specific**: Different configs for GitHub (5000/hr) vs Azure DevOps
-- **Usage Tracking**: Real-time monitoring of API usage percentages  
-- **Auto-Pause**: Automatic pausing when approaching rate limits (80% threshold)
-
-#### **🎮 Polling Control**
-
-- **Play/Pause System**: Manual control over API polling per provider
-- **Selective Control**: Start/pause individual providers or all at once
-- **Schedule Monitoring**: Visual display of next polling times and frequencies
-- **Background Status**: Real-time indication of polling activity
-
-#### **🛡️ Production-Ready Features**
-
-- **Configuration Events**: Real-time notifications for all config changes
-- **Error Handling**: Robust error boundaries and validation
-- **TypeScript Safety**: Complete type coverage for all configuration
-- **Security**: Show/hide toggle for sensitive tokens
-- **Performance**: Optimized intervals prevent API quota violations
-
-### 📊 **Rate Limiting Intelligence**
-
-| Provider | Default Limits | Smart Intervals | Auto-Pause |
-|----------|----------------|-----------------|------------|
-| **GitHub** | 5000 req/hour | 5min repos, 3min PRs | @80% usage |
-| **Azure DevOps** | 3600 req/hour | 4min repos, 90s pipelines | @85% usage |
-| **General APIs** | Variable | 60s default | @75% usage |
-
-### 🎯 **Usage Benefits**
-
-1. **🔒 Security**: No more .env files - all tokens managed through secure UI
-2. **💰 Cost Control**: Prevents API quota overruns that could cause service interruption
-3. **⚡ Performance**: Optimal intervals maximize data freshness while respecting limits  
-4. **🎛️ Control**: DevOps teams can pause polling during maintenance or high-usage periods
-5. **📈 Monitoring**: Real-time visibility into API usage patterns and health
-
-### � **Performance Improvements Implemented (18/07/2025)**
-
-- **Repository Limiting**: `?limit=N` parameter to avoid loading 100+ repos
-- **PR Search Optimization**: `?repo_limit=N` to check only N most recent repos  
-- **Timeout Reduction**: From ~30s to 2.2s (93% improvement)
-- **CORS Headers**: Proper CORS setup with aiohttp-cors
-- **User Guidance**: API responses include usage tips
-
-## 🛠️ **Comandos de Desenvolvimento (Atualizado 19/07/2025)**
-
-### MCP Server com WebSocket - ✅ FUNCIONANDO
+### MCP Server (BackEnd)
 
 ```bash
-# Navegar para o diretório
-cd /srv/apps/LIFE/KUBEX/timecraft_ai
+# API Server HTTP
+uv run --env-file ../.env mcp/api_server.py
 
-# API Server HTTP + WebSocket (RECOMENDADO - porta 3002)
-uv run --env-file .env timecraft_ai/mcp/api_server.py
-
-# FastMCP Server tradicional (porta 3001) 
-uv run --env-file .env timecraft_ai/mcp/server.py
+# FastMCP Server 
+uv run --env-file ./.env ./timecraft_ai/mcp/server.py
 ```
 
-### Kortex Frontend com Real-Time - ✅ FUNCIONANDO
+### Kortex Frontend
 
 ```bash
-# Navegar para o diretório
-cd /srv/apps/LIFE/KUBEX/kortex
-
-# Development server (porta 3001 - mudou de 3000)
+# Development
 npm run dev
 
-# Build (testado e funcionando)
+# Build
 npm run build
+
+# Linting
+npm run lint
 ```
-
-### 🧪 **Testes de WebSocket**
-
-```bash
-# Teste direto do WebSocket (Python)
-python3 -c "
-import asyncio
-import websockets
-import json
-
-async def test_ws():
-    async with websockets.connect('ws://127.0.0.1:3002/ws') as ws:
-        msg = await ws.recv()
-        print(json.loads(msg)['type'])
-
-asyncio.run(test_ws())
-"
-
-# Teste dos endpoints HTTP tradicionais
-curl http://127.0.0.1:3002/api/status
-curl http://127.0.0.1:3002/api/config/statusrafa-mcp
-curl http://127.0.0.1:3002/api/rate-limit/statusrafa-mcp/github
-```
-
-## 🎯 **Próxima Sessão - Preparação (Fase 7)**
-
-### 📋 **Context para Nova Sessão**
-
-**Objetivo**: Finalizar a integração do RealTimeDashboard na UI e adicionar features avançadas.
-
-**Estado Atual**:
-
-- ✅ WebSocket backend funcionando (127.0.0.1:3002/ws)
-- ✅ useWebSocket hook criado
-- ✅ RealTimeDashboard component criado (incompleto)
-- ✅ Settings page estruturado com tabs
-- ❌ RealTimeDashboard não integrado na UI
-- ❌ Faltam charts visuais para rate limits
-
-### 🎯 **Tarefas para Próxima Sessão (45-60 min)**
-
-1. **RealTimeDashboard Integration** (20 min)
-   - Completar o componente RealTimeDashboard.tsx
-   - Integrar na Settings page como nova tab
-   - Fix any TypeScript/styling issues
-
-2. **Live Charts Implementation** (20 min)
-   - Add visual progress bars for rate limits
-   - Real-time updating charts
-   - Color coding for different usage levels
-
-3. **WebSocket Status Indicators** (15 min)
-   - Connection status indicator in header
-   - Visual feedback for WebSocket events
-   - Error states and reconnection feedback
-
-4. **Testing & Polish** (10 min)
-   - Test complete flow with both servers running
-   - Verify real-time updates work properly
-   - Quick UI/UX improvements
-
-### 🔧 **Files to Focus On**
-
-```plaintext
-Priority Files for Next Session:
-├── /srv/apps/LIFE/KUBEX/kortex/src/
-│   ├── components/MCP/RealTimeDashboard.tsx     ← Fix and complete
-│   ├── hooks/useWebSocket.ts                    ← Already working ✅
-│   ├── pages/settings.tsx                       ← Add Real-Time tab
-│   └── components/Layout/Header.tsx             ← WebSocket status
-└── /srv/apps/LIFE/KUBEX/timecraft_ai/
-    ├── timecraft_ai/mcp/websocket_manager.py    ← Already working ✅
-    └── timecraft_ai/mcp/api_server.py           ← Already working ✅
-```
-
-### 🚀 **Quick Start Commands for Next Session**
-
-```bash
-# Terminal 1: Start MCP Server with WebSocket
-cd /srv/apps/LIFE/KUBEX/timecraft_ai
-uv run --env-file .env timecraft_ai/mcp/api_server.py
-
-# Terminal 2: Start Frontend
-cd /srv/apps/LIFE/KUBEX/kortex  
-npm run dev
-
-# Test WebSocket is working
-curl http://127.0.0.1:3002/api/status
-
-# Open in browser
-# http://localhost:3001/settings
-```
-
----
-
-## 🎉 **SESSION SUMMARY - 19/07/2025 - PARTE 2**
-
-### 🏁 **Fase 7 Completion - Real-Time UI Polish**
-
-Esta sessão completou com sucesso a **Fase 7**, transformando o dashboard em uma **interface de monitoramento em tempo real totalmente polida**:
-
-#### **🎨 UI/UX Achievements**
-
-- ✅ **RealTimeDashboard Enhancement**: Dashboard completamente redesenhado com visual moderno
-- ✅ **Animated Progress Bars**: Progress bars com animações, thresholds visuais e cores dinâmicas
-- ✅ **WebSocket Status Header**: Indicator de conexão WebSocket integrado no header principal
-- ✅ **Live Performance Stats**: Seção de estatísticas do servidor com métricas em tempo real
-- ✅ **Enhanced Rate Limit Cards**: Cards de rate limit redesenhados com status badges e indicadores
-- ✅ **Toast Notification System**: Sistema completo de notificações com ToastProvider
-
-#### **🔌 Real-Time Features**
-
-- ✅ **Live Timestamp Tracking**: Tracking do último update do WebSocket
-- ✅ **Connection Health Indicators**: Visual feedback de conexão/desconexão
-- ✅ **Alert System Integration**: Alertas em tempo real para rate limits e auto-pause
-- ✅ **Responsive Design**: Interface adaptável com suporte mobile
-- ✅ **Auto-Refresh Components**: Components que se atualizam automaticamente via WebSocket
-
-#### **💻 Technical Implementation**
-
-- ✅ **ToastNotification Component**: Sistema de toast com 4 tipos (success, error, warning, info)
-- ✅ **ToastProvider Context**: Provider React para gerenciamento global de toasts
-- ✅ **Enhanced useWebSocket Hook**: Hook atualizado com tracking de timestamp
-- ✅ **Header Integration**: Indicadores WebSocket no header com alertas visuais
-- ✅ **Production Ready**: Sistema pronto para produção com tratamento de erros
-
-### 📊 **Visual Improvements Delivered**
-
-| Component | Before | After | Enhancement |
-|-----------|--------|-------|-------------|
-| **RealTimeDashboard** | Basic layout | ✅ Modern design with animations | 200% visual improvement |
-| **Progress Bars** | Simple bars | ✅ Animated with thresholds | 300% better UX |
-| **Rate Limit Cards** | Plain info | ✅ Status badges + health indicators | 250% more informative |
-| **Header Status** | No indicators | ✅ Live WebSocket + alert counters | 100% new feature |
-| **Performance Stats** | Not existed | ✅ Live metrics with mock data | 100% new feature |
-| **Toast Notifications** | Not existed | ✅ Complete system with actions | 100% new feature |
-
-### 🎯 **Business Value Unlocked**
-
-1. **⚡ Instant Feedback**: Users see real-time status without page refresh
-2. **🎨 Professional UI**: Dashboard now looks enterprise-ready with modern design
-3. **🔔 Smart Alerts**: Proactive notifications prevent quota violations
-4. **📊 Better Monitoring**: Visual indicators make system health immediately apparent
-5. **🚀 Production Ready**: Complete system ready for deployment
-
-### 🎮 **Live Features Now Available**
-
-```plaintext
-Real-Time Dashboard Features:
-┌─────────────────────────────────────────┐
-│ ✅ WebSocket Connection Status          │
-│ ✅ Live Rate Limit Monitoring          │
-│ ✅ Animated Progress Bars              │ 
-│ ✅ Provider Health Indicators          │
-│ ✅ Auto-Pause Alerts                   │
-│ ✅ Performance Statistics              │
-│ ✅ Toast Notification System           │
-│ ✅ Responsive Mobile Design            │
-└─────────────────────────────────────────┘
-```
-
-### 🚀 **Sistema Completo e Funcional**
-
-O Kortex Dashboard agora é uma **plataforma de monitoramento em tempo real completa** com:
-
-- **Backend WebSocket**: Monitoramento inteligente de rate limits
-- **Frontend Real-Time**: Interface moderna que se atualiza automaticamente
-- **Sistema de Alertas**: Notificações proativas para eventos críticos
-- **Visual Polish**: Design profissional e responsivo
-- **Production Ready**: Pronto para deploy em produção
-
----
-
-## 🎉 **SESSION SUMMARY - 19/07/2025**
-
-### � **Epic Session Achievements**
-
-Esta foi uma **sessão transformadora** que elevou o Kortex de configuração estática para **monitoramento em tempo real**:
-
-#### **🔧 Phase 5 Completion - Advanced Configuration**
-
-- ✅ **Remote Configuration System**: Complete MCP server management via UI
-- ✅ **Intelligent Rate Limiting**: Auto-pause before hitting API quotas  
-- ✅ **Secure Token Management**: Safe storage and editing of sensitive tokens
-- ✅ **Real-time Validation**: Live config validation and health monitoring
-
-#### **📡 Phase 6 Breakthrough - Real-Time WebSocket System**
-
-- ✅ **WebSocket Backend**: Complete Python WebSocket server with monitoring
-- ✅ **Real-Time Monitoring**: Live rate limit tracking every 5 seconds
-- ✅ **Auto-Pause Intelligence**: Smart provider pausing at threshold levels
-- ✅ **React WebSocket Hook**: Production-ready useWebSocket implementation
-- ✅ **Live Dashboard Component**: RealTimeDashboard with charts and alerts
-
-### 📊 **Technical Achievements**
-
-| Feature | Before | After | Impact |
-|---------|--------|-------|---------|
-| **Configuration** | Local .env files | ✅ Remote UI management | 100% centralized |
-| **Rate Limits** | Manual tracking | ✅ Live monitoring + auto-pause | Quota protection |
-| **Updates** | Static/manual refresh | ✅ Real-time WebSocket | Instant feedback |
-| **Monitoring** | Basic status checks | ✅ Live metrics + performance | Full visibility |
-| **Control** | No rate control | ✅ Play/pause per provider | Granular control |
-
-### 🎯**Business Value Delivered**
-
-1. **💰 Cost Protection**: Rate limiting prevents API quota exhaustion
-2. **⚡ Real-Time Intelligence**: Instant visibility into system health
-3. **🛡️ Automated Safety**: Auto-pause prevents service interruptions  
-4. **🎛️ DevOps Control**: Remote configuration without server access
-5. **📈 Performance Insights**: Live metrics for optimization decisions
-
-### 🔌 **System Architecture Evolution**
-
-```plaintext
-FROM: Static Dashboard          TO: Real-Time Monitoring Platform
-      ↓                             ↓
-┌─────────────────┐            ┌─────────────────┐
-│ Manual Config   │    ═══►    │ Remote Config   │
-│ .env files      │            │ Secure UI       │
-│ No rate control │            │ Smart limits    │
-│ Static updates  │            │ Live WebSocket  │
-│ Manual refresh  │            │ Auto-updates    │
-└─────────────────┘            └─────────────────┘
-```
-
-### 🚀 **Ready for Next Session**
-
-**Estado**: Production-ready WebSocket system funcionando  
-**Próximo foco**: UI integration e visual polish  
-**Tempo estimado**: 45-60 minutos  
-**Complexidade**: Baixa (mostly UI work)
-
----
-
-***🎊 The Kortex dashboard evolved from static configuration to a real-time monitoring powerhouse!***
-
-*From .env files to live WebSocket dashboards - this system now provides enterprise-grade monitoring with intelligent automation.*
-
----
 
 ## 🔐 Configuração de Ambiente
 
@@ -707,52 +162,39 @@ src/
     └── APITypes.tsx        # API integration types
 ```
 
-## 🚀 Next Session Goals (Fase 5)
+## 🚀 Next Session Goals
 
-### 1. **Provider Management Modals** (45 min)
+### 1. **Modal Implementation** (30 min)
 
-- [ ] **AddProviderModal**: Formulário completo para adicionar novos providers
-- [ ] **EditProviderModal**: Edição de providers existentes  
-- [ ] **Form Validation**: Validação client-side e server-side
-- [ ] **Connection Testing**: Teste de conectividade em tempo real nos modals
+- [ ] API Provider Add/Edit modals
+- [ ] Form validation and error handling
+- [ ] Connection testing UI
 
-### 2. **Memory System Integration** (60 min)
+### 2. **Live MCP Connection** (60 min)
 
-- [ ] **Memory Display Interface**: Visualização da memória compartilhada do MCP
-- [ ] **Add Memory Entries**: Funcionalidade para adicionar notas via frontend
-- [ ] **Memory Search & Filter**: Busca e filtros nas entradas de memória
-- [ ] **Context Persistence**: Manter contexto entre sessões
-- [ ] **Memory Statistics**: Métricas de uso da memória
+- [ ] Connect to running MCP server
+- [ ] Display real GitHub repos
+- [ ] Show live PR status
+- [ ] Azure pipeline monitoring
 
-### 3. **Settings Page Enhancement** (45 min)
+### 3. **Data Integration** (45 min)
 
-- [ ] **MCP Server Configuration**: Settings para conexão e parâmetros
-- [ ] **Log Preferences**: Controles para frequência e tipos de logs
-- [ ] **Performance Tuning**: Configurações de cache e timeouts
-- [ ] **Theme & UI Preferences**: Dark mode, layout preferences
-- [ ] **Export/Import Settings**: Backup e restauração de configurações
+- [ ] Replace mock data with real API calls
+- [ ] Error handling and loading states
+- [ ] Real-time status updates
 
-### 4. **Notification System** (30 min)
+### 4. **Memory System Integration** (30 min)
 
-- [ ] **Toast Notifications**: Sistema de notificações temporárias
-- [ ] **Error Alerts**: Alertas específicos para erros do sistema
-- [ ] **Success Feedback**: Confirmações de ações realizadas
-- [ ] **Real-time Alerts**: Notificações para eventos importantes do MCP
+- [ ] Shared context between frontend/backend
+- [ ] Decision logging
+- [ ] Progress persistence
 
-### 🎯 **Session Success Criteria**
-
-- [ ] Todos os modais funcionais e validados
-- [ ] Dados reais substituindo dados mock
-- [ ] Performance mantida (< 3s para operações)
-- [ ] Error handling robusto implementado
-- [ ] UX fluida e responsiva
-
-## 💡Innovation Highlights
+## 💡 Innovation Highlights
 
 ### Unique Features
 
 1. **Dual MCP Interface**: HTTP + FastMCP SSE
-2. **Cross-Project Integration**: Kortex + Kortex + TimeCraft AI
+2. **Cross-Project Integration**: Lookatni + Kortex + TimeCraft AI
 3. **AI-Powered Suggestions**: Context-aware next steps
 4. **Unified Dashboard**: GitHub + Azure DevOps + Custom tools
 5. **Memory Persistence**: Shared context across sessions
@@ -767,50 +209,24 @@ src/
 
 ## 🎉 Success Metrics
 
-### ✅ **Fase 4 - Mock Data Elimination (COMPLETA - 19/07/2025)**
+### Phase 2 (Current) Success Criteria
 
-- [x] **100% Mock Data Removed**: ✅ All pages now use real data from MCP servers
-- [x] **useMCPData Hook**: ✅ Real-time data fetching with error handling
-- [x] **useMCPLogs Hook**: ✅ Intelligent log generation with harmonic frequency
-- [x] **Dynamic Statistics**: ✅ All metrics calculated from real system data
-- [x] **Live Monitor Overhaul**: ✅ Real-time system logs with realistic patterns
-- [x] **Performance Maintained**: ✅ < 3s response times preserved
-- [x] **Error Boundaries**: ✅ Robust error handling throughout system
-- [x] **Loading States**: ✅ Smooth user experience with loading indicators
+- [x] MCP connection test working
+- [ ] All modals functional
+- [ ] Error handling implemented
+- [ ] Connection status real-time
 
-### 🎯 **Próxima Sessão (Fase 5) Success Criteria**
+### Phase 3 (Next Session) Success Criteria
 
-- [ ] **Provider Modals**: AddProviderModal e EditProviderModal 100% funcionais
-- [ ] **Memory System**: Interface completa para MCP memory management
-- [ ] **Settings Enhancement**: Configurações avançadas e preferências
-- [ ] **Notification System**: Toast notifications e alert system
-- [ ] **Performance**: Mantida (< 3s para operações)
-- [ ] **UX Polish**: Interface responsiva e fluxos intuitivos
-
-### 📊 **Technical Achievements (19/07/2025 Session)**
-
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Mock Data Usage** | 80% mock data | ✅ 0% mock data | 100% elimination |
-| **Monitor Log Spam** | 3s intervals (spam) | ✅ 12-45s intelligent | 300-400% reduction |
-| **Data Authenticity** | Hardcoded values | ✅ Real calculations | 100% authentic |
-| **Log Variety** | Single templates | ✅ 4+ message types | 400% variety |
-| **System Realism** | Fake statistics | ✅ Dynamic metrics | 100% realistic |
-| **User Experience** | Static dashboard | ✅ Live monitoring | 100% dynamic |
+- [ ] Live GitHub data displayed
+- [ ] Azure pipelines monitoring
+- [ ] Memory system working
+- [ ] AI suggestions active
 
 ---
 
-### � **Major Achievements Unlocked Today**
+***Excited to see this integration come to life! 🔥***
 
-1. **🎯 Zero Mock Data**: Complete elimination across all dashboard pages
-2. **🧠 Smart Logs**: Intelligent log generation that mimics real system patterns  
-3. **📊 Dynamic Stats**: All statistics now calculated from real MCP data
-4. **⚡ Performance**: Maintained sub-3s response times while adding complexity
-5. **🎨 Harmonious UX**: Log monitoring that's engaging but not overwhelming
-6. **🔍 Real Filtering**: Models and servers sourced from actual system data
+The combination of modern frontend (Kortex) + intelligent backend (StatusRafa MCP) + ecosystem integration (Kubex) is going to be **incredible**!
 
----
-
-***� Dashboard is now 100% authentic! Ready for advanced features in Fase 5!***
-
-*The Kortex dashboard has evolved from a prototype with mock data into a **fully functional monitoring system** connected to real MCP servers, GitHub repositories, Azure DevOps pipelines, and live system telemetry!* ✨
+*Let's make development monitoring and project management a delightful experience!* ✨
