@@ -1,4 +1,4 @@
-# ![Kortex Banner](/docs/assets/top_banner_md_c.png)
+# ![Kortex Banner](/docs/assets/images/top_banner_md_c.png)
 
 [![License](https://img.shields.io/github/license/rafa-mori/kortex?style=flat-square)](https://github.com/rafa-mori/kortex/blob/main/LICENSE)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/rafa-mori/kortex/ci.yml?branch=main&style=flat-square)](https://github.com/rafa-mori/kortex/actions)
