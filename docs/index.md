@@ -1,5 +1,7 @@
 
-# Kortex – Real-Time Monitoring for DevOps & AI
+# ![![Kortex Banner](/docs/assets/top_banner_md_c.png)](/docs/assets/top_banner_md_c.png)
+
+## Kortex – Real-Time Monitoring for DevOps & AI
 
 > Production-ready dashboard for monitoring GitHub, Azure DevOps, and AI pipelines in real-time. Built for modern developer workflows.
 

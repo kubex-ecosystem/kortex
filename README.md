@@ -1,5 +1,13 @@
+# ![![Kortex Banner](/docs/assets/top_banner_md_c.png)](/docs/assets/top_banner_md_c.png)
 
-# 🌐 Kortex Dashboard – Real-Time DevOps & AI Monitoring
+[![GitHub](https://img.shields.io/github/license/rafa-mori/kortex?style=flat-square)](https://github.com/rafa-mori/kortex/blob/main/LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/rafa-mori/kortex/ci.yml?branch=main&style=flat-square)](https://github.com/rafa-mori/kortex/actions)
+[![Code Quality](https://img.shields.io/github/actions/workflow/status/rafa-mori/kortex/code-quality.yml?branch=main&style=flat-square)](https://github.com/rafa-mori/kortex/actions)
+[![Last Commit](https://img.shields.io/github/last-commit/rafa-mori/kortex?style=flat-square)](https://github.com/rafa-mori/kortex/commits)
+
+---
+
+## 🌐 Kortex Dashboard – Real-Time DevOps & AI Monitoring
 
 > Enterprise-grade dashboard for monitoring API usage, rate limits, and development workflows across GitHub, Azure DevOps, and AI pipelines – in real-time.
 

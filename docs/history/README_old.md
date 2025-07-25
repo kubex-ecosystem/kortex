@@ -1,4 +1,8 @@
-# Kortex Dashboard
+# ![![Kortex Banner](/docs/assets/top_banner_md_c.png)](/docs/assets/top_banner_md_c.png)
+
+---
+
+## Kortex Dashboard
 
 Sistema de monitoramento e manipulação de tarefas AI executadas em servidores MCP.
 
@@ -87,6 +91,7 @@ npm run build
 ## 🔧 Sistema de Marcadores v2.0
 
 Este projeto usa marcadores únicos para decomposição:
+
 - **Formato**: `/// caminho/arquivo ///`
 - **Vantagem**: Nunca conflita com código JavaScript/TypeScript
 - **Compatível**: grep, sed, awk e ferramentas Unix
