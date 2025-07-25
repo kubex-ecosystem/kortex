@@ -33,6 +33,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <DocumentationBanner />
         <div className="flex h-screen">
           <Sidebar 
+            onPageChange={(page) => {
+              router.push(page);
+              setSidebarOpen(false);
+            }}
+            currentPage={getPageTitle()}
             isOpen={sidebarOpen} 
             onClose={() => setSidebarOpen(false)}
           />

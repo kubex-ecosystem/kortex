@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { AppProvider } from '../../context/AppContext';
-import { useTheme } from '../../hooks/useTheme';
 import { Header } from '../../components/Layout/Header';
 import { Sidebar } from '../../components/Layout/Sidebar';
-import { DashboardPage } from '../../pages/DashboardPage';
-import { MonitorPage } from '../../pages/MonitorPage';
-import { AnalyticsPage } from '../../pages/AnalyticsPage';
 import { MCPSettings } from '../../components/MCP/MCPSettings/MCPSettings';
+import { AppProvider } from '../../context/AppContext';
+import { useTheme } from '../../hooks/useTheme';
 import { MCPSettingsType } from '../../types';
+import { AnalyticsPage } from '../Pages/AnalyticsPage';
+import { DashboardPage } from '../Pages/DashboardPage';
+import { MonitorPage } from '../Pages/MonitorPage';
 
 const App: React.FC = () => {
   const { isDark, toggleTheme } = useTheme();

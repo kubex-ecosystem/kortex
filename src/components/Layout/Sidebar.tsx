@@ -1,29 +1,34 @@
 import {
-    Activity,
-    BarChart3,
-    BookOpen,
-    Cpu,
-    Database,
-    ExternalLink,
-    LayoutDashboard,
-    Package,
-    Plus,
-    Settings,
-    X
+  Activity,
+  BarChart3,
+  BookOpen,
+  Cpu,
+  Database,
+  ExternalLink,
+  LayoutDashboard,
+  Package,
+  Plus,
+  Settings,
+  X
 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React from 'react';
 
 interface SidebarProps {
-  isOpen: boolean;
+  currentPage?: string;
+  isOpen?: boolean;
+  onPageChange: (page: string) => void;
   onClose: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ 
   isOpen, 
-  onClose
+  onClose,
+  onPageChange = () => {},
+  currentPage = 'Dashboard'
 }) => {
   const router = useRouter();
+  const isActive = (path: string) => currentPage === path || router.pathname === path;
   const currentPath = router.pathname;
 
   const menuItems = [
@@ -48,6 +53,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const handleNavigation = (path: string) => {
     router.push(path);
     onClose();
+  };
+
+  const handleExternalLink = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+    onClose();
+  };
+
+  const handleMenuAction = (action: string) => {
+    onClose();
+    switch (action) {
+      case 'documentation':
+        handleExternalLink('https://kortex.rafa-mori.dev/');
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleMenuItemClick = (path: string) => {
+    onPageChange(path);
   };
 
   return (
