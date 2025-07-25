@@ -242,8 +242,9 @@ class ResilientMCPService {
   }
 }
 
-// Singleton instance
-export const resilientMCPService = new ResilientMCPService();
+// Singleton instance for the application
+// Using localhost:3002 for our mock API server during development
+export const resilientMCPService = new ResilientMCPService('http://localhost:3002');
 
 // Fallback data for different endpoints
 export const FALLBACK_DATA = {

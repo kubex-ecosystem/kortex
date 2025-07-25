@@ -1,7 +1,7 @@
-import { Activity, Database, GitBranch, Server, XCircle } from 'lucide-react';
+import { Activity, Database, GitBranch, RefreshCw, Server, XCircle } from 'lucide-react';
 import { JSX } from 'react';
 import { useResilientApp } from '../../context/ResilientAppContext';
-import { useDefensiveMCPData } from '../../hooks/useDefensiveMCPData';
+import { useRealAPIData } from '../../hooks/useRealAPIData';
 import { Task } from '../../types';
 import { TaskCard } from '../Dashboard/TaskCard';
 import { LiveActivityFeed } from '../RealTime/LiveActivityFeed';
@@ -9,7 +9,7 @@ import { RealTimeStatus } from '../Status/RealTimeStatus';
 
 export const DashboardPage = (): JSX.Element => {
   const { tasks } = useResilientApp();
-  const { stats, isLoading, isConnected, error, lastUpdated } = useDefensiveMCPData();
+  const { stats, isLoading, error, isRealData, isFallbackData, lastUpdated, refreshData } = useRealAPIData();
   
   const statusCounts = (tasks || []).reduce((acc, task) => {
     const status = (task as any)?.status || (task as any)?.definition?.status || 'Unknown';
@@ -17,35 +17,39 @@ export const DashboardPage = (): JSX.Element => {
     return acc;
   }, {} as Record<string, number>);
 
-  // Real MCP-based statistics cards
+  // Real API-based statistics cards
   const statsCards = [
     { 
       label: 'Repositórios', 
       value: stats.totalRepositories, 
       icon: <Database className="h-8 w-8 text-blue-600" />, 
       color: 'blue',
-      subtitle: 'GitHub repos' 
+      subtitle: isRealData ? 'GitHub (dados reais)' : 'GitHub (demo)',
+      trend: isRealData ? '+2 este mês' : 'Demo data'
     },
     { 
       label: 'Pull Requests', 
       value: stats.totalPullRequests, 
       icon: <GitBranch className="h-8 w-8 text-green-600" />, 
       color: 'green',
-      subtitle: `${stats.openPRs} abertos, ${stats.draftPRs} drafts`
+      subtitle: `${stats.openPRs} abertos, ${stats.draftPRs} drafts`,
+      trend: isRealData ? `${stats.openPRs} pendentes` : 'Demo data'
     },
     { 
       label: 'Pipelines', 
       value: stats.totalPipelines, 
       icon: <Activity className="h-8 w-8 text-purple-600" />, 
       color: 'purple',
-      subtitle: `${stats.successfulPipelines} ok, ${stats.failedPipelines} falhou`
+      subtitle: `${stats.successfulPipelines} ok, ${stats.failedPipelines} falhou`,
+      trend: `${stats.runningPipelines} executando`
     },
     { 
       label: 'Fontes Conectadas', 
       value: stats.connectedSources, 
       icon: <Server className="h-8 w-8 text-orange-600" />, 
       color: 'orange',
-      subtitle: 'GitHub + Azure DevOps'
+      subtitle: isRealData ? 'GitHub + Azure DevOps' : 'APIs em modo demo',
+      trend: isRealData ? 'Dados em tempo real' : 'Simulação ativa'
     }
   ];
 
@@ -65,15 +69,29 @@ export const DashboardPage = (): JSX.Element => {
           {/* WebSocket Real-Time Status */}
           <RealTimeStatus compact />
           
-          {/* MCP Server Status (Legacy) */}
+          {/* API Data Status */}
           <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2 ${
-            isConnected 
+            isRealData 
               ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
+              : isFallbackData
+              ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200'
               : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200'
           }`}>
-            <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`} />
-            MCP Server {isConnected ? 'Conectado' : 'Desconectado'}
+            <div className={`w-2 h-2 rounded-full ${
+              isRealData ? 'bg-green-500' : isFallbackData ? 'bg-yellow-500' : 'bg-red-500'
+            }`} />
+            {isRealData ? 'Dados Reais' : isFallbackData ? 'Modo Demo' : 'Offline'}
           </div>
+          
+          {/* Refresh Button */}
+          <button
+            onClick={refreshData}
+            disabled={isLoading}
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 mr-1 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </button>
           
           {lastUpdated && (
             <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -101,9 +119,14 @@ export const DashboardPage = (): JSX.Element => {
           }`}>
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                  {stat.label}
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    {stat.label}
+                  </p>
+                  {isRealData && (
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  )}
+                </div>
                 <p className={`text-2xl font-bold ${
                   stat.color === 'gray' 
                     ? 'text-gray-900 dark:text-white' 
@@ -116,8 +139,17 @@ export const DashboardPage = (): JSX.Element => {
                     {stat.subtitle}
                   </p>
                 )}
+                {stat.trend && (
+                  <p className={`text-xs mt-1 font-medium ${
+                    isRealData ? 'text-green-600 dark:text-green-400' : 'text-gray-500 dark:text-gray-400'
+                  }`}>
+                    {stat.trend}
+                  </p>
+                )}
               </div>
-              {stat.icon}
+              <div className="ml-3">
+                {stat.icon}
+              </div>
             </div>
           </div>
         ))}
