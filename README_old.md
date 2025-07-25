@@ -16,7 +16,7 @@ Built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**, Kortex offers a
 
 ---
 
-## 📋 Table of Contents
+## � Table of Contents
 
 - [🚀 Features](#-features)
 - [🎯 Use Cases](#-use-cases)
@@ -35,28 +35,28 @@ Built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**, Kortex offers a
 
 ## 🚀 Features
 
-### Real-Time Monitoring
+### ✅ Real-Time Monitoring
 
 - **WebSocket-powered updates** - No page refreshes needed
 - **Live API rate limit tracking** for GitHub and Azure DevOps
 - **Auto-pause mechanisms** before hitting quota limits
 - **Real-time server health monitoring**
 
-### Multi-Platform Integration
+### ✅ Multi-Platform Integration
 
 - **GitHub** - Repositories, pull requests, actions, and API usage
 - **Azure DevOps** - Projects, pipelines, and deployment status
 - **Kubernetes/Helm** - Cluster management and release monitoring
 - **MCP Servers** - Model Context Protocol server management
 
-### Enterprise-Ready
+### ✅ Enterprise-Ready
 
 - **Type-safe TypeScript** codebase with zero compilation errors
 - **Responsive design** with dark mode support
 - **Resilient fallbacks** for offline/error scenarios
 - **Visual indicators** for data source status (real/demo modes)
 
-### Developer Experience
+### ✅ Developer Experience
 
 - **Static site generation** for fast deployments
 - **Modular architecture** with clean separation of concerns
@@ -68,21 +68,18 @@ Built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**, Kortex offers a
 ## 🎯 Use Cases
 
 ### DevOps Teams
-
 - Monitor CI/CD pipeline health across multiple platforms
 - Track API quotas before they impact builds
 - Visualize deployment status and system metrics
 - Manage Kubernetes clusters and Helm releases
 
 ### AI/ML Engineers
-
 - Monitor LLM agent execution and resource usage
 - Track API costs and usage patterns
 - Manage Model Context Protocol servers
 - Observe real-time inference metrics
 
 ### Backend Engineers
-
 - API observability and rate limit management
 - System health monitoring and alerting
 - Integration status tracking
@@ -141,13 +138,12 @@ npm run dev:full
 This will start both the Next.js application and the mock API server.
 
 **Access points:**
-
-- **Dashboard**: <http://localhost:3000>
-- **Mock API**: <http://localhost:3002>
+- **Dashboard**: http://localhost:3000
+- **Mock API**: http://localhost:3002
 
 ---
 
-## 🔧 Installation
+## � Installation
 
 ### Prerequisites
 
@@ -234,27 +230,23 @@ node scripts/mock-api-server.cjs
 ## 📊 Dashboard Overview
 
 ### Main Dashboard
-
 - **GitHub Integration**: Repository stats, pull requests, and API usage
 - **Azure DevOps**: Project overview, pipeline status, and deployment metrics
 - **Real-time Indicators**: Live data status and refresh mechanisms
 - **KPI Cards**: Key performance indicators with trend analysis
 
 ### Servers Management
-
 - **MCP Server Monitoring**: Health status, uptime, and performance metrics
 - **CRUD Operations**: Create, update, and delete server configurations
 - **Real-time Health Checks**: Automatic server monitoring with alerts
 
 ### Analytics Dashboard
-
 - **Aggregated Metrics**: Combined data from GitHub, Azure, and MCP sources
 - **Trend Analysis**: Historical data visualization and growth patterns
 - **Provider Statistics**: Usage breakdown by service provider
 - **Performance Monitoring**: System-wide performance indicators
 
 ### Helm/Kubernetes
-
 - **Cluster Management**: Kubernetes namespace and resource monitoring
 - **Helm Releases**: Deployment status and release management
 - **Resource Monitoring**: Pod status, scaling, and resource usage
@@ -266,35 +258,30 @@ node scripts/mock-api-server.cjs
 ### Supported Platforms
 
 #### GitHub
-
 - Repository management and statistics
 - Pull request monitoring
 - GitHub Actions status
 - API rate limit tracking
 
 #### Azure DevOps
-
 - Project and pipeline overview
 - Build and deployment status
 - Work item tracking
 - API usage monitoring
 
 #### Kubernetes/Helm
-
 - Cluster health monitoring
 - Helm release management
 - Resource utilization tracking
 - Deployment automation
 
 #### MCP (Model Context Protocol)
-
 - Server health monitoring
 - Protocol compliance checking
 - Performance metrics
 - Configuration management
 
 ### KUBEX Ecosystem
-
 Kortex is part of the larger KUBEX ecosystem:
 
 - **KbxHorizon**: Go CLI framework for production applications
@@ -304,11 +291,11 @@ Kortex is part of the larger KUBEX ecosystem:
 
 ---
 
-## 🛠️ Development
+## �️ Development
 
 ### Project Structure
 
-```bash
+```
 kortex/
 ├── src/
 │   ├── components/        # UI components
@@ -339,6 +326,7 @@ kortex/
 # Development
 npm run dev              # Start Next.js dev server
 npm run dev:mock         # Start mock API server
+npm run dev:full         # Start both servers
 
 # Building
 npm run build            # Production build
@@ -347,6 +335,7 @@ npm run export           # Generate static site
 
 # Code Quality
 npm run lint             # ESLint checking
+npm run type-check       # TypeScript validation
 npm test                 # Run test suite
 
 # Utilities
@@ -373,7 +362,7 @@ curl http://localhost:3002/api/mcp/servers
 
 ---
 
-## 🚀 Deployment
+## � Deployment
 
 ### Static Site Generation
 
@@ -407,19 +396,16 @@ CMD ["npm", "start"]
 ### Environment-Specific Configurations
 
 #### Development
-
 - Mock API server on localhost:3002
 - Hot reload and debug tools
 - Comprehensive error logging
 
 #### Staging
-
 - Connection to staging StatusRafa instance
 - Production-like data with test tokens
 - Performance monitoring enabled
 
 #### Production
-
 - Direct integration with StatusRafa MCP
 - Real API tokens and authentication
 - Optimized builds and caching
@@ -478,14 +464,16 @@ copies or substantial portions of the Software.
 ## 📞 Contact & Support
 
 - **Author**: Rafael Mori
-- **Email**: <faelmori@gmail.com>
+- **Email**: faelmori@gmail.com
 - **GitHub**: [@rafa-mori](https://github.com/rafa-mori)
 - **Project Issues**: [GitHub Issues](https://github.com/rafa-mori/kortex/issues)
 
 ---
 
-## 🌟 Acknowledgments
+<div align="center">
 
-Built with ❤️ by the KUBEX team
+**Built with ❤️ by the KUBEX team**
 
 [🌐 Website](https://rafa-mori.dev) · [📚 Docs](./docs) · [🚀 Roadmap](./docs/ROADMAP.md) · [🐛 Issues](https://github.com/rafa-mori/kortex/issues)
+
+</div>

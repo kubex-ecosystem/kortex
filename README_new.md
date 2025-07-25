@@ -339,6 +339,7 @@ kortex/
 # Development
 npm run dev              # Start Next.js dev server
 npm run dev:mock         # Start mock API server
+npm run dev:full         # Start both servers
 
 # Building
 npm run build            # Production build
@@ -347,6 +348,7 @@ npm run export           # Generate static site
 
 # Code Quality
 npm run lint             # ESLint checking
+npm run type-check       # TypeScript validation
 npm test                 # Run test suite
 
 # Utilities
