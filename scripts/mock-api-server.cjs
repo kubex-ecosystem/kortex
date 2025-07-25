@@ -137,6 +137,182 @@ const server = http.createServer((req, res) => {
       return;
     }
 
+    // Helm API endpoints
+    if (path === '/api/helm/context') {
+      console.log('📡 GET /api/helm/context');
+      
+      const helmContext = {
+        success: true,
+        context: {
+          kubeconfig_path: '/home/user/.kube/config',
+          current_context: 'kubernetes-admin@kubernetes',
+          namespaces: ['default', 'kube-system', 'kube-public', 'kube-node-lease', 'kubex-system', 'monitoring'],
+          helm_version: 'v3.12.0',
+          kubernetes_version: 'v1.27.3',
+          cluster_info: {
+            server: 'https://10.0.0.1:6443',
+            name: 'kubernetes'
+          }
+        }
+      };
+      
+      console.log('✅ Serving Helm context:', { namespaces: helmContext.context.namespaces.length });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(helmContext));
+      return;
+    }
+
+    if (path === '/api/helm/releases') {
+      console.log('📡 GET /api/helm/releases');
+      
+      const namespace = urlParsed.searchParams.get('namespace');
+      
+      // Generate realistic Helm releases
+      const generateReleases = (targetNamespace) => {
+        const releases = [
+          {
+            name: 'kosmos-mcp',
+            namespace: 'kubex-system',
+            revision: 3,
+            updated: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'deployed',
+            chart: 'kosmos-mcp-1.2.3',
+            app_version: '1.0.0',
+            description: 'Kosmos MCP Server deployment'
+          },
+          {
+            name: 'statusrafa',
+            namespace: 'monitoring',
+            revision: 1,
+            updated: new Date(Date.now() - Math.random() * 2 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'deployed',
+            chart: 'statusrafa-0.9.5',
+            app_version: '0.9.5',
+            description: 'StatusRafa monitoring system'
+          },
+          {
+            name: 'prometheus',
+            namespace: 'monitoring',
+            revision: 5,
+            updated: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'deployed',
+            chart: 'prometheus-15.9.2',
+            app_version: '2.40.0',
+            description: 'Prometheus monitoring stack'
+          },
+          {
+            name: 'nginx-ingress',
+            namespace: 'default',
+            revision: 2,
+            updated: new Date(Date.now() - Math.random() * 14 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'deployed',
+            chart: 'nginx-ingress-4.7.1',
+            app_version: '1.8.1',
+            description: 'NGINX Ingress Controller'
+          },
+          {
+            name: 'cert-manager',
+            namespace: 'cert-manager',
+            revision: 1,
+            updated: new Date(Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'deployed',
+            chart: 'cert-manager-v1.12.0',
+            app_version: 'v1.12.0',
+            description: 'Certificate management controller'
+          }
+        ];
+        
+        // Filter by namespace if specified
+        if (targetNamespace) {
+          return releases.filter(r => r.namespace === targetNamespace);
+        }
+        
+        return releases;
+      };
+      
+      const releases = generateReleases(namespace);
+      
+      const response = {
+        success: true,
+        releases: releases
+      };
+      
+      console.log('✅ Serving Helm releases:', { 
+        namespace: namespace || 'all', 
+        count: releases.length 
+      });
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(response));
+      return;
+    }
+
+    // Handle POST requests for Helm deploy
+    if (req.method === 'POST' && path === '/api/helm/deploy') {
+      console.log('📡 POST /api/helm/deploy');
+      
+      let body = '';
+      req.on('data', (chunk) => {
+        body += chunk.toString();
+      });
+      
+      req.on('end', () => {
+        try {
+          const deployRequest = JSON.parse(body);
+          console.log('Deploy request:', {
+            release: deployRequest.release_name,
+            chart: deployRequest.chart_path,
+            namespace: deployRequest.namespace,
+            dry_run: deployRequest.dry_run
+          });
+          
+          // Simulate deployment process
+          const response = {
+            success: true,
+            message: `Release "${deployRequest.release_name}" deployed successfully`,
+            release: {
+              name: deployRequest.release_name,
+              namespace: deployRequest.namespace,
+              revision: 1,
+              status: 'deployed',
+              chart: deployRequest.chart_path,
+              updated: new Date().toISOString(),
+              description: `Deployed ${deployRequest.release_name} via Kortex`
+            }
+          };
+          
+          console.log('✅ Deployment successful:', deployRequest.release_name);
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify(response));
+        } catch (error) {
+          console.error('❌ Deploy error:', error);
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, error: 'Invalid request body' }));
+        }
+      });
+      return;
+    }
+
+    // Handle DELETE requests for Helm uninstall
+    if (req.method === 'DELETE' && path.startsWith('/api/helm/uninstall/')) {
+      console.log('📡 DELETE /api/helm/uninstall');
+      
+      const releaseName = path.split('/').pop();
+      const namespace = urlParsed.searchParams.get('namespace') || 'default';
+      
+      console.log('Uninstall request:', { release: releaseName, namespace });
+      
+      const response = {
+        success: true,
+        message: `Release "${releaseName}" uninstalled successfully`,
+        release: releaseName
+      };
+      
+      console.log('✅ Uninstall successful:', releaseName);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(response));
+      return;
+    }
+
     // Combined stats endpoint
     if (path === '/stats') {
       const githubStats = generateGitHubStats();
@@ -180,6 +356,10 @@ server.listen(PORT, () => {
   console.log(`   GET /mcp/servers     - MCP servers list`);
   console.log(`   GET /stats           - Combined statistics`);
   console.log(`   GET /health          - Health check`);
+  console.log(`   GET /api/helm/context - Helm system context`);
+  console.log(`   GET /api/helm/releases - Helm releases`);
+  console.log(`   POST /api/helm/deploy - Deploy Helm chart`);
+  console.log(`   DELETE /api/helm/uninstall/:release - Uninstall release`);
   console.log(`🔄 Data refreshes on each request with realistic variations`);
 });
 

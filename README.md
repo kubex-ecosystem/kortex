@@ -1,92 +1,126 @@
-# Kortex Dashboard
 
-Sistema de monitoramento e manipulação de tarefas AI executadas em servidores MCP.
+# 🌐 Kortex Dashboard – Real-Time DevOps & AI Monitoring
 
-## 🚀 Quick Start
+> Enterprise-grade dashboard for monitoring API usage, rate limits, and development workflows across GitHub, Azure DevOps, and AI pipelines – in real-time.
+
+&#x20;&#x20;
+
+---
+
+## 🚀 What is Kortex?
+
+Kortex is a modular, real-time monitoring dashboard designed for developers, AI engineers, and DevOps teams. It integrates live telemetry from GitHub, Azure DevOps, and your own infrastructure via the [StatusRafa MCP Server](https://github.com/rafa-mori/statusrafa-mcp).
+
+**Use Cases:**
+
+- Monitor rate limits before they break your builds
+- Track API provider health in real time
+- Pause polling and optimize usage dynamically
+- Visualize performance and telemetry from GitHub, Azure, and LLM agents
+
+---
+
+## 🧱 Core Features
+
+✅ Live WebSocket monitoring (no refresh needed)\
+✅ Animated UI with performance indicators\
+✅ Auto-pause for providers hitting rate limits\
+✅ Remote MCP configuration via UI\
+✅ Toast alerts, smart logs, and timestamp tracking\
+✅ Fully modular (Next.js + Tailwind CSS + TypeScript)\
+✅ Compatible with TimeCraft AI and the Kubex Ecosystem
+
+---
+
+## 🖥️ Live Dashboard Preview
+
+---
+
+## 📦 Installation (Development)
 
 ```bash
-# Instalar dependências
-npm install
+# 1. Clone the repo
+$ git clone https://github.com/rafa-mori/kortex.git && cd kortex
 
-# Executar em desenvolvimento
-npm run dev
+# 2. Install dependencies
+$ npm install
 
-# Build para produção
+# 3. Start dev server (http://localhost:3001)
+$ npm run dev
+
+# MCP Server required (run separately)
+```
+
+### Optional: Start MCP HTTP + WebSocket server
+
+```bash
+cd ../timecraft_ai
+uv run --env-file .env timecraft_ai/mcp/api_server.py
+```
+
+---
+
+## ⚙️ Environment Variables (Kortex)
+
+Create a `.env.local` file in the `kortex/` directory:
+
+```env
+NEXT_PUBLIC_BACKEND_HOST=http://127.0.0.1:3002
+NEXT_PUBLIC_WS_URL=ws://127.0.0.1:3002/ws
+```
+
+Backend port `3002` is used by the MCP HTTP + WebSocket API.
+
+---
+
+## 🧠 Part of the Kubex Ecosystem
+
+Kortex is one of the key modules inside the Kubex ecosystem. It integrates with:
+
+- **TimeCraft AI**: LLM agent orchestrator + suggestions + memory
+- **StatusRafa MCP Server**: Real-time telemetry + API unification
+- **GoForge**: DevOps pipelines and auto-compilation
+
+Explore more: [kubex.dev (coming soon)](https://kubex.rafa-mori.dev)
+
+---
+
+## 📊 Architecture Overview
+
+```mermaid
+system datagraph TD
+    A[Kortex Dashboard (Next.js)] --> B[API Proxy /api/mcp/*]
+    B --> C[StatusRafa HTTP API (Python)]
+    C --> D[GitHub | Azure | MCP Memory]
+    C --> E[WebSocket /ws] --> A
+```
+
+---
+
+## 🛠 Roadmap Highlights
+
+-
+
+See full roadmap → [`docs/ROADMAP.md`](docs/ROADMAP.md)
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please open issues or PRs.
+
+```bash
+# Format & Lint
+npm run lint
+
+# Build static site
 npm run build
 ```
 
-## 📁 Estrutura do Projeto
+---
 
-```
-src/
-├── components/
-│   ├── layout/
-│   │   ├── Header.tsx
-│   │   └── Sidebar.tsx
-│   ├── ui/
-│   │   ├── StatusBadge.tsx
-│   │   ├── ProgressBar.tsx
-│   │   └── NotificationCenter.tsx
-│   └── dashboard/
-│       └── TaskCard.tsx
-├── pages/
-│   ├── DashboardPage.tsx
-│   ├── MonitorPage.tsx
-│   └── AnalyticsPage.tsx
-├── context/
-│   └── AppContext.tsx
-├── hooks/
-│   └── useTheme.ts
-├── types/
-│   └── index.ts
-└── App.tsx
-```
+## 📄 License
 
-## 🎯 Funcionalidades
+MIT © Rafael Mori
 
-- ✅ Dashboard com estatísticas em tempo real
-- ✅ Live Monitor com logs simulados e filtros
-- ✅ Analytics com KPIs e gráficos
-- ✅ Sistema de notificações integrado
-- ✅ Context API para estado global
-- ✅ Tema claro/escuro
-- ✅ Layout 100% responsivo
-- ✅ Animações e microinterações
-
-## 🛠️ Extração de Arquivos
-
-Para extrair os arquivos deste código, use o script de extração v2.0:
-
-```bash
-# Listar todos os arquivos
-grep "^///" codigo.txt | sed 's/^\/\/m\/ \(.*\) \/m\/\/$/\1/'
-
-# Extrair com o script v2.0 (fornecido separadamente)
-./extract-files.sh codigo.txt ./meu-projeto
-```
-
-⚠️ **Formato dos marcadores**: `/// caminho/arquivo ///`
-
-## 🚀 Deploy
-
-O projeto está configurado para build estático com Next.js:
-
-```bash
-npm run build
-# Os arquivos estarão em ./out/
-```
-
-## 🧩 Tecnologias
-
-- **Next.js 14** - Framework React
-- **TypeScript** - Tipagem estática
-- **Tailwind CSS** - Estilização
-- **Lucide React** - Ícones
-- **Context API** - Estado global
-
-## 🔧 Sistema de Marcadores v2.0
-
-Este projeto usa marcadores únicos para decomposição:
-- **Formato**: `/// caminho/arquivo ///`
-- **Vantagem**: Nunca conflita com código JavaScript/TypeScript
-- **Compatível**: grep, sed, awk e ferramentas Unix
+---
