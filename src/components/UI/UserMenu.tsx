@@ -1,4 +1,4 @@
-import { ChevronDown, LogOut, Settings, User, UserCircle } from 'lucide-react';
+import { BookOpen, ChevronDown, LogOut, Settings, User, UserCircle } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -38,6 +38,10 @@ export const UserMenu: React.FC = () => {
       case 'settings':
         router.push('/settings');
         break;
+      case 'documentation':
+        // Abrir documentação em nova aba
+        window.open('https://kortex.rafa-mori.dev/', '_blank', 'noopener,noreferrer');
+        break;
       case 'login':
         router.push('/login');
         break;
@@ -63,6 +67,12 @@ export const UserMenu: React.FC = () => {
       label: 'Settings', 
       icon: <Settings size={16} />,
       description: 'Application preferences'
+    },
+    { 
+      id: 'documentation', 
+      label: 'Documentation', 
+      icon: <BookOpen size={16} />,
+      description: 'User guide and API reference'
     },
     { 
       id: 'login', 

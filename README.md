@@ -1,6 +1,6 @@
 # ![Kortex Banner](/docs/assets/images/top_banner_md_c.png)
 
-[![License](https://img.shields.io/github/license/rafa-mori/kortex?style=flat-square)](https://github.com/rafa-mori/kortex/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/rafa-mori/kortex?style=flat-square)](LICENSE)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/rafa-mori/kortex/ci.yml?branch=main&style=flat-square)](https://github.com/rafa-mori/kortex/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15+-black?style=flat-square)](https://nextjs.org/)

@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useTheme } from '../../hooks/useTheme';
+import { DocumentationBanner } from '../UI/DocumentationBanner';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 
@@ -29,6 +30,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className={isDark ? 'dark' : ''}>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <DocumentationBanner />
         <div className="flex h-screen">
           <Sidebar 
             isOpen={sidebarOpen} 
