@@ -1,0 +1,20 @@
+Metadata-Version: 2.4
+Name: kortex-docs
+Version: 1.0.0
+Summary: Documentation dependencies for Kortex
+Requires-Python: >=3.8
+License-File: LICENSE
+Requires-Dist: mkdocs>=1.5.3
+Requires-Dist: mkdocs-material>=9.4.0
+Requires-Dist: mkdocs-mermaid2-plugin>=1.1.1
+Requires-Dist: mkdocs-awesome-pages-plugin>=2.9.2
+Requires-Dist: mkdocs-redirects>=1.2.1
+Requires-Dist: mkdocs-minify-plugin>=0.7.1
+Requires-Dist: mkdocs-git-revision-date-localized-plugin>=1.2.1
+Requires-Dist: mkdocs-git-committers-plugin-2>=2.2.3
+Requires-Dist: pymdown-extensions>=10.3
+Requires-Dist: pillow>=10.0.0
+Requires-Dist: cairosvg>=2.7.1
+Requires-Dist: watchdog>=3.0.0
+Requires-Dist: ghp-import>=2.1.0
+Dynamic: license-file

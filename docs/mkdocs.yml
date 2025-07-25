@@ -5,7 +5,10 @@ site_url: https://rafa-mori.github.io/kortex
 
 repo_name: rafa-mori/kortex
 repo_url: https://github.com/rafa-mori/kortex
-edit_uri: edit/main/docs-site/docs/
+edit_uri: edit/main/docs/
+
+# Since docs are in the docs-content/ folder
+docs_dir: docs-content
 
 theme:
   name: material
@@ -71,7 +74,7 @@ extra:
       link: https://twitter.com/faelOmori
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/rafa-mori/
-    - icon: fontawesome/brands/website
+    - icon: fontawesome/solid/link
       link: https://rafamori.pro
     - icon: fontawesome/solid/globe
       link: https://rafa-mori.dev

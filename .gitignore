@@ -18,6 +18,7 @@ node_modules/
 !.yarn/versions
 .venv/
 */.venv/
+docs/site/
 
 # Testing
 /coverage

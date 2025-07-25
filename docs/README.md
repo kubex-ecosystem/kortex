@@ -1,12 +1,41 @@
-# ![Kortex Banner](/docs/assets/images/top_banner_md_c.png)
+# Kortex Documentation
 
-[![License](https://img.shields.io/github/license/rafa-mori/kortex?style=flat-square)](https://github.com/rafa-mori/kortex/blob/main/LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/rafa-mori/kortex/ci.yml?branch=main&style=flat-square)](https://github.com/rafa-mori/kortex/actions)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?style=flat-square)](https://www.typescriptlang.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-15+-black?style=flat-square)](https://nextjs.org/)
-[![Last Commit](https://img.shields.io/github/last-commit/rafa-mori/kortex?style=flat-square)](https://github.com/rafa-mori/kortex/commits)
+This directory contains the complete documentation for Kortex, built with MkDocs Material.
 
----
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.8+
+- UV package manager installed
+
+### Setup
+
+1. **Install dependencies**:
+
+   ```bash
+   uv sync
+   ```
+
+2. **Activate virtual environment**:
+
+   ```bash
+   source .venv/bin/activate
+   ```
+
+3. **Start development server**:
+
+   ```bash
+   mkdocs serve
+   ```
+
+   Or use the helper script:
+
+   ```bash
+   ./docs-dev.sh serve
+   ```
+
+4. **Open in browser**: <http://localhost:8000>
 
 ## 🌐 Real-Time DevOps & AI Monitoring Dashboard
 
@@ -149,7 +178,7 @@ This will start both the Next.js application and the mock API server.
 
 ## 🔧 Installation
 
-### Prerequisites
+### Prerequisites (Development)
 
 - **Node.js** 18.0.0 or higher
 - **npm** or **yarn** package manager

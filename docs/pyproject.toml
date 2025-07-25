@@ -1,0 +1,28 @@
+[project]
+name = "kortex-docs"
+version = "1.0.0"
+description = "Documentation dependencies for Kortex"
+requires-python = ">=3.8"
+
+dependencies = [
+    "mkdocs>=1.5.3",
+    "mkdocs-material>=9.4.0",
+    "mkdocs-mermaid2-plugin>=1.1.1",
+    "mkdocs-awesome-pages-plugin>=2.9.2",
+    "mkdocs-redirects>=1.2.1",
+    "mkdocs-minify-plugin>=0.7.1",
+    "mkdocs-git-revision-date-localized-plugin>=1.2.1",
+    "mkdocs-git-committers-plugin-2>=2.2.3",
+    "pymdown-extensions>=10.3",
+    "pillow>=10.0.0",
+    "cairosvg>=2.7.1",
+    "watchdog>=3.0.0",
+    "ghp-import>=2.1.0",
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = []
