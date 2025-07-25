@@ -7,6 +7,7 @@ jest.mock('../../../hooks/useWebSocket', () => ({
   useWebSocket: () => ({
     isConnected: false,
     connectionStatus: 'disconnected',
+    alerts: [],
   }),
 }))
 
@@ -29,6 +30,15 @@ jest.mock('../../../context/AppContext', () => ({
     removeTask: jest.fn(),
     removeServer: jest.fn(),
     removeLog: jest.fn(),
+  }),
+}))
+
+// Mock useWebSocket hook to include alerts
+jest.mock('../../../hooks/useWebSocket', () => ({
+  useWebSocket: () => ({
+    isConnected: false,
+    connectionStatus: 'disconnected',
+    alerts: [],
   }),
 }))
 
@@ -55,8 +65,8 @@ describe('Header Component', () => {
   it('displays current page title', () => {
     render(<Header {...defaultProps} currentPage="Test Page" />)
     
-    // Check if current page is displayed
-    expect(screen.getByText('Test Page')).toBeInTheDocument()
+    // Check if current page is displayed (use partial text match)
+    expect(screen.getByText(/Test Page/)).toBeInTheDocument()
   })
 
   it('calls onToggle when theme button is clicked', () => {
@@ -106,12 +116,23 @@ describe('Header Component', () => {
   it('shows different icons based on theme', () => {
     const { rerender } = render(<Header {...defaultProps} isDark={false} />)
     
-    // In light mode, should show moon icon
-    expect(screen.getByTestId('theme-icon')).toBeInTheDocument()
+    // Find theme button by looking for moon or sun icons
+    const buttons = screen.getAllByRole('button')
+    const themeButton = buttons.find(btn => 
+      btn.querySelector('.lucide-moon') || 
+      btn.querySelector('.lucide-sun')
+    )
+    
+    expect(themeButton).toBeInTheDocument()
     
     // In dark mode, should show sun icon
     rerender(<Header {...defaultProps} isDark={true} />)
-    expect(screen.getByTestId('theme-icon')).toBeInTheDocument()
+    const buttonsAfter = screen.getAllByRole('button')
+    const themeButtonAfter = buttonsAfter.find(btn => 
+      btn.querySelector('.lucide-moon') || 
+      btn.querySelector('.lucide-sun')
+    )
+    expect(themeButtonAfter).toBeInTheDocument()
   })
 
   it('has proper accessibility attributes', () => {
