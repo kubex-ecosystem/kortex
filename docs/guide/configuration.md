@@ -59,6 +59,7 @@ interface KortexConfig {
    - Go to GitHub.com → Settings → Developer settings → Personal access tokens
 
 2. **Create New Token**:
+
    ```bash
    # Required scopes for Kortex
    repo              # Repository access
@@ -68,6 +69,7 @@ interface KortexConfig {
    ```
 
 3. **Configure in Kortex**:
+
    ```env
    GITHUB_TOKEN=ghp_your_token_here
    ```
@@ -96,7 +98,8 @@ const githubConfig = {
    - Organization Settings → Personal Access Tokens
 
 2. **Required Scopes**:
-   ```
+
+   ```plaintext
    Build (read)           # Pipeline information
    Project and team (read) # Project details
    Work Items (read)      # Work item data
@@ -104,6 +107,7 @@ const githubConfig = {
    ```
 
 3. **Configure in Environment**:
+
    ```env
    AZURE_DEVOPS_TOKEN=your_pat_here
    AZURE_DEVOPS_ORGANIZATION=your-org-name

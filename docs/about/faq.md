@@ -10,7 +10,8 @@ Common questions and answers about Kortex, troubleshooting, and best practices.
 
 ### Q: What are the system requirements?
 
-**A:** 
+**A:**
+
 - **Browser**: Modern web browser with JavaScript enabled (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
 - **Node.js**: Version 18.0 or higher for development
 - **Memory**: 512MB RAM minimum for optimal performance
@@ -31,6 +32,7 @@ Common questions and answers about Kortex, troubleshooting, and best practices.
 **A:** There are several installation methods:
 
 1. **Clone and run locally**:
+
    ```bash
    git clone https://github.com/your-org/kortex.git
    cd kortex
@@ -39,11 +41,13 @@ Common questions and answers about Kortex, troubleshooting, and best practices.
    ```
 
 2. **Deploy to Vercel** (recommended):
+
    ```bash
    vercel --prod
    ```
 
 3. **Docker deployment**:
+
    ```bash
    docker run -p 3000:3000 kortex:latest
    ```
@@ -53,12 +57,14 @@ Common questions and answers about Kortex, troubleshooting, and best practices.
 **A:** This usually indicates missing dependencies or incorrect paths:
 
 1. **Clear cache and reinstall**:
+
    ```bash
    rm -rf node_modules package-lock.json
    npm install
    ```
 
 2. **Check TypeScript paths**:
+
    ```bash
    npm run type-check
    ```
@@ -75,6 +81,7 @@ Common questions and answers about Kortex, troubleshooting, and best practices.
 4. **Location**: File must be in project root directory
 
 Example correct `.env.local`:
+
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
 NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
@@ -85,7 +92,8 @@ GITHUB_TOKEN=ghp_your_token_here
 
 ### Q: How do I get a GitHub Personal Access Token?
 
-**A:** 
+**A:**
+
 1. Go to GitHub.com → Settings → Developer settings → Personal access tokens → Tokens (classic)
 2. Click "Generate new token"
 3. Select scopes: `repo`, `user`, `read:org`, `workflow`
@@ -98,6 +106,7 @@ GITHUB_TOKEN=ghp_your_token_here
 **A:** Several strategies to manage rate limits:
 
 1. **Increase polling intervals**:
+
    ```javascript
    // Increase from 1 minute to 5 minutes
    const POLL_INTERVAL = 5 * 60 * 1000;
@@ -117,6 +126,7 @@ GITHUB_TOKEN=ghp_your_token_here
    - Work Items (read)
 
 2. **Check organization name**:
+
    ```bash
    # Test connection
    curl -u ":$AZURE_DEVOPS_TOKEN" \
@@ -140,6 +150,7 @@ GITHUB_TOKEN=ghp_your_token_here
    - Use longer heartbeat intervals
 
 3. **Server configuration**:
+
    ```javascript
    // Increase connection timeout
    const ws = new WebSocket(url, {
@@ -153,6 +164,7 @@ GITHUB_TOKEN=ghp_your_token_here
 **A:** Troubleshooting steps:
 
 1. **Check WebSocket status**:
+
    ```javascript
    console.log('WebSocket state:', ws.readyState);
    // 0: CONNECTING, 1: OPEN, 2: CLOSING, 3: CLOSED
@@ -180,6 +192,7 @@ However, real-time features will be limited to polling intervals.
 **A:** Kortex uses Tailwind CSS. You can customize colors in several ways:
 
 1. **Modify tailwind.config.js**:
+
    ```javascript
    module.exports = {
      theme: {
@@ -194,6 +207,7 @@ However, real-time features will be limited to polling intervals.
    ```
 
 2. **Use CSS custom properties**:
+
    ```css
    :root {
      --primary-color: #3B82F6;
@@ -232,6 +246,7 @@ const Dashboard = () => (
 **A:** To add support for GitLab, Bitbucket, etc.:
 
 1. **Create integration file**:
+
    ```typescript
    // lib/gitlab-integration.ts
    export class GitLabIntegration {
@@ -240,6 +255,7 @@ const Dashboard = () => (
    ```
 
 2. **Add to context**:
+
    ```typescript
    // context/AppContext.tsx
    const [gitlabData, setGitlabData] = useState();
@@ -266,6 +282,7 @@ const Dashboard = () => (
 ### Q: Does Kortex collect any user data?
 
 **A:** No, Kortex is a client-side application that:
+
 - Runs entirely in your browser or on your infrastructure
 - Only communicates with APIs you configure
 - Doesn't send data to external analytics services
@@ -277,6 +294,7 @@ const Dashboard = () => (
 
 1. **Use HTTPS** in production
 2. **Implement authentication** if needed:
+
    ```javascript
    // Example: Basic auth middleware
    export function authMiddleware(req, res, next) {
@@ -286,6 +304,7 @@ const Dashboard = () => (
 
 3. **Restrict network access** using firewalls
 4. **Keep dependencies updated**:
+
    ```bash
    npm audit
    npm update
@@ -298,11 +317,13 @@ const Dashboard = () => (
 **A:** Performance optimization strategies:
 
 1. **Reduce API polling frequency**:
+
    ```env
    NEXT_PUBLIC_POLLING_INTERVAL=300000  # 5 minutes instead of 1 minute
    ```
 
 2. **Enable caching**:
+
    ```javascript
    // Cache API responses
    const cache = new Map();
@@ -327,6 +348,7 @@ const Dashboard = () => (
 **A:** Yes, but it requires configuration:
 
 1. **Multiple GitHub repos**:
+
    ```javascript
    const repos = [
      { owner: 'org1', repo: 'repo1' },
@@ -335,6 +357,7 @@ const Dashboard = () => (
    ```
 
 2. **Multiple Azure projects**:
+
    ```javascript
    const projects = ['project1', 'project2', 'project3'];
    ```
@@ -346,6 +369,7 @@ const Dashboard = () => (
 **A:** Implement monitoring for your Kortex deployment:
 
 1. **Health check endpoint**:
+
    ```typescript
    // pages/api/health.ts
    export default function handler(req, res) {
@@ -367,6 +391,7 @@ const Dashboard = () => (
 **A:** Update process depends on deployment method:
 
 1. **Local development**:
+
    ```bash
    git pull origin main
    npm install
@@ -374,11 +399,13 @@ const Dashboard = () => (
    ```
 
 2. **Vercel deployment**:
+
    ```bash
    git push origin main  # Auto-deploys on push
    ```
 
 3. **Docker deployment**:
+
    ```bash
    docker pull kortex:latest
    docker stop kortex
@@ -390,6 +417,7 @@ const Dashboard = () => (
 **A:** Yes, for high availability:
 
 1. **Load balancer setup**:
+
    ```nginx
    upstream kortex {
      server kortex-1:3000;
@@ -406,6 +434,7 @@ const Dashboard = () => (
 **A:** Backup important configuration:
 
 1. **Environment variables**:
+
    ```bash
    # Export current env vars
    env | grep NEXT_PUBLIC > kortex-config-backup.env
@@ -421,6 +450,7 @@ const Dashboard = () => (
 **A:** Systematic troubleshooting:
 
 1. **Verify server is running**:
+
    ```bash
    curl http://localhost:3002/health
    ```
@@ -435,6 +465,7 @@ const Dashboard = () => (
 **A:** Debug steps:
 
 1. **Check API credentials**:
+
    ```bash
    # Test GitHub
    curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user
@@ -445,12 +476,14 @@ const Dashboard = () => (
    ```
 
 2. **Check rate limits**:
+
    ```bash
    curl -H "Authorization: token $GITHUB_TOKEN" \
      https://api.github.com/rate_limit
    ```
 
 3. **Enable debug logging**:
+
    ```env
    NEXT_PUBLIC_DEBUG_MODE=true
    ```
@@ -460,12 +493,14 @@ const Dashboard = () => (
 **A:** Most common build issues:
 
 1. **TypeScript errors**:
+
    ```bash
    npm run type-check
    ```
 
 2. **Missing environment variables** in production
 3. **Dependency version conflicts**:
+
    ```bash
    npm ls --depth=0
    ```
