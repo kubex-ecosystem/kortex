@@ -134,6 +134,22 @@ export function useDynamicMCPConfig() {
     },
   };
 
+  const executeCommand = async (command: SystemCommand, args: string[]): Promise<CommandResult> => {
+    console.log(`🔴 useDynamicMCPConfig: executeCommand "${command.name}" with args ${args.join(', ')}`);
+    if (command.id === 'demo') {
+      return {
+        success: true,
+        output: `Executed demo command ${command.name} with args: ${args.join(', ')}`,
+        duration: 1000
+      };
+    }
+    return {
+      success: false,
+      error: 'MCP Service offline',
+      duration: 0
+    };
+  };
+
   // Initialize with fallback immediately
   useEffect(() => {
     console.log('🛡️ useDynamicMCPConfig: Initialized in fallback mode (MCP service offline)');
@@ -141,5 +157,6 @@ export function useDynamicMCPConfig() {
   }, []);
 
   // Return tuple - EXPLICIT FORMAT!
-  return [fallbackState, fallbackActions];
+  return [fallbackState, fallbackActions, executeCommand];
 }
+
