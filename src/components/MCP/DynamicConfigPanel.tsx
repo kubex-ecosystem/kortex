@@ -4,22 +4,22 @@
  * Permite alteração em tempo real de configurações, gerenciamento de secrets e comandos
  */
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  Settings,
-  Save,
-  RefreshCw,
-  Shield,
-  Terminal,
-  Download,
   AlertCircle,
   CheckCircle,
+  Download,
   Eye,
   EyeOff,
   Play,
+  RefreshCw,
+  Save,
+  Settings,
+  Shield,
   Square,
+  Terminal,
 } from 'lucide-react';
+import React, { useState } from 'react';
 import { useDynamicMCPConfig } from '../../hooks/useDynamicMCPConfig';
 
 interface DynamicConfigPanelProps {
@@ -33,6 +33,39 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
   const [secretsData, setSecretsData] = useState<Record<string, string>>({});
   const [selectedCommand, setSelectedCommand] = useState<string>('');
   const [commandArgs, setCommandArgs] = useState<string>('');
+  const objConfigActions = (configActions || {executeCommand: undefined}) as {
+    refreshConfig?: () => Promise<void>;
+    executeCommand?: (command: string, args: string[], silent?: boolean) => Promise<any>;
+    refreshCommands?: () => Promise<void>;
+    listBackups?: () => Promise<any>;
+    createBackup?: () => Promise<any>;
+    updateSecrets?: (secrets: Record<string, string>) => Promise<void>;
+    validateCommand?: (command: string, args: string[]) => Promise<any>;
+    updateConfig?: (config: Record<string, any>, secrets: Record<string, string>) => Promise<void>;
+  }
+  const objConfigState = (configState || {isLoading: false, isUpdating: false}) as {
+    isLoading?: boolean;
+    isUpdating?: boolean;
+    isExecutingCommand?: boolean;
+    config?: Record<string, any>;
+    lastUpdate?: Date;
+    configStats?: {
+      totalConfigs?: number;
+      enabledConfigs?: number;
+      lastUpdate?: Date;
+    };
+    commandCategories?: string[];
+    availableCommands?: Record<string, {name: string; description: string}[]>;
+    configError?: string;
+    commandError?: string;
+    commandStats?: {
+      total_commands: number;
+      total_categories: number;
+      lastUpdate: Date;
+    };
+    secretsStatus?: Record<string, { exists: boolean; masked_value?: string }>;
+    error?: string;
+  }
 
   const handleSecretsUpdate = (key: string, value: string) => {
     setSecretsData(prev => ({ ...prev, [key]: value }));
@@ -42,7 +75,11 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
     if (!selectedCommand) return;
     
     const args = commandArgs.trim() ? commandArgs.split(' ') : [];
-    const result = await configActions.executeCommand(selectedCommand, args, true);
+    if (!objConfigActions.executeCommand) {
+      console.warn('🔴 executeCommand action is not available in fallback mode');
+      return;
+    }
+    const result = await (objConfigActions.executeCommand as Function)(selectedCommand, args, true);
     
     console.log('Command result:', result);
   };
@@ -52,7 +89,11 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
   };
 
   const createBackup = async () => {
-    const result = await configActions.createBackup();
+    if (!objConfigActions.createBackup) {
+      console.warn('🔴 createBackup action is not available in fallback mode');
+      return;
+    }
+    const result = await (objConfigActions.createBackup as Function)();
     if (result) {
       console.log('Backup created:', result.backup_path);
     }
@@ -75,35 +116,35 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
         
         <div className="flex gap-2">
           <button
-            onClick={configActions.refreshConfig}
-            disabled={configState.isLoading}
+            onClick={() => ((objConfigActions || {refreshConfig: undefined}).refreshConfig as Function)()}
+            disabled={objConfigState.isLoading}
             className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
             title="Atualizar configuração"
             aria-label="Atualizar configuração"
           >
-            <RefreshCw className={`w-4 h-4 ${configState.isLoading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${objConfigState.isLoading ? 'animate-spin' : ''}`} />
           </button>
           
           <button
-            onClick={() => configActions.updateConfig(configState.config || {}, secretsData)}
-            disabled={configState.isUpdating}
+            onClick={() => (objConfigActions.updateConfig as Function)(objConfigState.config || {}, secretsData)}
+            disabled={objConfigState.isUpdating}
             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
           >
             <Save className="w-4 h-4" />
-            {configState.isUpdating ? 'Salvando...' : 'Salvar'}
+            {objConfigState.isUpdating ? 'Salvando...' : 'Salvar'}
           </button>
         </div>
       </div>
 
       {/* Error Display */}
-      {(configState.configError || configState.commandError || configState.error) && (
+      {(objConfigState.configError || objConfigState.commandError || objConfigState.error) && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-4 p-3 bg-red-900/30 border border-red-600 rounded text-red-300 flex items-center gap-2"
         >
           <AlertCircle className="w-4 h-4" />
-          {configState.configError || configState.commandError || configState.error}
+          {objConfigState.configError || objConfigState.commandError || objConfigState.error}
         </motion.div>
       )}
 
@@ -138,22 +179,22 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
             exit={{ opacity: 0, x: -20 }}
             className="space-y-6"
           >
-            {configState.config && (
+            {objConfigState.config && (
               <div className="space-y-4">
                 <h3 className="text-lg font-medium text-white">Status da Configuração</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 bg-gray-800 rounded">
                     <div className="text-gray-400 text-sm">Servidor</div>
                     <div className="text-white font-mono">
-                      {configState.config.server?.host}:{configState.config.server?.port}
+                      {objConfigState.config.server?.host}:{objConfigState.config.server?.port}
                     </div>
                   </div>
                   
                   <div className="p-4 bg-gray-800 rounded">
                     <div className="text-gray-400 text-sm">Provedores Ativos</div>
                     <div className="text-white font-mono">
-                      {configState.config.providers ? 
-                        Object.keys(configState.config.providers).length : 0}
+                      {objConfigState.config.providers ?
+                        Object.keys(objConfigState.config.providers).length : 0}
                     </div>
                   </div>
                 </div>
@@ -161,7 +202,7 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
                 <div className="p-4 bg-gray-800 rounded">
                   <h4 className="font-medium text-white mb-2">Configuração Atual</h4>
                   <pre className="text-xs text-gray-300 overflow-x-auto">
-                    {JSON.stringify(configState.config, null, 2)}
+                    {JSON.stringify(objConfigState.config, null, 2)}
                   </pre>
                 </div>
               </div>
@@ -181,7 +222,7 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium text-white">Gerenciamento de Secrets</h3>
               <button
-                onClick={() => configActions.updateSecrets(secretsData)}
+                onClick={() => (objConfigActions.updateSecrets as Function)(secretsData)}
                 disabled={Object.keys(secretsData).length === 0}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
               >
@@ -189,7 +230,7 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
               </button>
             </div>
 
-            {configState.secretsStatus && Object.entries(configState.secretsStatus).map(([key, status]) => (
+            {objConfigState.secretsStatus && Object.entries(objConfigState.secretsStatus).map(([key, status]) => (
               <div key={key} className="p-4 bg-gray-800 rounded border border-gray-700">
                 <div className="flex items-center justify-between mb-2">
                   <label className="font-medium text-white capitalize">{key.replace('_', ' ')}</label>
@@ -239,13 +280,13 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium text-white">Comandos do Sistema</h3>
               <button
-                onClick={configActions.refreshCommands}
-                disabled={configState.isLoading}
+                onClick={objConfigActions.refreshCommands}
+                disabled={objConfigState.isLoading}
                 className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
                 title="Atualizar lista de comandos"
                 aria-label="Atualizar lista de comandos"
               >
-                <RefreshCw className={`w-4 h-4 ${configState.isLoading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-4 h-4 ${objConfigState.isLoading ? 'animate-spin' : ''}`} />
               </button>
             </div>
 
@@ -260,9 +301,9 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
                   aria-label="Selecionar comando"
                 >
                   <option value="">Selecione um comando</option>
-                  {configState.commandCategories.map(category => (
+                  {(objConfigState.commandCategories || []).map(category => (
                     <optgroup key={category} label={category}>
-                      {configState.availableCommands[category]?.map(cmd => (
+                      {(objConfigState.availableCommands || {})[category]?.map(cmd => (
                         <option key={cmd.name} value={cmd.name}>
                           {cmd.name} - {cmd.description}
                         </option>
@@ -288,19 +329,20 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
             <div className="flex gap-2">
               <button
                 onClick={executeCommand}
-                disabled={!selectedCommand || configState.isExecutingCommand}
+                disabled={!selectedCommand || objConfigState.isExecutingCommand}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
               >
-                {configState.isExecutingCommand ? (
+                {objConfigState.isExecutingCommand ? (
                   <Square className="w-4 h-4" />
                 ) : (
                   <Play className="w-4 h-4" />
                 )}
-                {configState.isExecutingCommand ? 'Executando...' : 'Executar'}
+                {objConfigState.isExecutingCommand ? 'Executando...' : 'Executar'}
               </button>
 
               <button
-                onClick={() => configActions.validateCommand(selectedCommand, commandArgs.split(' '))}
+                title="Validar comando"
+                onClick={() => ((objConfigActions || {validateCommand: () => {}}).validateCommand as Function)(selectedCommand, commandArgs.split(' '))}
                 disabled={!selectedCommand}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
               >
@@ -309,17 +351,17 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
             </div>
 
             {/* Command Stats */}
-            {configState.commandStats && (
+            {objConfigState.commandStats && (
               <div className="mt-6 p-4 bg-gray-800 rounded">
                 <h4 className="font-medium text-white mb-2">Estatísticas</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <div className="text-gray-400">Total de Comandos</div>
-                    <div className="text-white font-mono">{configState.commandStats.total_commands || 0}</div>
+                    <div className="text-white font-mono">{objConfigState.commandStats.total_commands || 0}</div>
                   </div>
                   <div>
                     <div className="text-gray-400">Categorias</div>
-                    <div className="text-white font-mono">{configState.commandCategories.length}</div>
+                    <div className="text-white font-mono">{(objConfigState.commandCategories || []).length}</div>
                   </div>
                 </div>
               </div>
@@ -349,7 +391,7 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
 
             <div className="space-y-2">
               <button
-                onClick={() => configActions.listBackups()}
+                onClick={() => ((objConfigActions || {listBackups: () => {}}).listBackups as Function)()}
                 className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600"
               >
                 Listar Backups
@@ -360,33 +402,33 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
       </AnimatePresence>
 
       {/* Stats Display */}
-      {configState.configStats && (
+      {objConfigState.configStats && (
         <div className="mt-6 p-4 bg-gray-800 rounded">
           <h4 className="font-medium text-white mb-2">Status da Configuração</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <div className="text-gray-400">Última Atualização</div>
               <div className="text-white font-mono">
-                {configState.lastUpdate?.toLocaleString() || 'N/A'}
+                {objConfigState.lastUpdate?.toLocaleString() || 'N/A'}
               </div>
             </div>
             <div>
               <div className="text-gray-400">Total Secrets</div>
               <div className="text-white font-mono">
-                {configState.secretsStatus ? Object.keys(configState.secretsStatus).length : 0}
+                {objConfigState.secretsStatus ? Object.keys(objConfigState.secretsStatus).length : 0}
               </div>
             </div>
             <div>
               <div className="text-gray-400">Secrets Configurados</div>
               <div className="text-white font-mono">
-                {configState.secretsStatus ? 
-                  Object.values(configState.secretsStatus).filter(s => s.exists).length : 0}
+                {objConfigState.secretsStatus ?
+                  Object.values(objConfigState.secretsStatus).filter(s => s.exists).length : 0}
               </div>
             </div>
             <div>
               <div className="text-gray-400">Status</div>
               <div className="text-green-400 font-mono">
-                {configState.isLoading ? 'Carregando...' : 'Online'}
+                {objConfigState.isLoading ? 'Carregando...' : 'Online'}
               </div>
             </div>
           </div>

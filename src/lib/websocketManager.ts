@@ -6,7 +6,7 @@
 
 import { useEffect, useState } from 'react';
 
-interface WebSocketEventMap {
+export interface WebSocketEventMap {
   'server:status': { serverId: string; status: 'online' | 'offline' | 'error'; timestamp: string };
   'pipeline:update': { pipelineId: string; stage: string; status: string; progress?: number };
   'user:action': { userId: string; action: string; target: string; timestamp: string };

@@ -209,7 +209,7 @@ export class MCPServerService {
    */
   async testConnection(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseURL}/api/status`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/status`);
       const data: MCPServerResponse<MCPStatus> = await response.json();
       return data.success && response.ok;
     } catch (error) {
@@ -223,7 +223,7 @@ export class MCPServerService {
    */
   async getStatus(): Promise<MCPStatus | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/status`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/status`);
       const data = await response.json();
       
       if (data.success && response.ok) {
@@ -264,7 +264,7 @@ export class MCPServerService {
    */
   async getDynamicConfig(): Promise<DynamicConfig | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/config`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/config`);
       const data = await response.json();
       
       if (data.success && response.ok) {
@@ -286,7 +286,7 @@ export class MCPServerService {
     applyImmediately: boolean = true
   ): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseURL}/api/config`, {
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -311,7 +311,7 @@ export class MCPServerService {
    */
   async validateConfig(config: Partial<DynamicConfig>): Promise<{ valid: boolean; errors?: string[] }> {
     try {
-      const response = await fetch(`${this.baseURL}/api/config/validate`, {
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/config/validate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -340,7 +340,7 @@ export class MCPServerService {
    */
   async resetConfig(section: 'all' | 'server' | 'providers' | 'features' = 'all'): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseURL}/api/config/reset`, {
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/config/reset`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -364,7 +364,7 @@ export class MCPServerService {
    */
   async getConfigStats(): Promise<ConfigStats | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/config/stats`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/config/stats`);
       const data = await response.json();
       
       if (data.success && response.ok) {
@@ -386,7 +386,7 @@ export class MCPServerService {
    */
   async getAvailableCommands(): Promise<{ commands: Record<string, SystemCommand[]>; categories: string[]; stats: any } | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/commands`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/commands`);
       const data = await response.json();
       
       if (data.success && response.ok) {
@@ -408,7 +408,7 @@ export class MCPServerService {
    */
   async getCommandHelp(command: string): Promise<SystemCommand | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/commands/${command}`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/commands/${command}`);
       const data = await response.json();
       
       if (data.success && response.ok) {
@@ -431,7 +431,7 @@ export class MCPServerService {
     timeout?: number
   ): Promise<CommandResult> {
     try {
-      const response = await fetch(`${this.baseURL}/api/commands/execute`, {
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/commands/execute`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -461,7 +461,7 @@ export class MCPServerService {
    */
   async validateCommand(command: string, args: string[] = []): Promise<CommandResult> {
     try {
-      const response = await fetch(`${this.baseURL}/api/commands/validate`, {
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/commands/validate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -493,7 +493,7 @@ export class MCPServerService {
    */
   async getSecretsStatus(): Promise<Record<string, { exists: boolean; masked_value?: string }> | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/secrets`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/secrets`);
       const data = await response.json();
       
       if (data.success && response.ok) {
@@ -514,7 +514,7 @@ export class MCPServerService {
     applyImmediately: boolean = true
   ): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseURL}/api/secrets`, {
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/secrets`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -542,7 +542,7 @@ export class MCPServerService {
    */
   async createConfigBackup(): Promise<{ backup_path: string } | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/config/backup`, {
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/config/backup`, {
         method: 'POST'
       });
 
@@ -563,7 +563,7 @@ export class MCPServerService {
    */
   async listConfigBackups(): Promise<Array<{ filename: string; created_at: string; size_kb: number }> | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/config/backups`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/config/backups`);
       const data = await response.json();
       
       if (data.success && response.ok) {
@@ -581,7 +581,7 @@ export class MCPServerService {
    */
   async restoreConfigBackup(backupFilename: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseURL}/api/config/restore`, {
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/config/restore`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -608,7 +608,7 @@ export class MCPServerService {
    */
   async getRepositories(): Promise<string[]> {
     try {
-      const response = await fetch(`${this.baseURL}/api/repos`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/repos`);
       const data: MCPServerResponse<string[]> = await response.json();
       return data.success ? data.data || [] : [];
     } catch (error) {
@@ -633,7 +633,7 @@ export class MCPServerService {
         };
       }
 
-      const response = await fetch(url, options);
+      const response: Response | undefined = await fetch(url, options);
       const data = await response.json();
       return data.success ? data.prs || data.data || [] : [];
     } catch (error) {
@@ -658,7 +658,7 @@ export class MCPServerService {
         };
       }
 
-      const response = await fetch(url, options);
+      const response: Response | undefined = await fetch(url, options);
       const data = await response.json();
       return data.success ? data.pipelines || data.data || [] : [];
     } catch (error) {
@@ -672,7 +672,7 @@ export class MCPServerService {
    */
   async getMemory(limit: number = 10): Promise<MemoryEntry[]> {
     try {
-      const response = await fetch(`${this.baseURL}/api/memory?limit=${limit}`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/memory?limit=${limit}`);
       const data: MCPServerResponse<MemoryEntry[]> = await response.json();
       return data.success ? data.data || [] : [];
     } catch (error) {
@@ -686,7 +686,7 @@ export class MCPServerService {
    */
   async addMemoryEntry(note: string): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseURL}/api/memory`, {
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/memory`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note })
@@ -704,7 +704,7 @@ export class MCPServerService {
    */
   async getSuggestion(): Promise<string | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/suggest`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/suggest`);
       const data = await response.json();
       return data.success ? data.suggestion || data.data || null : null;
     } catch (error) {
@@ -718,7 +718,7 @@ export class MCPServerService {
    */
   async generateSessionId(): Promise<string | null> {
     try {
-      const response = await fetch(`${this.baseURL}/api/session`);
+      const response: Response | undefined = await fetch(`${this.baseURL}/api/session`);
       const data = await response.json();
       return data.success ? data.session_id || data.data?.session_id || null : null;
     } catch (error) {

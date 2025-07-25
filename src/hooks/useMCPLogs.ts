@@ -1,13 +1,14 @@
 /**
- * 🪵 useMCPLogs Hook
+ * 🪵 useMCPLogs Hook - RESILIENT VERSION
  * Hook para capturar logs reais do sistema MCP e providers
+ * Funciona com ou sem MCP Server online - NUNCA QUEBRA!
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LogEntry } from '../types/LogTypes';
-import { useMCPData } from './useMCPData';
-import { useMCPServers } from './useMCPServers';
 import { useAPIManager } from './useAPIManager';
+import { useDefensiveMCPData } from './useDefensiveMCPData';
+import { useMCPServers } from './useMCPServers';
 
 interface UseMCPLogsReturn {
   logs: LogEntry[];
@@ -31,8 +32,8 @@ export function useMCPLogs(): UseMCPLogsReturn {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isMonitoring, setIsMonitoring] = useState(true);
   
-  // Get data from other hooks
-  const { stats: mcpStats, isLoading: mcpLoading, error: mcpError } = useMCPData();
+  // Get data from other hooks - RESILIENT VERSION!
+  const { stats: mcpStats, isLoading: mcpLoading, error: mcpError } = useDefensiveMCPData();
   const { servers, stats: serverStats } = useMCPServers();  
   const { providers, stats: providerStats } = useAPIManager();
 

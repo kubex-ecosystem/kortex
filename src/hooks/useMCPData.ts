@@ -1,10 +1,49 @@
 /**
- * Hook para gerenciar dados reais do MCP Server
+ * Hook para gerenciar dados reais do MCP Server - RESILIENT VERSION
  * Substitui dados mock por dados reais das APIs MCP
+ * Funciona com ou sem MCP Server online - NUNCA QUEBRA!
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { mcpService, MCPStatus, GitHubRepo, PullRequest, Pipeline, MemoryEntry } from '../lib/mcpService';
+import { useCallback, useEffect, useState } from 'react';
+
+// Tipos locais para compatibilidade
+export interface MCPStatus {
+  connected: boolean;
+  lastCheck: Date;
+  services: string[];
+}
+
+export interface GitHubRepo {
+  name: string;
+  url: string;
+  stars: number;
+  lastUpdate: Date;
+}
+
+export interface PullRequest {
+  id: string;
+  title: string;
+  status: 'open' | 'closed' | 'draft' | 'merged';
+  author: string;
+  url: string;
+  createdAt: Date;
+}
+
+export interface Pipeline {
+  id: string;
+  name: string;
+  status: 'running' | 'success' | 'failed' | 'pending';
+  branch: string;
+  startedAt: Date;
+  duration?: number;
+}
+
+export interface MemoryEntry {
+  id: string;
+  content: string;
+  timestamp: Date;
+  type: 'note' | 'activity' | 'error';
+}
 
 export interface MCPStats {
   totalRepositories: number;
