@@ -1,5 +1,5 @@
 // src/context/AppContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
 import { LogEntry, Task } from '../types';
 import { MCPServerType } from '../types/MCP/Server';
 
@@ -10,7 +10,7 @@ interface Notification {
   read: boolean;
 }
 
-interface AppContextType {
+export interface AppContextType {
   servers: MCPServerType[];
   tasks: Task[];
   logs?: LogEntry[];
@@ -174,6 +174,13 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     }
   ]);
 
+  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected'>('disconnected');
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [tasks, setTasks] = useState<Task[]>([
     { id: '001', status: 'Running', model: { id: '001', name: 'GPT-4', version: '1.0', maxTokens: 4096, description: 'A powerful model', costPerRequest: 0.01, monthlyLimit: 10000, usage: 5000, requests: 100 } },
     { id: '002', status: 'Completed', model: { id: '002', name: 'Claude', version: '1.0', maxTokens: 1024, description: 'A powerful model', costPerRequest: 0.01, monthlyLimit: 10000, usage: 5000, requests: 100 } },
@@ -249,7 +256,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AppContext.Provider value={{ 
+    <AppContext.Provider value={{
+      isConnected, 
+      isLoading, 
+      error,
       servers, 
       tasks, 
       addNotification,
@@ -282,3 +292,5 @@ export const useApp = (): AppContextType => {
   }
   return ctx as AppContextType;
 };
+
+export default { AppProvider, useApp, AppContext };

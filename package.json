@@ -22,7 +22,7 @@
     "Other"
   ],
   "engines": {
-    "node": ">=18.0.0",
+    "node": ">=22.17.0",
     "yarn": ">=1.22.0"
   },
   "repository": {
@@ -63,6 +63,9 @@
       "require": "./dist/index.cjs"
     }
   },
+  "sponsor": {
+    "url": "https://rafamori.pro"
+  },
   "readme": "README.md",
   "publisher": "mori",
   "scripts": {
@@ -76,10 +79,13 @@
     "dev:mock": "node scripts/mock-api-server.cjs",
     "build": "PORT=3000 next build",
     "export": "PORT=3000 next export",
-    "start": "PORT=3000 next start",
+    "start": "PORT=3000 next start", 
     "lint": "next lint --ignore-path .gitignore",
     "type-check": "tsc --noEmit",
-    "test": "PORT=3000 next test",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
     "dep:map:json": "npx dependency-cruiser --output-type json --include-only -'^(src|tests)' --exclude '^node_modules' src > dependency-map.json",
     "map:components": "node scripts/map-components.js",
     "map:components:watch": "PORT=3000 nodemon --watch src/components --exec 'node scripts/map-components.js'",
@@ -93,24 +99,24 @@
     "clean:environment": "PORT=3000 rm -rf ./node_modules ./yarn.lock ./package-lock.json ./.next ./out ./coverage || true",
     "build:old": "PORT=3000 react-scripts build",
     "start:old": "PORT=3000 react-scripts start",
-    "test:old": "PORT=3000 jest",
-    "test:old-coverage": "PORT=3000 jest --coverage",
-    "test:old-watch": "PORT=3000 jest --watch",
-    "test:old-coverage-watch": "PORT=3000 jest --coverage --watch",
-    "test:old-e2e": "PORT=3000 jest --env=jsdom",
-    "test:old-e2e-watch": "PORT=3000 jest --env=jsdom --watch",
-    "test:old-coverage-e2e": "PORT=3000 jest --env=jsdom --coverage",
-    "test:old-coverage-html": "PORT=3000 jest --coverage --coverageReporters=html",
-    "test:old-coverage-json": "PORT=3000 jest --coverage --coverageReporters=json",
-    "test:old-coverage-text": "PORT=3000 jest --coverage --coverageReporters=text",
-    "test:old-coverage-clover": "PORT=3000 jest --coverage --coverageReporters=clover",
-    "test:old-coverage-lcov": "PORT=3000 jest --coverage --coverageReporters=lcov",
-    "test:old-coverage-summary": "PORT=3000 jest --coverage --coverageReporters=summary",
-    "test:old-coverage-text-summary": "PORT=3000 jest --coverage --coverageReporters=text-summary",
-    "test:old-coverage-json-summary": "PORT=3000 jest --coverage --coverageReporters=json-summary",
-    "test:old-coverage-verbose": "PORT=3000 jest --coverage --coverageReporters=verbose",
-    "test:old-coverage-lcovonly": "PORT=3000 jest --coverage --coverageReporters=lcovonly",
-    "test:old-coverage-cobertura": "PORT=3000 jest --coverage --coverageReporters=cobertura"
+    "test:old": "PORT=3003 jest --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}' --watchAll=false --env=jsdom",
+    "test:old-coverage": "PORT=3003 jest --coverage --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-watch": "PORT=3003 jest --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}' --watch",
+    "test:old-coverage-watch": "PORT=3003 jest --coverage --watch --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-e2e": "PORT=3003 jest --env=jsdom --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-e2e-watch": "PORT=3003 jest --env=jsdom --watch --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-e2e": "PORT=3003 jest --env=jsdom --coverage --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-html": "PORT=3003 jest --coverage --coverageReporters=html --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-json": "PORT=3003 jest --coverage --coverageReporters=json --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-text": "PORT=3003 jest --coverage --coverageReporters=text --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-clover": "PORT=3003 jest --coverage --coverageReporters=clover --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-lcov": "PORT=3003 jest --coverage --coverageReporters=lcov --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-summary": "PORT=3003 jest --coverage --coverageReporters=summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-text-summary": "PORT=3003 jest --coverage --coverageReporters=text-summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-json-summary": "PORT=3003 jest --coverage --coverageReporters=json-summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-verbose": "PORT=3003 jest --coverage --coverageReporters=verbose --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-lcovonly": "PORT=3003 jest --coverage --coverageReporters=lcovonly --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-cobertura": "PORT=3003 jest --coverage --coverageReporters=cobertura --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'"
   },
   "overrides": {
     "node-fetch": "2.6.7"
@@ -142,7 +148,11 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-flow": "^7.27.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/history": "^4.7.11",
+    "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19",
@@ -153,6 +163,8 @@
     "eslint-config-next": "14.0.0",
     "globby": "^14.1.0",
     "husky": "^9.1.7",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5",
     "lucide-react": "^0.525.0",
     "postcss": "^8",
     "react-aria-components": "^1.10.1",
@@ -298,40 +310,5 @@
         "publish": true
       }
     }
-  },
-  "jest": {
-    "testEnvironment": "jsdom",
-    "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
-    },
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json",
-      "node"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/build/",
-      "/dist/",
-      "/out/",
-      "/coverage/",
-      "/public/",
-      "/next.config.js",
-      "/postcss.config.js",
-      "/tailwind.config.js",
-      "/babel.config.js",
-      "/jest.config.js",
-      "/cypress.config.js",
-      "/cypress/",
-      "/scripts/",
-      "/tests/",
-      "/docs/"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/src/tests/jest.setup.js"
-    ]
   }
 }

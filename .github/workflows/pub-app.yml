@@ -1,0 +1,94 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    if: github.actor == 'faelmori' || github.actor == 'dependabot[bot]' || github.actor == 'github-actions[bot]'
+    name: Deploy Application
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+      - name: Install Dependencies
+        run: |
+          npm install
+      - name: Build Application
+        run: |
+          npm run build
+        env:
+          CI: true
+          NODE_ENV: production
+          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
+          BUILD_VERSION: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Tests
+        run: |
+          npm test
+        env:
+          CI: true
+          NODE_ENV: production
+          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
+          BUILD_VERSION: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+  publish:
+    needs: test
+    if: github.actor == 'faelmori' || github.actor == 'dependabot[bot]' || github.actor == 'github-actions[bot]'
+    name: Publish Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '22'
+      - name: Install Dependencies
+        run: |
+          npm install
+      - name: Build Application
+        run: |
+          npm run build
+        env:
+          CI: true
+          NODE_ENV: production
+          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
+          BUILD_VERSION: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Application
+        run: |
+          npm run publish
+        env:
+          CI: true
+          NODE_ENV: production
+          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
+          BUILD_VERSION: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Finalize Publishing
+        run: |
+          echo "Finalizing publishing..."
+          if [ -d "dist" ]; then
+            echo "Cleaning up temporary files."
+            npm run clean || true
+            rm -rf node_modules || true
+          fi
+          echo "Publishing completed successfully."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
+          BUILD_VERSION: ${{ github.sha }}
+          CI: true
