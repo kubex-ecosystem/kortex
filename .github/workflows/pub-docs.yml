@@ -1,0 +1,49 @@
+name: Publish Documentation
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Run Tests
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+      - name: Install Dependencies
+        run: |
+          python -m pip install uv
+          cd docs
+          uv venv
+          source .venv/bin/activate
+          uv sync
+      - name: Run Tests
+        id: test
+        run: |
+          if [ basename "$(pwd)" != "docs" ]; then
+            cd docs
+          fi
+          source .venv/bin/activate
+          uv run mkdocs build -q
+      - name: Build Documentation
+        run: |
+          if [ basename "$(pwd)" != "docs" ]; then
+            cd docs
+          fi
+          source .venv/bin/activate
+          uv run mkdocs gh-deploy --force --clean -q
+          if [ $? -ne 0 ]; then
+            echo "Documentation build failed."
+            exit 1
+          fi
+          echo "Documentation build completed successfully."
+          rm -rf .venv || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
