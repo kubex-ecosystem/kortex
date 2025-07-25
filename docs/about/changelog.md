@@ -1,40 +1,40 @@
-# 📖 Changelog
+# Changelog
 
-Complete version history and release notes for LookAtni File Markers.
+All notable changes to Kortex will be documented in this file.
 
-## Version 1.0.6 (Current) - July 2025
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### 🎉 New Features
+## [Unreleased]
 
-- **Enhanced Visual Markers**: Improved syntax highlighting and interactive navigation
-- **Advanced CLI Tools**: Complete TypeScript-based command-line interface
-- **Smart Validation System**: Multi-layered validation with auto-fix suggestions
-- **Performance Optimizations**: Parallel processing and memory management improvements
-- **GitHub Pages Documentation**: Beautiful, modern documentation site with Material Theme
+### Added
 
-### 🔧 Improvements
+- Comprehensive documentation with MkDocs Material theme
+- Professional README with installation and configuration guides
+- Real-time WebSocket monitoring capabilities
+- GitHub Actions workflow monitoring
+- Azure DevOps pipeline integration
+- MCP server management and monitoring
+- Dark mode support with system preference detection
+- Mobile-responsive design with collapsible sidebar
+- Alert system with customizable notifications
+- Performance metrics visualization
+- Multi-environment configuration support
 
-- **Better Error Handling**: More descriptive error messages and recovery suggestions
-- **Cross-Platform Compatibility**: Improved path handling for Windows/Unix systems
-- **Memory Optimization**: Reduced memory usage for large projects
-- **Faster Generation**: Up to 40% faster marker generation for medium-sized projects
-- **Enhanced Configuration**: More flexible configuration options and templates
+### Changed
 
-### 🐛 Bug Fixes
+- Improved TypeScript type safety across all components
+- Enhanced error handling and recovery mechanisms
+- Optimized WebSocket connection management
+- Better mobile navigation experience
+- Streamlined build process for static export
 
-- Fixed command registration issues in VS Code extension
-- Resolved path separator problems on Windows
-- Fixed memory leaks in large file processing
-- Corrected encoding issues with non-UTF8 files
-- Fixed extraction conflicts with existing directories
+### Security
 
-### 📚 Documentation
-
-- Complete documentation overhaul with modern design
-- Added comprehensive examples and tutorials
-- Improved API documentation with TypeScript interfaces
-- Added troubleshooting guides and best practices
-- Created video tutorials and demo recordings
+- Secure token storage implementation
+- Content Security Policy headers
+- Input validation and sanitization
+- Rate limiting protection for API calls
 
 ---
 
@@ -209,21 +209,21 @@ The first stable release of LookAtni File Markers with complete core functionali
 
 ### Version 1.1.0 (Planned - Q3 2025)
 
-#### 🎯 Major Features
+#### 🎯 Major Features (v1.1.0)
 
 - **Web Interface**: Browser-based marker management and visualization
 - **Real-time Collaboration**: Live sharing and collaborative editing
 - **Cloud Integration**: Support for cloud storage and synchronization
 - **Advanced Analytics**: Detailed project analysis and insights
 
-#### 🔧 Enhancements
+#### 🔧 Enhancements (v1.1.0)
 
 - **Plugin Ecosystem**: Third-party plugin support and marketplace
 - **AI-Powered Suggestions**: Intelligent recommendations and optimizations
 - **Advanced Search**: Full-text search within marker files
 - **Git Integration**: Deep integration with Git workflows
 
-#### 🎨 User Experience
+#### 🎨 User Experience (v1.1.0)
 
 - **Mobile Support**: Mobile app for viewing and basic operations
 - **Dark/Light Themes**: Multiple theme options and customization

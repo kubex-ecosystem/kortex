@@ -22,12 +22,14 @@ open http://localhost:3000
 Once Kortex is running, you'll see:
 
 ### Dashboard Overview
+
 - **GitHub Integration**: Repository stats and API usage
 - **Azure DevOps**: Pipeline status and project metrics  
 - **Real-time Updates**: Live data via WebSocket connections
 - **Visual Indicators**: Data source status (Real Data vs Demo Mode)
 
 ### Key Interface Elements
+
 - **Sidebar Navigation**: Switch between different views
 - **Status Cards**: Quick overview of system health
 - **Charts & Metrics**: Visual representation of your data
@@ -37,9 +39,10 @@ Once Kortex is running, you'll see:
 
 ### Navigation Structure
 
+```mermaid
 === "Dashboard"
     Main overview with aggregated metrics from all connected services
-    
+
     - GitHub repository statistics
     - Azure DevOps pipeline status
     - API rate limit monitoring
@@ -47,7 +50,7 @@ Once Kortex is running, you'll see:
 
 === "Servers"
     MCP (Model Context Protocol) server management
-    
+
     - Server health monitoring
     - Configuration management
     - Performance metrics
@@ -55,7 +58,7 @@ Once Kortex is running, you'll see:
 
 === "Analytics"
     Advanced analytics and trend analysis
-    
+
     - Cross-platform data aggregation
     - Historical trend visualization
     - Provider usage statistics
@@ -63,11 +66,12 @@ Once Kortex is running, you'll see:
 
 === "Helm"
     Kubernetes cluster and Helm release management
-    
+
     - Cluster health monitoring
     - Helm release status
     - Resource utilization
     - Deployment management
+```
 
 ### Status Indicators
 
@@ -121,12 +125,14 @@ For Azure DevOps integration:
 ## 🎪 Demo Mode vs Real Data
 
 ### Demo Mode (Default)
+
 - Uses mock API server on `localhost:3002`
 - Simulates realistic data patterns
 - Perfect for development and testing
 - No external API tokens required
 
 ### Real Data Mode
+
 - Connects to actual GitHub/Azure APIs
 - Requires valid authentication tokens
 - Shows your real project data
@@ -168,6 +174,7 @@ Add and manage MCP servers:
 ### Theme and Appearance
 
 Kortex supports:
+
 - **Dark/Light modes**: Automatic detection or manual toggle
 - **Responsive design**: Works on desktop, tablet, and mobile
 - **Custom branding**: Modify colors and logos in settings
@@ -175,6 +182,7 @@ Kortex supports:
 ### Dashboard Layout
 
 Customize your workspace:
+
 - **Drag & drop**: Rearrange dashboard cards
 - **Hide/show**: Toggle specific metrics
 - **Refresh rates**: Adjust update intervals
@@ -183,31 +191,34 @@ Customize your workspace:
 
 ### Common Issues
 
-!!! warning "Port Already in Use"
-    If you see port conflicts:
-    ```bash
-    # Check what's using port 3000
-    lsof -i :3000
-    
-    # Use different port
-    PORT=3001 npm run dev
-    ```
+- **API Connection Errors**: Check your tokens and network settings
+- **WebSocket Failures**: Ensure mock API server is running. If you see an error about WebSocket connection failing, make sure your mock API server is running:
+  <!-- !!! info "WebSocket Connection Failed" -->
+  
+  ```bash
+  npm run dev:mock
+  ```
 
-!!! info "WebSocket Connection Failed"
-    Ensure mock API server is running:
-    ```bash
-    npm run dev:mock
-    ```
+- **Data Not Updating**: Verify WebSocket connection in browser console. If you see errors, check your `.env.local` settings.
+  <!-- !!! tip "No Data Showing" -->
+  
+  ```bash
+  # Verify environment variables
+  cat .env.local
+  
+  # Test API endpoints
+  curl http://localhost:3002/api/github/repos
+  ```
 
-!!! tip "No Data Showing"
-    Check your environment configuration:
-    ```bash
-    # Verify environment variables
-    cat .env.local
-    
-    # Test API endpoints
-    curl http://localhost:3002/api/github/repos
-    ```
+- **Port Conflicts**: If port 3000 is in use, change it in `.env.local`. Remember to update any relevant configurations.
+
+  <!-- !!! info "Port Conflict Detected" -->
+  If you see an error about port 3000 being in use, you can change the port by modifying your `.env.local` file:
+
+  ```bash
+  lsof -i :3000 # Check what's using port 3000
+  PORT=3001 npm run dev # Use different port
+  ```
 
 ### Getting Help
 
