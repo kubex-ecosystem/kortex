@@ -1,11 +1,10 @@
-import React from 'react';
 import { Layout } from '../components/Layout/Layout';
-import { DashboardPage } from '../components/Pages/DashboardPage';
+import { DashboardPageComplete } from '../components/Pages/DashboardPageComplete';
 
 export default function Home() {
   return (
     <Layout>
-      <DashboardPage />
+      <DashboardPageComplete />
     </Layout>
   );
 }

@@ -1,15 +1,16 @@
-import React from 'react';
-import { useRouter } from 'next/router';
-import { 
-  X, 
-  LayoutDashboard, 
-  Activity, 
-  Cpu, 
-  Database, 
-  Settings, 
-  Plus,
-  BarChart3
+import {
+    Activity,
+    BarChart3,
+    Cpu,
+    Database,
+    LayoutDashboard,
+    Package,
+    Plus,
+    Settings,
+    X
 } from 'lucide-react';
+import { useRouter } from 'next/router';
+import React from 'react';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -27,6 +28,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
     { icon: <Activity size={20} />, label: 'Live Monitor', path: '/monitor' },
     { icon: <BarChart3 size={20} />, label: 'Analytics', path: '/analytics' },
+    { icon: <Package size={20} />, label: 'Helm Charts', path: '/helm' },
     { icon: <Cpu size={20} />, label: 'Servers', path: '/servers' },
     { icon: <Database size={20} />, label: 'API Config', path: '/api-config' },
     { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
@@ -56,8 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-4">
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-              LookAt<span className="text-blue-600">ni</span>
-            </h2>
+              Kube<span className="text-blue-600">X</span>            </h2>
             <button 
               title='Close Sidebar'
               onClick={onClose} 

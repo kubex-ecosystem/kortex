@@ -1,8 +1,10 @@
+import { AlertCircle, Bell, Menu, Moon, Sun, Wifi, WifiOff } from 'lucide-react';
 import React, { useState } from 'react';
-import { Menu, Sun, Moon, Bell, Search, User, Wifi, WifiOff, AlertCircle } from 'lucide-react';
 import { useApp } from '../../../src/context/AppContext';
-import { NotificationCenter } from '../UI/NotificationCenter';
 import { useWebSocket } from '../../hooks/useWebSocket';
+import { NotificationCenter } from '../UI/NotificationCenter';
+import { SearchBar } from '../UI/SearchBar';
+import { UserMenu } from '../UI/UserMenu';
 
 interface HeaderProps {
   isDark: boolean;
@@ -35,7 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
             <Menu size={20} className="text-gray-600 dark:text-gray-400" />
           </button>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            LookAt<span className="text-blue-600">ni</span>
+            Korte<span className="text-blue-600">X</span>
           </h1>
           <span className="hidden md:block text-sm text-gray-500 dark:text-gray-400">
             / {currentPage}
@@ -43,13 +45,9 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg px-3 py-2 w-64">
-            <Search size={16} className="text-gray-400 mr-2" />
-            <input 
-              type="text" 
-              placeholder="Search..." 
-              className="bg-transparent text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 outline-none flex-1"
-            />
+          {/* Search Bar */}
+          <div className="hidden sm:block">
+            <SearchBar />
           </div>
 
           {/* WebSocket Status Indicator */}
@@ -104,14 +102,8 @@ export const Header: React.FC<HeaderProps> = ({
             {isDark ? <Sun size={20} /> : <Moon size={20} />}
           </button>
           
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <User size={16} className="text-white" />
-            </div>
-            <span className="hidden sm:block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Admin
-            </span>
-          </div>
+          {/* User Menu */}
+          <UserMenu />
         </div>
       </div>
     </header>

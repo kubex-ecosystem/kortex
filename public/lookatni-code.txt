@@ -1,0 +1,165 @@
+# LookAtni Code - Gerado automaticamente
+# Data: 2025-07-21T05:34:17.849Z
+# Fonte: ./kortex-extension
+# Total de arquivos: 9
+
+/// CODE_OF_CONDUCT.md ///
+
+# Código de Conduta
+
+Todos os colaboradores devem manter um ambiente respeitoso, inclusivo e profissional. Não será tolerada discriminação de qualquer tipo. Para mais detalhes, consulte a política completa no site oficial do projeto.
+
+/// CONTRIBUTING.md ///
+
+# Como Contribuir
+
+1. Fork o repositório
+2. Crie sua branch (`git checkout -b minha-feature`)
+3. Commit suas mudanças (`git commit -am 'Minha feature'`)
+4. Push para a branch (`git push origin minha-feature`)
+5. Abra um Pull Request
+
+Revise os testes e siga os padrões de codificação definidos no repositório. Obrigado por contribuir!
+
+/// README.md ///
+
+# 🧠 Kortex: AI-Driven Cloud Orchestration Interface
+
+O Kortex é a camada de interface inteligente do ecossistema Kubex. Ele se comunica com MCPs locais/remotos, provê dashboards, interações com clusters Kubernetes e integrações com ferramentas DevOps modernas. 100% modular e com suporte a extensões.
+
+## Principais recursos
+- Painel de controle unificado
+- Integração com múltiplos MCPs
+- Conectores com Horizon, Kosmos, Synex
+- Suporte a webhooks e controle assíncrono
+
+## Objetivo
+Tornar a gestão de infra, devops e AI orquestration simples e acessível para qualquer perfil técnico.
+
+/// SECURITY.md ///
+
+# Política de Segurança
+
+Se você encontrar qualquer vulnerabilidade de segurança, por favor reporte imediatamente por e-mail (contato@rafa.dev) ou abra uma issue marcada como "security". Atualizações críticas terão prioridade máxima e serão auditadas cuidadosamente.
+
+/// background.js ///
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "ping_mcp") {
+    fetch("http://localhost:3002/health")
+      .then((res) => res.json())
+      .then((data) => sendResponse({ ok: true, data }))
+      .catch((err) => sendResponse({ ok: false, error: err.toString() }));
+    return true; // async response
+  }
+});
+
+/// lookatni_markers_canvas.txt ///
+/// CODE_OF_CONDUCT.md ///
+
+# Código de Conduta
+
+Todos os colaboradores devem manter um ambiente respeitoso, inclusivo e profissional. Não será tolerada discriminação de qualquer tipo. Para mais detalhes, consulte a política completa no site oficial do projeto.
+
+
+/// CONTRIBUTING.md ///
+
+# Como Contribuir
+
+1. Fork o repositório
+2. Crie sua branch (`git checkout -b minha-feature`)
+3. Commit suas mudanças (`git commit -am 'Minha feature'`)
+4. Push para a branch (`git push origin minha-feature`)
+5. Abra um Pull Request
+
+Revise os testes e siga os padrões de codificação definidos no repositório. Obrigado por contribuir!
+
+
+/// LICENSE ///
+
+MIT License
+
+Copyright (c) 2025 Rafael Mori
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction...
+
+
+/// README.md ///
+
+# 🧠 Kortex: AI-Driven Cloud Orchestration Interface
+
+O Kortex é a camada de interface inteligente do ecossistema Kubex. Ele se comunica com MCPs locais/remotos, provê dashboards, interações com clusters Kubernetes e integrações com ferramentas DevOps modernas. 100% modular e com suporte a extensões.
+
+## Principais recursos
+- Painel de controle unificado
+- Integração com múltiplos MCPs
+- Conectores com Horizon, Kosmos, Synex
+- Suporte a webhooks e controle assíncrono
+
+## Objetivo
+Tornar a gestão de infra, devops e AI orquestration simples e acessível para qualquer perfil técnico.
+
+
+/// SECURITY.md ///
+
+# Política de Segurança
+
+Se você encontrar qualquer vulnerabilidade de segurança, por favor reporte imediatamente por e-mail (contato@rafa.dev) ou abra uma issue marcada como "security". Atualizações críticas terão prioridade máxima e serão auditadas cuidadosamente.
+
+
+/// manifest.json ///
+{
+  "manifest_version": 3,
+  "name": "Kortex Local Connector",
+  "version": "0.1",
+  "description": "Bridge between Kortex SaaS and local MCP.",
+  "permissions": [
+    "scripting",
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost:3002/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
+
+/// popup.html ///
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kortex Connector</title>
+    <script defer src="popup.js"></script>
+  </head>
+  <body>
+    <h1>Kortex ↔ MCP</h1>
+    <button id="ping">Ping MCP</button>
+    <pre id="result"></pre>
+  </body>
+</html>
+
+/// popup.js ///
+document.getElementById("ping").addEventListener("click", () => {
+  chrome.runtime.sendMessage({ action: "ping_mcp" }, (response) => {
+    const pre = document.getElementById("result");
+    pre.textContent = response.ok
+      ? JSON.stringify(response.data, null, 2)
+      : `Error: ${response.error}`;
+  });
+});

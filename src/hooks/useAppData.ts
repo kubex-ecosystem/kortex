@@ -3,13 +3,13 @@
  * Hook centralizado para gerenciar todos os dados da aplicação com integração real
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { LogEntry, Task } from '../types';
-import { MCPServerType } from '../types/MCP/Server';
 import { APIProvider } from '../types/APITypes';
+import { MCPServerType } from '../types/MCP/Server';
+import { useAPIManager } from './useAPIManager';
 import { useMCPData } from './useMCPData';
 import { useMCPServers } from './useMCPServers';
-import { useAPIManager } from './useAPIManager';
 
 interface Notification {
   id: string;
@@ -75,6 +75,7 @@ interface UseAppDataReturn {
   removeLog: (id: string) => void;
   
   connect: () => Promise<void>;
+  testConnection: (server: MCPServerType) => Promise<boolean>;
   disconnect: () => void;
   refreshData: () => Promise<void>;
 }
@@ -87,7 +88,7 @@ export function useAppData(): UseAppDataReturn {
   
   // Initialize hooks
   const { stats: mcpStats, isLoading: isLoadingMCP, error: mcpError } = useMCPData();
-  const { servers, stats: serverStats, addServer, updateServer, removeServer, refreshServers } = useMCPServers();
+  const { servers, stats: serverStats, addServer, updateServer, removeServer, refreshServers, testConnection } = useMCPServers();
   const { providers, stats: providerStats, addProvider, updateProvider, removeProvider, refreshProviders } = useAPIManager();
 
   // Initialize client-side only
@@ -107,12 +108,12 @@ export function useAppData(): UseAppDataReturn {
     const newNotifications: Notification[] = [];
     
     // Check for offline servers
-    const offlineServers = servers.filter(s => s.status === 'Offline');
+    const offlineServers = servers.filter((s: MCPServerType) => s.status === 'Offline');
     if (offlineServers.length > 0) {
       newNotifications.push({
         id: `offline-servers-${Date.now()}`,
         title: 'Servidores Offline',
-        message: `${offlineServers.length} servidor(es) estão offline: ${offlineServers.map(s => s.name).join(', ')}`,
+        message: `${offlineServers.length} servidor(es) estão offline: ${offlineServers.map((s: MCPServerType) => s.name).join(', ')}`,
         type: 'warning',
         timestamp: new Date(),
         read: false,
@@ -141,8 +142,8 @@ export function useAppData(): UseAppDataReturn {
     }
     
     // Success notification if everything is connected
-    if (servers.length > 0 && servers.every(s => s.status === 'Online') && 
-        providers.length > 0 && providers.every(p => p.status === 'Connected')) {
+    if (servers.length > 0 && servers.every((s: MCPServerType) => s.status === 'Online') && 
+        providers.length > 0 && providers.every((p: APIProvider) => p.status === 'Connected')) {
       newNotifications.push({
         id: `all-connected-${Date.now()}`,
         title: 'Sistema Operacional',
@@ -291,6 +292,7 @@ export function useAppData(): UseAppDataReturn {
     
     connect,
     disconnect,
+    testConnection,
     refreshData
   };
 }

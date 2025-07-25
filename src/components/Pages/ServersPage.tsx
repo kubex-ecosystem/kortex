@@ -1,37 +1,85 @@
-import React, { useState } from 'react';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit, 
-  Trash2, 
-  RefreshCw, 
-  Server, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Activity,
   AlertCircle,
-  Eye,
+  CheckCircle,
+  Edit,
+  Filter,
   Loader2,
-  Activity
+  Plus,
+  RefreshCw,
+  Search,
+  Server,
+  Trash2,
+  XCircle
 } from 'lucide-react';
+
+import React, { useState } from 'react';
+import { useAppData } from '../../hooks/useAppData';
+import { useRealMCPData } from '../../hooks/useRealMCPData';
 import { MCPServerType } from '../../types/MCP/Server';
 import { ServerStatus } from '../../types/ServerTypes';
 import { ServerModal } from '../Servers/ServerModal';
-import { useMCPServers } from '../../hooks/useMCPServers';
 
 export const ServersPage: React.FC = () => {
+  // Get original data for backwards compatibility
   const { 
-    servers, 
-    isLoading, 
-    error,
-    stats,
-    addServer, 
-    updateServer, 
-    removeServer, 
-    refreshServers,
-    testConnection
-  } = useMCPServers();
+    logs,
+    isLoadingMCP,
+    addTask,
+    removeTask,
+    updateTask,
+  } = useAppData();
   
+  // Get real MCP data
+  const {
+    stats: mcpStats,
+    servers: realServers,
+    isLoading: isLoadingRealData,
+    error: realDataError,
+    isRealData,
+    lastUpdated,
+    refreshData,
+    addServer,
+    updateServer,
+    removeServer,
+    testConnection
+  } = useRealMCPData();
+  
+  const [error, setError] = useState<string | null>(realDataError);
+  const isLoading = isLoadingMCP || isLoadingRealData;
+
+  // Convert real server data to MCPServerType format for compatibility
+  const servers: MCPServerType[] = realServers.map(server => ({
+    id: server.id,
+    name: server.name,
+    hostname: server.hostname,
+    status: server.status,
+    lastUpdated: server.lastSeen || new Date(),
+    totalProcessed: server.totalRequests,
+    successRate: server.totalRequests > 0 ? ((server.totalRequests - server.errors) / server.totalRequests) * 100 : 0,
+    avgResponseTime: server.responseTime || 0,
+    // Mock required fields for compatibility
+    config: {} as any,
+    tasks: [],
+    logs: [],
+    notifications: [],
+    stats: {
+      totalRequests: server.totalRequests,
+      successfulRequests: server.totalRequests - server.errors,
+      failedRequests: server.errors,
+      avgResponseTime: server.responseTime || 0,
+      uptime: server.status === 'Online' ? 100 : 0,
+      connectedProviders: server.activeConnections
+    } as any
+  }));
+
+  const serverStats = {
+    total: mcpStats.totalServers,
+    online: mcpStats.onlineServers,
+    offline: mcpStats.offlineServers,
+    warning: mcpStats.warningServers
+  };
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<ServerStatus | 'all'>('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -47,7 +95,7 @@ export const ServersPage: React.FC = () => {
   });
 
   const handleRefresh = async () => {
-    await refreshServers();
+    await refreshData();
   };
 
   const handleTestConnection = async (server: MCPServerType) => {
@@ -169,16 +217,37 @@ export const ServersPage: React.FC = () => {
             <div className="mt-3 flex items-center space-x-6">
               <div className="flex items-center space-x-1 text-sm">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-gray-600 dark:text-gray-400">Online: {stats.online}</span>
+                <span className="text-gray-600 dark:text-gray-400">Online: {serverStats.online}</span>
               </div>
               <div className="flex items-center space-x-1 text-sm">
                 <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                <span className="text-gray-600 dark:text-gray-400">Offline: {stats.offline}</span>
+                <span className="text-gray-600 dark:text-gray-400">Offline: {serverStats.offline}</span>
               </div>
               <div className="flex items-center space-x-1 text-sm">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                <span className="text-gray-600 dark:text-gray-400">Warning: {stats.warning}</span>
+                <span className="text-gray-600 dark:text-gray-400">Warning: {serverStats.warning}</span>
               </div>
+            </div>
+            
+            {/* Data Source Indicator */}
+            <div className="mt-2 flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <div className={`w-2 h-2 rounded-full ${isRealData ? 'bg-green-500' : 'bg-orange-500'}`}></div>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {isRealData ? '🌐 Real Data' : '🔧 Demo Data'}
+                </span>
+              </div>
+              <span className="text-xs text-gray-400">
+                Updated: {lastUpdated.toLocaleTimeString()}
+              </span>
+              <button
+                onClick={refreshData}
+                disabled={isLoading}
+                className="flex items-center space-x-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
+                <span>Refresh</span>
+              </button>
             </div>
           </div>
           <button
