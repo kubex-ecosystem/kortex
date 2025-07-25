@@ -27,14 +27,14 @@ jobs:
       - name: Run Tests
         id: test
         run: |
-          if [ basename "$(pwd)" != "docs" ]; then
+          if [[ "$(basename "$(pwd)")" != "docs" ]]; then
             cd docs
           fi
           source .venv/bin/activate
           uv run mkdocs build -q
       - name: Build Documentation
         run: |
-          if [ basename "$(pwd)" != "docs" ]; then
+          if [[ "$(basename "$(pwd)")" != "docs" ]]; then
             cd docs
           fi
           source .venv/bin/activate
