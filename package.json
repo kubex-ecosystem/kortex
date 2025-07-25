@@ -78,7 +78,7 @@
     "start": "next start",
     "lint": "next lint --ignore-path .gitignore",
     "test": "next test",
-    "dep:map:json":"npx dependency-cruiser --output-type json --include-only -'^(src|tests)' --exclude '^node_modules' src > dependency-map.json",
+    "dep:map:json": "npx dependency-cruiser --output-type json --include-only -'^(src|tests)' --exclude '^node_modules' src > dependency-map.json",
     "map:components": "node scripts/map-components.js",
     "map:components:watch": "nodemon --watch src/components --exec 'node scripts/map-components.js'",
     "dep:graph": "depcruise --exclude '^node_modules' --output-type dot src | dot -T svg > dependencygraph.svg",
@@ -135,6 +135,7 @@
     "react-toastify": "^9.1.2",
     "react-use": "^17.4.0",
     "react-window": "^1.8.6",
+    "ws": "^8.18.3",
     "zustand": "^4.0.0"
   },
   "devDependencies": {

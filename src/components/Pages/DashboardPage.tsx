@@ -4,6 +4,8 @@ import { useResilientApp } from '../../context/ResilientAppContext';
 import { useDefensiveMCPData } from '../../hooks/useDefensiveMCPData';
 import { Task } from '../../types';
 import { TaskCard } from '../Dashboard/TaskCard';
+import { LiveActivityFeed } from '../RealTime/LiveActivityFeed';
+import { RealTimeStatus } from '../Status/RealTimeStatus';
 
 export const DashboardPage = (): JSX.Element => {
   const { tasks } = useResilientApp();
@@ -58,8 +60,12 @@ export const DashboardPage = (): JSX.Element => {
           Dashboard
         </h1>
         
-        {/* Connection Status */}
-        <div className="flex items-center gap-3">
+        {/* Real-Time Connection Status */}
+        <div className="flex items-center gap-4">
+          {/* WebSocket Real-Time Status */}
+          <RealTimeStatus compact />
+          
+          {/* MCP Server Status (Legacy) */}
           <div className={`px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2 ${
             isConnected 
               ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200'
@@ -115,6 +121,22 @@ export const DashboardPage = (): JSX.Element => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Real-Time Activity Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Connection Status */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            � Connection Status
+          </h2>
+          <RealTimeStatus showDetails />
+        </div>
+
+        {/* Live Activity Feed */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <LiveActivityFeed maxEvents={8} />
+        </div>
       </div>
 
       {/* Recent Tasks */}

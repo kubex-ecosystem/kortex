@@ -400,3 +400,5 @@ export function useMCPServers(): UseMCPServersReturn {
     testConnection
   };
 }
+
+export default useMCPServers;
