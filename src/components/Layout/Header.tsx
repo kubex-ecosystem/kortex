@@ -1,4 +1,4 @@
-import { AlertCircle, Bell, Menu, Moon, Sun, Wifi, WifiOff } from 'lucide-react';
+import { AlertCircle, Bell, BookOpen, Menu, Moon, Sun, Wifi, WifiOff } from 'lucide-react';
 import React, { useState } from 'react';
 import { useApp } from '../../../src/context/AppContext';
 import { useWebSocket } from '../../hooks/useWebSocket';
@@ -77,6 +77,17 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
             )}
           </div>
+          
+          {/* Documentation Link */}
+          <a
+            href="https://kortex.rafa-mori.dev/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
+            title="Open Documentation"
+          >
+            <BookOpen size={20} className="text-gray-600 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
+          </a>
           
           <div className="relative">
             <button 

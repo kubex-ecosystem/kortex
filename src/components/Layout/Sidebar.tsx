@@ -1,8 +1,10 @@
 import {
     Activity,
     BarChart3,
+    BookOpen,
     Cpu,
     Database,
+    ExternalLink,
     LayoutDashboard,
     Package,
     Plus,
@@ -32,6 +34,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { icon: <Cpu size={20} />, label: 'Servers', path: '/servers' },
     { icon: <Database size={20} />, label: 'API Config', path: '/api-config' },
     { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
+  ];
+
+  const externalLinks = [
+    { 
+      icon: <BookOpen size={20} />, 
+      label: 'Documentation', 
+      url: 'https://kortex.rafa-mori.dev/',
+      description: 'Complete user guide and API reference'
+    },
   ];
 
   const handleNavigation = (path: string) => {
@@ -86,6 +97,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             ))}
           </nav>
+          
+          {/* External Links Section */}
+          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-3 mb-3">
+              Resources
+            </h3>
+            <div className="space-y-1">
+              {externalLinks.map((link) => (
+                <a
+                  key={link.url}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-left transform hover:scale-105 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                >
+                  {link.icon}
+                  <span className="font-medium flex-1">{link.label}</span>
+                  <ExternalLink size={14} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
+                </a>
+              ))}
+            </div>
+          </div>
           
           <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
             <button className="w-full flex items-center gap-3 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all duration-200 transform hover:scale-105">

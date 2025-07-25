@@ -2,7 +2,9 @@ import {
   Activity,
   AlertCircle,
   BarChart3,
+  BookOpen,
   Database,
+  ExternalLink,
   GitBranch,
   LayoutDashboard,
   Monitor,
@@ -281,26 +283,51 @@ export const DashboardPageComplete: React.FC = () => {
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-          <h4 className="font-semibold text-gray-900 dark:text-white mb-3">Next Steps</h4>
-          <div className="space-y-2 text-sm">
-            <button 
-              onClick={() => router.push('/api-config')}
-              className="w-full text-left p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-300"
-            >
-              → Add DeepSeek API key
-            </button>
-            <button 
-              onClick={() => router.push('/helm')}
-              className="w-full text-left p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-300"
-            >
-              → Deploy test application
-            </button>
-            <button 
-              onClick={() => router.push('/settings')}
-              className="w-full text-left p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-300"
-            >
-              → Configure notifications
-            </button>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="font-semibold text-gray-900 dark:text-white">Getting Started</h4>
+            <BookOpen className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          </div>
+          <div className="space-y-3">
+            <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-3">
+              <p className="text-sm text-blue-800 dark:text-blue-300 mb-2">
+                New to Kortex? Get started with our comprehensive documentation.
+              </p>
+              <a
+                href="https://kortex.rafa-mori.dev/getting-started/quick-start/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
+              >
+                Quick Start Guide
+                <ExternalLink className="w-3 h-3 ml-1" />
+              </a>
+            </div>
+            <div className="text-sm space-y-1">
+              <a 
+                href="https://kortex.rafa-mori.dev/guide/configuration/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                → Configuration Guide
+              </a>
+              <a 
+                href="https://kortex.rafa-mori.dev/features/extraction/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                → Feature Overview
+              </a>
+              <a 
+                href="https://kortex.rafa-mori.dev/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                → Full Documentation
+              </a>
+            </div>
           </div>
         </div>
       </div>
