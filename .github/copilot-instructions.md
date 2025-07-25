@@ -135,7 +135,7 @@ const foo = "bar";
 
 Use **bold** for key terms, *italics* for filenames or soft emphasis. Don’t overformat.
 
-Links should be descriptive: `[Installation Guide](#installation)` — not `[click here]`. Use reference links for footnotes.
+Links should be descriptive: `[Installation Guide]` — not `[click here]`. Use reference links for footnotes.
 
 Images must include alt text: `![Architecture diagram](./diagram.png)`. Avoid decorative images without context.
 
