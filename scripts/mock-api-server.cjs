@@ -165,7 +165,7 @@ const server = http.createServer((req, res) => {
     if (path === '/api/helm/releases') {
       console.log('📡 GET /api/helm/releases');
       
-      const namespace = urlParsed.searchParams.get('namespace');
+      const namespace = parsedUrl.query.namespace;
       
       // Generate realistic Helm releases
       const generateReleases = (targetNamespace) => {
@@ -297,7 +297,7 @@ const server = http.createServer((req, res) => {
       console.log('📡 DELETE /api/helm/uninstall');
       
       const releaseName = path.split('/').pop();
-      const namespace = urlParsed.searchParams.get('namespace') || 'default';
+      const namespace = parsedUrl.query.namespace || 'default';
       
       console.log('Uninstall request:', { release: releaseName, namespace });
       
