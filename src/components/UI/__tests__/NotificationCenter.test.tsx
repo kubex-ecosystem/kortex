@@ -35,7 +35,9 @@ describe('NotificationCenter Component', () => {
 
   it('does not render when isOpen is false', () => {
     render(<NotificationCenter isOpen={false} onClose={mockOnClose} />);
-    expect(screen.queryByText('Notifications')).not.toBeInTheDocument();
+    // Verifica se o modal está escondido através da classe CSS
+    const modal = document.querySelector('.fixed');
+    expect(modal).toHaveClass('hidden');
   });
 
   it('displays close button', () => {
