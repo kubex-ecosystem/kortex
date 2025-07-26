@@ -46,7 +46,7 @@ export const MCPConnectionSettings: React.FC<MCPConnectionSettingsProps> = ({ co
             type="text"
             value={localConfig.baseURL}
             onChange={(e) => handleChange('baseURL', e.target.value)}
-            placeholder="localhost:8080"
+            placeholder="localhost:3003"
             className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
           />
         </div>
@@ -59,7 +59,7 @@ export const MCPConnectionSettings: React.FC<MCPConnectionSettingsProps> = ({ co
             type="text"
             value={localConfig.wsUrl}
             onChange={(e) => handleChange('wsUrl', e.target.value)}
-            placeholder="ws://localhost:8080"
+            placeholder="ws://localhost:3003"
             className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
           />
         </div>

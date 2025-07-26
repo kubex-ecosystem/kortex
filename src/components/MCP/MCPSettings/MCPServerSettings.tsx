@@ -82,7 +82,7 @@ export const MCPServerSettings: React.FC<MCPServerSettingsProps> = ({
                 type="text"
                 value={newServer.hostname}
                 onChange={(e) => setNewServer({ ...newServer, hostname: e.target.value })}
-                placeholder="localhost:8080"
+                placeholder="localhost:3003"
                 className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
               />
             </div>

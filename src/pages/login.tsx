@@ -1,9 +1,13 @@
 import { ArrowRight, Cpu, Eye, EyeOff, Lock, Mail, Shield, Zap } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { useApp } from '../context/AppContext';
 import { useTheme } from '../hooks/useTheme';
 
 const LoginPage: React.FC = () => {
+  // Use the custom hook to get the theme and context values
+  const { notifications } = useApp();
+  const unreadCount = notifications?.filter(n => !n.read).length || 0;
   const { isDark } = useTheme();
   const router = useRouter();
   const [formData, setFormData] = useState({

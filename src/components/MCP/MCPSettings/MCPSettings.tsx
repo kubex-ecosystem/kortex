@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { MCPConnectionConfigType, MCPSettingsType } from "../../../types";
-import { randomUUID } from "crypto";
 
 interface MCPSettingsProps {
   onSave: (config: MCPSettingsType) => void;
@@ -14,8 +13,8 @@ export const MCPSettings: React.FC<MCPSettingsProps> = ({ onSave, initialConfig 
     connectionConfig: {
       id: Math.random().toString(36).substring(2),
       type: "HTTP",
-      baseURL: "localhost:8080",
-      wsUrl: "localhost:8080",
+      baseURL: "localhost:3003",
+      wsUrl: "localhost:3003",
       apiKey: "your-api-key",
       enableWebSocket: false,
       autoReconnect: true,

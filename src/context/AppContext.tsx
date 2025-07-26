@@ -1,9 +1,10 @@
 // src/context/AppContext.tsx
-import { createContext, ReactNode, useContext, useState } from 'react';
-import { LogEntry, Task } from '../types';
+import { Context, createContext, ReactNode, useContext, useState } from 'react';
+import { LogEntry, Notification, Task } from '../types';
 import { MCPServerType } from '../types/MCP/Server';
 
-interface Notification {
+export interface AppNotification extends Partial<Notification> {
+  id: string;
   type: 'info' | 'success' | 'error';
   title: string;
   message: string;
@@ -11,183 +12,67 @@ interface Notification {
 }
 
 export interface AppContextType {
-  servers: MCPServerType[];
-  tasks: Task[];
+  connectionStatus?: 'connected' | 'disconnected';
+  servers?: MCPServerType[];
+  tasks?: Task[];
   logs?: LogEntry[];
-  notifications?: Notification[];
-  isConnected?: boolean;
-  isLoading?: boolean;
+  notifications?: AppNotification[];
+  isConnected: boolean;
+  isLoading: boolean;
   error?: string | null;
   lastUpdate?: Date | null;
-  connect: () => Promise<void>;
-  disconnect: () => void;
-  refreshData: () => Promise<void>;
-  addTask: (task: Task) => void;
-  addServer: (server: MCPServerType) => void;
-  addLog: (log: LogEntry) => void;
-  removeTask: (taskId: string) => void;
-  removeServer: (serverId: string) => void;
-  removeLog: (logId: string) => void;
-  markNotificationRead: (id: string) => void;
-  removeNotification: (id: string) => void;
-  clearNotifications: () => void;
-  updateServer: (server: MCPServerType) => void;
-  updateTask: (task: Task) => void;
-  updateLog: (log: LogEntry) => void;
-  updateNotification: (notification: Notification) => void;
-  addNotification: (n: Notification) => void;
+  isDark?: boolean;
+  setIsDark?: (isDark: boolean) => void;
+  toggleTheme?: () => void;
+  connect?: () => Promise<void>;
+  disconnect?: () => void;
+  refreshData?: () => Promise<void>;
+  addTask?: (task: Task) => void;
+  addServer?: (server: MCPServerType) => void;
+  addLog?: (log: LogEntry) => void;
+  removeTask?: (taskId: string) => void;
+  removeServer?: (serverId: string) => void;
+  removeLog?: (logId: string) => void;
+  markNotificationRead?: (id: string) => void;
+  removeNotification?: (id: string) => void;
+  clearNotifications?: () => void;
+  updateServer?: (server: MCPServerType) => void;
+  updateTask?: (task: Task) => void;
+  updateLog?: (log: LogEntry) => void;
+  updateNotification?: (notification: AppNotification) => void;
+  addNotification?: (n: AppNotification) => void;
 }
 
-const AppContext = createContext<AppContextType | unknown | undefined>({});
+const AppContext: Context<AppContextType | undefined> = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  // MOCK data só pra dev, substitui por fetchs reais depois
-  const [servers] = useState<MCPServerType[]>([
-    { 
-      id: '1', 
-      name: 'MCP-01', 
-      hostname: 'mcp-01.local',
-      status: 'Online',
-      config: {
-        place: 'local',
-        connectionType: 'HTTP',
-        connectionConfig: {
-          id: '1',
-          type: 'HTTP',
-          baseURL: 'http://localhost:3000',
-          wsUrl: 'ws://localhost:3000',
-          apiKey: 'test-key',
-          enableWebSocket: true,
-          autoReconnect: true,
-          retryOnFailure: true,
-          retryBackoff: true
-        },
-        apiProvider: {
-          id: '1',
-          name: 'OpenAI',
-          provider: 'OpenAI',
-          enabled: true,
-          activeModel: null
-        }
-      },
-      lastUpdated: new Date(),
-      tasks: [],
-      logs: [],
-      notifications: [],
-      stats: {
-        type: 'servers',
-        totalServers: 3,
-        totalTasks: 15,
-        completedTasks: 12,
-        failedTasks: 1,
-        avgResponseTime: 1.8
-      },
-      totalProcessed: 100,
-      successRate: 95,
-      avgResponseTime: 1.8
-    },
-    { 
-      id: '2', 
-      name: 'MCP-02', 
-      hostname: 'mcp-02.local',
-      status: 'Offline',
-      config: {
-        place: 'local',
-        connectionType: 'HTTP',
-        connectionConfig: {
-          id: '2',
-          type: 'HTTP',
-          baseURL: 'http://localhost:3001',
-          wsUrl: 'ws://localhost:3001',
-          apiKey: 'test-key-2',
-          enableWebSocket: true,
-          autoReconnect: true,
-          retryOnFailure: true,
-          retryBackoff: true
-        },
-        apiProvider: {
-          id: '2',
-          name: 'Google',
-          provider: 'Google',
-          enabled: true,
-          activeModel: null
-        }
-      },
-      lastUpdated: new Date(),
-      tasks: [],
-      logs: [],
-      notifications: [],
-      stats: {
-        type: 'servers',
-        totalServers: 3,
-        totalTasks: 8,
-        completedTasks: 7,
-        failedTasks: 1,
-        avgResponseTime: 2.1
-      },
-      totalProcessed: 50,
-      successRate: 85,
-      avgResponseTime: 2.1
-    },
-    { 
-      id: '3', 
-      name: 'MCP-03', 
-      hostname: 'mcp-03.local',
-      status: 'Warning',
-      config: {
-        place: 'remote',
-        connectionType: 'HTTPS',
-        connectionConfig: {
-          id: '3',
-          type: 'HTTPS',
-          baseURL: 'https://mcp-03.example.com',
-          wsUrl: 'wss://mcp-03.example.com',
-          apiKey: 'test-key-3',
-          enableWebSocket: true,
-          autoReconnect: true,
-          retryOnFailure: true,
-          retryBackoff: true
-        },
-        apiProvider: {
-          id: '3',
-          name: 'Azure',
-          provider: 'Azure',
-          enabled: true,
-          activeModel: null
-        }
-      },
-      lastUpdated: new Date(),
-      tasks: [],
-      logs: [],
-      notifications: [],
-      stats: {
-        type: 'servers',
-        totalServers: 3,
-        totalTasks: 5,
-        completedTasks: 4,
-        failedTasks: 1,
-        avgResponseTime: 2.9
-      },
-      totalProcessed: 30,
-      successRate: 80,
-      avgResponseTime: 2.9
-    }
-  ]);
+  const [servers, setServers] = useState<MCPServerType[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [isDark, setIsDark] = useState<boolean>(false);
+  const toggleTheme = () => {
+    if (!document) 
+      return;
 
+    setIsDark(prev => !prev);
+    document.documentElement.classList.toggle('dark', !isDark);
+    document.hasStorageAccess().then(granted => {
+      if (granted) {
+        localStorage.setItem('isDark', JSON.stringify(!isDark));
+      }
+    });
+  };
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected'>('disconnected');
-  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const mockRemoveNotification = (id: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
 
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: '001', status: 'Running', model: { id: '001', name: 'GPT-4', version: '1.0', maxTokens: 4096, description: 'A powerful model', costPerRequest: 0.01, monthlyLimit: 10000, usage: 5000, requests: 100 } },
-    { id: '002', status: 'Completed', model: { id: '002', name: 'Claude', version: '1.0', maxTokens: 1024, description: 'A powerful model', costPerRequest: 0.01, monthlyLimit: 10000, usage: 5000, requests: 100 } },
-    { id: '003', status: 'Failed', model: { id: '003', name: 'Gemini', version: '1.0', maxTokens: 1024, description: 'A powerful model', costPerRequest: 0.01, monthlyLimit: 10000, usage: 5000, requests: 100 } }
-  ]);
-
-  const addNotification = (notification: Notification) => {
+  const addNotification = (notification: AppNotification) => {
     console.log('[📣 Notification]', notification);
   };
 
@@ -239,7 +124,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     console.log('[🧹 Clear Notifications]');
   };
 
-  const updateNotification = (notification: Notification) => {
+  const updateNotification = (notification: AppNotification) => {
     console.log('[✏️ Update Notification]', notification);
   };
 
@@ -255,42 +140,69 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     console.log('[🔄 Refresh Data]');
   };
 
+  const appContextValue: Context<AppContextType | undefined> = AppContext || createContext({
+    servers: servers,
+    tasks: tasks,
+    isConnected: isConnected,
+    isLoading: isLoading,
+    error: error,
+    logs: logs,
+    notifications: notifications,
+    connectionStatus: connectionStatus,
+    lastUpdate: lastUpdate,
+    isDark: isDark,
+    setIsDark: setIsDark,
+    toggleTheme: toggleTheme,
+    addTask: addTask,
+    addNotification: addNotification,
+    addServer: addServer,
+    updateServer: updateServer,
+    removeServer: removeServer,
+    removeTask: removeTask,
+    updateTask: updateTask,
+    addLog: addLog,
+    removeLog: removeLog,
+    updateLog: updateLog,
+    markNotificationRead: markNotificationRead,
+    removeNotification: removeNotification,
+    clearNotifications: clearNotifications,
+    updateNotification: updateNotification,
+    connect: connect,
+    disconnect: disconnect,
+    refreshData: refreshData
+  } as AppContextType) as Context<AppContextType | undefined>;
+
   return (
     <AppContext.Provider value={{
-      isConnected, 
-      isLoading, 
-      error,
-      servers, 
-      tasks, 
-      addNotification,
-      addServer,
-      updateServer,
-      removeServer,
-      addTask,
-      removeTask,
-      updateTask,
-      addLog,
-      removeLog,
-      updateLog,
-      markNotificationRead,
-      removeNotification,
-      clearNotifications,
-      updateNotification,
-      connect,
-      disconnect,
-      refreshData
-    }}>
+        ...appContextValue,
+        servers,
+        tasks,
+        isConnected,
+        isLoading,
+      }}>
       {children}
     </AppContext.Provider>
   );
 };
 
-export const useApp = (): AppContextType => {
-  const ctx: AppContextType | unknown = useContext(AppContext);
+export const useApp = () => {
+  // Use the context to get the app state
+  if (!useContext) {
+    throw new Error('React.useContext is not available. Ensure you are using React 16.8 or later.');
+  }
+  const ctx = useContext(AppContext);
   if (!ctx) {
     throw new Error('useApp must be used within AppProvider');
   }
-  return ctx as AppContextType;
+  return ctx;
 };
 
-export default { AppProvider, useApp, AppContext };
+// type AppContextProps = AppContextType & {
+//   isDark?: boolean;
+//   setIsDark?: (isDark: boolean) => void;
+//   toggleTheme?: () => void;
+// };
+
+export default { AppProvider, useApp, AppContext, createMockAppContext: (overrides: Partial<AppContextType> = {}) => ({
+  ...overrides,
+}) };

@@ -80,7 +80,7 @@
     "build": "PORT=3000 next build",
     "dist": "rm -rf dist && next build && mkdir -p dist && cp -r .next dist/.next && cp -r public dist/public && cp package.json dist/package.json && cp README.md dist/README.md && cp LICENSE dist/LICENSE",
     "export": "PORT=3000 next export",
-    "start": "PORT=3000 next start", 
+    "start": "PORT=3000 next start",
     "lint": "next lint --ignore-path .gitignore",
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
@@ -99,25 +99,7 @@
     "clean": "PORT=3000 next clean",
     "clean:environment": "PORT=3000 rm -rf ./node_modules ./yarn.lock ./package-lock.json ./.next ./out ./coverage || true",
     "build:old": "PORT=3000 react-scripts build",
-    "start:old": "PORT=3000 react-scripts start",
-    "test:old": "PORT=3003 jest --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}' --watchAll=false --env=jsdom",
-    "test:old-coverage": "PORT=3003 jest --coverage --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-watch": "PORT=3003 jest --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}' --watch",
-    "test:old-coverage-watch": "PORT=3003 jest --coverage --watch --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-e2e": "PORT=3003 jest --env=jsdom --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-e2e-watch": "PORT=3003 jest --env=jsdom --watch --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-e2e": "PORT=3003 jest --env=jsdom --coverage --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-html": "PORT=3003 jest --coverage --coverageReporters=html --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-json": "PORT=3003 jest --coverage --coverageReporters=json --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-text": "PORT=3003 jest --coverage --coverageReporters=text --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-clover": "PORT=3003 jest --coverage --coverageReporters=clover --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-lcov": "PORT=3003 jest --coverage --coverageReporters=lcov --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-summary": "PORT=3003 jest --coverage --coverageReporters=summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-text-summary": "PORT=3003 jest --coverage --coverageReporters=text-summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-json-summary": "PORT=3003 jest --coverage --coverageReporters=json-summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-verbose": "PORT=3003 jest --coverage --coverageReporters=verbose --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-lcovonly": "PORT=3003 jest --coverage --coverageReporters=lcovonly --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-cobertura": "PORT=3003 jest --coverage --coverageReporters=cobertura --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'"
+    "start:old": "PORT=3000 react-scripts start"
   },
   "overrides": {
     "node-fetch": "2.6.7"
@@ -134,6 +116,10 @@
     "material-icons-react": "^1.0.4",
     "next": "^15.0.0",
     "next-i18next": "^15.4.2",
+    "ws": "^8.18.3",
+    "zustand": "^4.0.0"
+  },
+  "devDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.1",
@@ -144,10 +130,6 @@
     "react-toastify": "^9.1.2",
     "react-use": "^17.4.0",
     "react-window": "^1.8.6",
-    "ws": "^8.18.3",
-    "zustand": "^4.0.0"
-  },
-  "devDependencies": {
     "@babel/plugin-syntax-flow": "^7.27.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -171,7 +153,8 @@
     "react-aria-components": "^1.10.1",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "winston": "^3.17.0"
   },
   "husky": {
     "hooks": {

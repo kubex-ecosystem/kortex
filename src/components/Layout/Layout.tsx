@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
+import { useApp } from '../../context/AppContext';
 import { useTheme } from '../../hooks/useTheme';
 import { DocumentationBanner } from '../UI/DocumentationBanner';
 import { Header } from './Header';
@@ -10,6 +11,8 @@ interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  // Use the custom hook to get the theme and context values
+  const contextValue = useApp();
   const { isDark, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
@@ -26,6 +29,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
     return titles[router.pathname] || 'Dashboard';
   };
+  const { notifications } = contextValue;
+  const unreadCount = notifications?.filter(n => !n.read).length || 0;
 
   return (
     <div className={isDark ? 'dark' : ''}>

@@ -13,9 +13,9 @@ interface HeaderProps {
   currentPage: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ 
-  isDark, 
-  onToggle, 
+export const Header: React.FC<HeaderProps> = ({
+  isDark,
+  onToggle,
   onMenuClick, 
   currentPage 
 }) => {
@@ -25,13 +25,17 @@ export const Header: React.FC<HeaderProps> = ({
   const unreadCount = notifications?.filter(n => !n.read).length;
   const hasActiveAlerts = alerts.length > 0;
 
+  const handleMenuClick = () => {
+    onMenuClick();
+  };
+
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3 sticky top-0 z-30">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button 
             title='Menu'
-            onClick={onMenuClick} 
+            onClick={handleMenuClick} 
             className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <Menu size={20} className="text-gray-600 dark:text-gray-400" />

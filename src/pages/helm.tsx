@@ -1,6 +1,7 @@
 import { Activity, AlertCircle, CheckCircle, Clock, Package, Play, Server, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Layout } from '../components/Layout/Layout';
+import { useApp } from '../context/AppContext';
 import {
   HelmContextResponse,
   HelmDeployRequest,
@@ -11,6 +12,8 @@ import {
 } from '../types';
 
 const HelmPage: React.FC = () => {
+  const { isDark } = useApp();
+  const themeClass = isDark ? 'dark-theme' : 'light-theme';
   const [releases, setReleases] = useState<HelmRelease[]>([]);
   const [systemContext, setSystemContext] = useState<HelmSystemContext | null>(null);
   const [loading, setLoading] = useState(false);

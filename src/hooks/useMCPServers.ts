@@ -59,7 +59,7 @@ export function useMCPServers(): UseMCPServersReturn {
       console.log('🔄 Loading servers using resilient service...');
       
       // Try to get servers from resilient service
-      const response = await resilientMCPService.safeRequest('/servers', { method: 'GET' });
+      const response = await resilientMCPService.safeRequest('/api/servers', { method: 'GET' });
       
       if (response.success && response.data) {
         console.log('✅ Got servers from API:', response.data);

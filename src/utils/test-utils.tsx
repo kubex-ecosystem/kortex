@@ -96,20 +96,36 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
 
 export function renderWithProviders(
   ui: ReactElement,
-  options: CustomRenderOptions = {}
+  options: CustomRenderOptions = {
+    contextValue: useApp(),
+  },
 ) {
+  // Destructure contextValue and other render options
   const { contextValue, ...renderOptions } = options
+
+  // Create a mock context value with defaults if not provided
+  const defaultContextValue = contextValue || { ...useApp() };
   
-  const mockContextValue = createMockAppContext(contextValue)
+  // Create a mock context value with the provided overrides
+  // or the default context value
+  const createMockAppContext = (overrides: Partial<AppContextType> = {}) => ({
+    ...defaultContextValue,
+    ...overrides,
+  });
 
-  function Wrapper({ children }: { children: React.ReactNode }) {
-    return (
-      <AppProvider {...mockContextValue}>
-        {children}
-      </AppProvider>
-    )
-  }
+  // Create a mock context value
+  const mockContextValue = createMockAppContext(contextValue);
+  
+  // Create a wrapper component that provides the context
+  // and renders the UI
+  const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+    <AppProvider {...mockContextValue}>
+      {children}
+    </AppProvider>
+  );
 
+  // Render the UI with the custom wrapper
+  // and any additional render options
   return render(ui, { wrapper: Wrapper, ...renderOptions })
 }
 

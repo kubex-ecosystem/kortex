@@ -1,5 +1,6 @@
 import { Activity, Database, HelpCircle, Server, Settings, Sliders, Zap } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useApp } from '../../context/AppContext';
 import { useMCPServers } from '../../hooks/useMCPServers';
 import { MCPServerConfig, MCPSettingsType } from '../../types';
 import DynamicConfigPanel from '../MCP/DynamicConfigPanel';
@@ -8,6 +9,10 @@ import { MCPSettings } from '../MCP/MCPSettings/MCPSettings';
 import RealTimeDashboard from '../MCP/RealTimeDashboard';
 
 export function SettingsPage() {
+  const { isDark, toggleTheme } = useApp();
+  // Determine theme class based on dark mode
+  const themeClass = isDark ? 'bg-white text-gray-900' : 'bg-gray-900 text-white';
+  const [showHelp, setShowHelp] = useState(false);
   const [activeTab, setActiveTab] = useState('dynamic');
   const [selectedServerId, setSelectedServerId] = useState<string>('statusrafa-mcp');
   const { servers } = useMCPServers();
@@ -22,6 +27,21 @@ export function SettingsPage() {
     // Aqui você pode adicionar lógica adicional como notificações
   };
 
+  // Load initial server configuration or other data if needed
+  
+  useEffect(() => {
+    if (servers.length > 0) {
+      setSelectedServerId(servers[0].id);
+    }
+  }, [servers]);
+
+  useEffect(() => {
+    // Load initial server configuration or other data if needed
+    if (servers.length > 0) {
+      setSelectedServerId(servers[0].id);
+    }
+  }, [servers]);
+
   const tabs = [
     { id: 'dynamic', label: 'Dynamic Configuration', icon: Zap },
     { id: 'realtime', label: 'Real-Time Dashboard', icon: Activity },
@@ -33,14 +53,14 @@ export function SettingsPage() {
   ];
 
   return (
-    <div className="p-6">
+    <div className={`p-6 ${themeClass}`}>
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-2">Settings</h1>
         <p className="text-gray-600">Configure your MCP servers, rate limits, and system preferences</p>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 mb-6 bg-gray-100 p-1 rounded-lg">
+      <div className={`flex space-x-1 mb-6 p-1 rounded-lg ${themeClass}}`}>
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -61,7 +81,7 @@ export function SettingsPage() {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-white border border-gray-200 rounded-lg">
+      <div className={`border border-gray-200 rounded-lg ${themeClass}`}>
         {activeTab === 'dynamic' && (
           <div className="p-6">
             <div className="mb-6">

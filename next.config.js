@@ -3,7 +3,6 @@
 export default {
   trailingSlash: true,
   reactStrictMode: true,
-  useFileSystemPublicRoutes: false,
   cacheMaxMemorySize: 512,
   compress: true,
   cleanDistDir: true,

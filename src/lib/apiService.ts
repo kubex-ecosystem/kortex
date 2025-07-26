@@ -13,9 +13,9 @@
  */
 
 import { APIProvider } from '../types/APITypes';
-import { MCPStatus, MCPServerResponse } from './mcpService';
 import { authService } from './authService';
 import { cacheService } from './cacheService';
+import { MCPStatus } from './mcpService';
 
 // ============================================================================
 // INTERFACES BASE
@@ -403,7 +403,7 @@ export class APIServiceFactory {
     switch (provider.provider) {
       case 'StatusRafa MCP':
         service = new MCPServerService({
-          baseURL: provider.mcpEndpoint || 'http://127.0.0.1:3002',
+          baseURL: provider.mcpEndpoint || 'http://127.0.0.1:3001',
           timeout: 10000,
           cache: true
         }, provider.id);
