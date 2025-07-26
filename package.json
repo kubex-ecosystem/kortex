@@ -78,6 +78,7 @@
     "dev": "PORT=3000 next dev",
     "dev:mock": "node scripts/mock-api-server.cjs",
     "build": "PORT=3000 next build",
+    "dist": "rm -rf dist && next build && mkdir -p dist && cp -r .next dist/.next && cp -r public dist/public && cp package.json dist/package.json && cp README.md dist/README.md && cp LICENSE dist/LICENSE",
     "export": "PORT=3000 next export",
     "start": "PORT=3000 next start", 
     "lint": "next lint --ignore-path .gitignore",

@@ -10,6 +10,12 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
+  checks: write
+  deployments: write
+  statuses: write
+
+env:
+  PUBLIC_URL: ${{ secrets.PUBLIC_URL || 'https://kortex.rafa-mori.dev/' }}
 
 jobs:
   test:
@@ -32,16 +38,16 @@ jobs:
         env:
           CI: true
           NODE_ENV: production
-          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
           BUILD_VERSION: ${{ github.sha }}
+          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Tests
         run: |
           npm test
         env:
           CI: true
+          PORT: 3000
           NODE_ENV: production
-          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
           BUILD_VERSION: ${{ github.sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
@@ -57,9 +63,67 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '22'
+
+      - name: Cache Node Modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+            ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+
+    ## <editor-fold desc="Optional Caching for Yarn or pnpm" defaultstate="collapsed">
+    # - name: Cache Yarn
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: ~/.yarn-cache
+    #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-yarn-
+    #       ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+    # - name: Cache pnpm
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: ~/.pnpm-store
+    #     key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-pnpm-
+    #       ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+    #
+    ## </editor-fold>
+
+      - name: Cache Build Artifacts
+        uses: actions/cache@v2
+        with:
+          path: dist
+          key: ${{ runner.os }}-dist-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-dist-
+            ${{ runner.os }}-dist-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install Dependencies
         run: |
-          npm install
+          if ! npm ci > /dev/null; then
+            npm i -g npm
+            npm i --no-fund --no-audit --prefer-offline
+          fi
+        env:
+          CI: true
+          NODE_ENV: production
+          PUBLIC_URL: ${{ secrets.PUBLIC_URL }}
+          BUILD_VERSION: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Build Artifacts
+        uses: actions/cache@v2
+        with:
+          path: dist
+          key: ${{ runner.os }}-dist-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-dist-
+            ${{ runner.os }}-dist-${{ hashFiles('**/package-lock.json') }}
+
       - name: Build Application
         run: |
           npm run build

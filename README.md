@@ -2,10 +2,9 @@
 
 [![Pub_Docs](https://github.com/rafa-mori/kortex/actions/workflows/pub-docs.yml/badge.svg)](https://github.com/rafa-mori/kortex/actions/workflows/pub-docs.yml)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/rafa-mori/kortex/ci.yml?branch=main&style=flat-square)](https://github.com/rafa-mori/kortex/actions)
+[![Build](https://github.com/rafa-mori/kortex/actions/workflows/pub-app.yml/badge.svg)](https://github.com/rafa-mori/kortex/actions/workflows/pub-app.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15+-black?style=flat-square)](https://nextjs.org/)
-[![Last Commit](https://img.shields.io/github/last-commit/rafa-mori/kortex?style=flat-square)](https://github.com/rafa-mori/kortex/commits)
 
 ---
 
