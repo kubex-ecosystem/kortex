@@ -34,12 +34,12 @@ describe('Utils Library', () => {
 
   describe('formatDate function', () => {
     it('formats date string correctly', () => {
-      const result = formatDate('2024-01-15');
+      const result = formatDate('2024-01-15T12:00:00Z');
       expect(result).toBe('January 15, 2024');
     });
 
     it('formats Date object correctly', () => {
-      const date = new Date('2024-12-25');
+      const date = new Date('2024-12-25T12:00:00Z');
       const result = formatDate(date);
       expect(result).toBe('December 25, 2024');
     });
