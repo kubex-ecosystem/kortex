@@ -5,7 +5,7 @@
 - **Ambiente Python**: Configurado com UV package manager
 - **MkDocs Material**: Instalado e funcionando (v9.6.15)
 - **Build System**: Operacional com 61 packages
-- **Servidor de Desenvolvimento**: Funcionando em <http://localhost:8000>
+- **Servidor de Desenvolvimento**: Funcionando em <http://localhost:3001>
 - **Helper Script**: `docs-dev.sh` com todas as funcionalidades
 
 ## 📁 Estrutura Final

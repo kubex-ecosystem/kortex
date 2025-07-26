@@ -45,7 +45,7 @@ Se você encontrar qualquer vulnerabilidade de segurança, por favor reporte ime
 /// background.js ///
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "ping_mcp") {
-    fetch("http://localhost:3002/health")
+    fetch("http://localhost:3001/health")
       .then((res) => res.json())
       .then((data) => sendResponse({ ok: true, data }))
       .catch((err) => sendResponse({ ok: false, error: err.toString() }));
@@ -120,7 +120,7 @@ Se você encontrar qualquer vulnerabilidade de segurança, por favor reporte ime
     "activeTab"
   ],
   "host_permissions": [
-    "http://localhost:3002/*"
+    "http://localhost:3001/*"
   ],
   "background": {
     "service_worker": "background.js"

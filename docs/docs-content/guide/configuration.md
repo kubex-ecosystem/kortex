@@ -10,8 +10,8 @@ Create a `.env.local` file in your project root:
 
 ```env
 # Required: API Configuration
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
-NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
 
 # Optional: Service Integrations
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
@@ -155,7 +155,7 @@ interface MCPServerConfig {
 servers:
   - id: "kosmos-server"
     name: "Kosmos MCP Server"
-    endpoint: "http://localhost:8000"
+    endpoint: "http://localhost:3001"
     protocol: "http"
     healthCheck:
       path: "/health"
@@ -312,8 +312,8 @@ interface NotificationConfig {
 ```env
 # .env.development
 NODE_ENV=development
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
-NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
 NEXT_PUBLIC_DEBUG_MODE=true
 NEXT_PUBLIC_MOCK_MODE=true
 
@@ -547,7 +547,7 @@ curl -u ":$AZURE_DEVOPS_TOKEN" \
 
 ```javascript
 // Debug WebSocket in browser console
-const ws = new WebSocket('ws://localhost:3002/ws');
+const ws = new WebSocket('ws://localhost:3001/ws');
 ws.onopen = () => console.log('Connected');
 ws.onerror = (error) => console.error('WebSocket error:', error);
 ws.onmessage = (event) => console.log('Message:', event.data);

@@ -13,7 +13,7 @@ interface MCPProxyConfig {
 }
 
 const CONFIG: MCPProxyConfig = {
-  baseURL: process.env.MCP_SERVER_URL || 'http://127.0.0.1:3002',
+  baseURL: process.env.MCP_SERVER_URL || 'http://localhost:3001',
   timeout: 15000,
   retries: 3,
   corsEnabled: true

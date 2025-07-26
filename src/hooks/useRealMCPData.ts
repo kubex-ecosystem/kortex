@@ -51,7 +51,7 @@ const FALLBACK_SERVERS: MCPServerData[] = [
   {
     id: 'kosmos-1',
     name: 'Kosmos MCP Server',
-    hostname: 'localhost:8000',
+    hostname: 'localhost:3001',
     status: 'Offline',
     responseTime: 0,
     lastSeen: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
@@ -65,7 +65,7 @@ const FALLBACK_SERVERS: MCPServerData[] = [
   {
     id: 'statusrafa-1',
     name: 'StatusRafa MCP Server',
-    hostname: 'localhost:8001',
+    hostname: 'localhost:3001',
     status: 'Offline',
     responseTime: 0,
     lastSeen: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
@@ -79,7 +79,7 @@ const FALLBACK_SERVERS: MCPServerData[] = [
   {
     id: 'local-mock-1',
     name: 'Local Mock Server',
-    hostname: 'localhost:3002',
+    hostname: 'localhost:3001',
     status: 'Online',
     responseTime: 45,
     lastSeen: new Date(),
@@ -165,7 +165,7 @@ export function useRealMCPData() {
         setStats(prev => ({
           ...prev,
           servers: prev.servers.map(server => 
-            server.hostname === 'localhost:3002' 
+            server.hostname === 'localhost:3001' 
               ? { ...server, status: 'Online' as ServerStatus, lastSeen: new Date(), responseTime: 45 }
               : server
           )
@@ -207,7 +207,7 @@ export function useRealMCPData() {
       
       // Check if we got real data by comparing with fallback
       if (serversData.length === FALLBACK_SERVERS.length && 
-          serversData.every(s => s.status === 'Offline' || s.hostname.includes('localhost:3002'))) {
+          serversData.every(s => s.status === 'Offline' || s.hostname.includes('localhost:3001'))) {
         dataSource = 'fallback';
       }
 
@@ -327,7 +327,7 @@ export function useRealMCPData() {
       console.log('🔍 Testing connection to:', server.hostname);
       
       // For mock server, always return true
-      if (server.hostname?.includes('localhost:3002')) {
+      if (server.hostname?.includes('localhost:3001')) {
         return true;
       }
       

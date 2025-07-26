@@ -42,7 +42,7 @@ echo "✅ Dependencies installed successfully!"
 # Check if we should start the dev server
 if [ "$1" = "--serve" ] || [ "$1" = "-s" ]; then
     echo "🌟 Starting development server..."
-    echo "📖 Documentation will be available at: http://localhost:8000"
+    echo "📖 Documentation will be available at: http://localhost:3001"
     echo "🔄 Changes will be automatically reloaded"
     echo ""
     echo "Press Ctrl+C to stop the server"
@@ -63,7 +63,7 @@ else
     echo "     ./setup.sh --build"
     echo "     or: uv run mkdocs build"
     echo ""
-    echo "  📖 Documentation will be available at: http://localhost:8000"
+    echo "  📖 Documentation will be available at: http://localhost:3001"
     echo ""
     echo "  ⚡ uv benefits:"
     echo "     • 10-100x faster than pip"

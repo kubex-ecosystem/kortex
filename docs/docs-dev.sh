@@ -28,7 +28,7 @@ show_usage() {
     print_color "📚 Kortex Documentation Development Scripts" "$BLUE"
     echo ""
     print_color "Available commands:" "$YELLOW"
-    echo "  serve    - Start development server (default: localhost:8000)"
+    echo "  serve    - Start development server (default: localhost:3001)"
     echo "  build    - Build static documentation"
     echo "  deploy   - Deploy to GitHub Pages"
     echo "  lint     - Check markdown files (if available)"
@@ -54,7 +54,7 @@ check_venv() {
 serve_docs() {
     check_venv
     print_color "🚀 Starting MkDocs development server..." "$GREEN"
-    print_color "📍 Server will be available at: http://localhost:8000" "$BLUE"
+    print_color "📍 Server will be available at: http://localhost:3001" "$BLUE"
     print_color "🔥 Live reload enabled - edit files and see changes instantly!" "$YELLOW"
     echo ""
     mkdocs serve

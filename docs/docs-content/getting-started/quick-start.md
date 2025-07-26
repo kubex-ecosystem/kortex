@@ -96,8 +96,8 @@ Edit `.env.local` with your settings:
 
 ```env
 # Required: API Configuration
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
-NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
 
 # Optional: Service Integrations
 GITHUB_TOKEN=your_personal_access_token
@@ -126,7 +126,7 @@ For Azure DevOps integration:
 
 ### Demo Mode (Default)
 
-- Uses mock API server on `localhost:3002`
+- Uses mock API server on `localhost:3001`
 - Simulates realistic data patterns
 - Perfect for development and testing
 - No external API tokens required
@@ -146,8 +146,8 @@ Watch as data updates automatically:
 
 ```bash
 # In terminal, watch API calls
-curl http://localhost:3002/api/github/repos
-curl http://localhost:3002/api/azure/projects
+curl http://localhost:3001/api/github/repos
+curl http://localhost:3001/api/azure/projects
 ```
 
 The dashboard will reflect changes within seconds via WebSocket updates.
@@ -207,7 +207,7 @@ Customize your workspace:
   cat .env.local
   
   # Test API endpoints
-  curl http://localhost:3002/api/github/repos
+  curl http://localhost:3001/api/github/repos
   ```
 
 - **Port Conflicts**: If port 3000 is in use, change it in `.env.local`. Remember to update any relevant configurations.

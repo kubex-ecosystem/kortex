@@ -1,7 +1,6 @@
+import { Activity, AlertTriangle, CheckCircle, Clock, Pause, Play, Settings, TrendingUp, Wifi, WifiOff, XCircle } from 'lucide-react';
 import React, { useState } from 'react';
-import { Activity, Wifi, WifiOff, AlertTriangle, Pause, Play, Settings, CheckCircle, XCircle, Clock, TrendingUp } from 'lucide-react';
 import { useWebSocket } from '../../hooks/useWebSocket';
-import { RateLimitStatus } from '../../types';
 
 interface RealTimeDashboardProps {
   className?: string;
@@ -9,7 +8,7 @@ interface RealTimeDashboardProps {
 
 export const RealTimeDashboard: React.FC<RealTimeDashboardProps> = ({ className = '' }) => {
   const { isConnected, serverConfig, rateLimitStatus, pollingStatus, alerts, clearAlerts, lastUpdate } = 
-    useWebSocket('ws://127.0.0.1:3002/ws');
+    useWebSocket('ws://localhost:3001/ws');
   
   const [showAlerts, setShowAlerts] = useState(true);
 

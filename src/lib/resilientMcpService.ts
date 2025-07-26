@@ -87,13 +87,17 @@ class ResilientMCPService {
     // 2. Tentar request real
     try {
       const response = await this.attemptRequest(endpoint, options, finalConfig);
+
+      if (!response.success || !JSON.stringify(response.data || {}).includes('<!DOCTYPE ')) {
+        throw new Error(`Unsupported content type: ${response.data}`);
+      }
       
       // Cache successful response
       if (response.success && finalConfig.useCache) {
         this.cache.set(cacheKey, {
           data: response.data,
           timestamp: Date.now()
-        });
+        }); 
       }
 
       // Reset fallback mode on success
@@ -131,6 +135,14 @@ class ResilientMCPService {
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const contentType = response.headers.get('Content-Type');
+      if (contentType && !contentType.includes('application/json')) {
+        throw new Error(`Unsupported content type: ${contentType}`);
+      }
+      if ((await response.text()).includes('<!DOCTYPE ')) {
+        throw new Error(`Invalid JSON response: ${await response.text()}`);
       }
 
       const data = await response.json();
@@ -243,8 +255,8 @@ class ResilientMCPService {
 }
 
 // Singleton instance for the application
-// Using localhost:3002 for our mock API server during development
-export const resilientMCPService = new ResilientMCPService('http://localhost:3002');
+// Using localhost:3001 for our mock API server during development
+export const resilientMCPService = new ResilientMCPService('http://localhost:3001');
 
 // Fallback data for different endpoints
 export const FALLBACK_DATA = {

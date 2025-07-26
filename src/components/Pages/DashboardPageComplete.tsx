@@ -16,40 +16,38 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import useMCPData from '../../hooks/useMCPData';
 
 export const DashboardPageComplete: React.FC = () => {
+  const mcpData = useMCPData();
+  if (!mcpData) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [stats] = useState({
-    // System Overview
-    totalServers: 4,
-    activeServers: 3,
-    totalRepositories: 24,
-    totalPullRequests: 18,
-    totalPipelines: 7,
-    helmReleases: 12,
-    
-    // Activity Stats
-    successfulPipelines: 5,
-    failedPipelines: 2,
-    openPRs: 12,
-    draftPRs: 6,
-    connectedSources: 3,
-    
-    // Performance
-    averageResponseTime: 245,
-    uptime: 99.2,
-    apiCallsToday: 1247,
-    storageUsed: 67
-  });
+  const [isRealData, setIsRealData] = useState(true);
+  const [isFallbackData, setIsFallbackData] = useState(false);
+  const { 
+    stats,
+    refresh,
+    lastUpdated,
+    error,
+    status,
+    pullRequests,
+    pipelines,
+    repositories,
+    isConnected,
+    isLoading: isMCPDataLoading,
+  } = mcpData;
+
 
   const [recentActivity] = useState([
-    { id: 1, type: 'deploy', message: 'Helm chart "nginx-app" deployed successfully', time: '2 min ago', status: 'success' },
-    { id: 2, type: 'pr', message: 'Pull request #234 merged into main branch', time: '8 min ago', status: 'success' },
-    { id: 3, type: 'alert', message: 'API rate limit warning for GitHub provider', time: '15 min ago', status: 'warning' },
-    { id: 4, type: 'server', message: 'MCP Server reconnected after brief downtime', time: '1 hour ago', status: 'info' },
-    { id: 5, type: 'backup', message: 'System backup completed successfully', time: '3 hours ago', status: 'success' }
-  ]);
+    // { id: 1, type: 'deploy', message: 'Helm chart "nginx-app" deployed successfully', time: '2 min ago', status: 'success' },
+    // { id: 2, type: 'pr', message: 'Pull request #234 merged into main branch', time: '8 min ago', status: 'success' },
+    // { id: 3, type: 'alert', message: 'API rate limit warning for GitHub provider', time: '15 min ago', status: 'warning' },
+    // { id: 4, type: 'server', message: 'MCP Server reconnected after brief downtime', time: '1 hour ago', status: 'info' },
+    // { id: 5, type: 'backup', message: 'System backup completed successfully', time: '3 hours ago', status: 'success' }
+  ] as Array<{ id: number; type: string; message: string; time: string; status: string }>);
 
   useEffect(() => {
     // Simulate initial load
@@ -61,10 +59,10 @@ export const DashboardPageComplete: React.FC = () => {
   const primaryCards = [
     { 
       label: 'Active Servers', 
-      value: `${stats.activeServers}/${stats.totalServers}`, 
+      value: `${stats.connectedSources}`, 
       icon: <Server className="h-6 w-6" />, 
       color: 'text-blue-600 bg-blue-100 dark:bg-blue-900/20',
-      subtitle: `${((stats.activeServers/stats.totalServers)*100).toFixed(1)}% uptime`,
+      subtitle: `${(stats.connectedSources).toFixed(1)} uptime`,
       action: () => router.push('/servers')
     },
     { 
@@ -85,7 +83,8 @@ export const DashboardPageComplete: React.FC = () => {
     },
     { 
       label: 'Helm Releases', 
-      value: stats.helmReleases, 
+      //value: stats.helmReleases, 
+      value: 0, 
       icon: <Package className="h-6 w-6" />, 
       color: 'text-orange-600 bg-orange-100 dark:bg-orange-900/20',
       subtitle: 'Kubernetes deployments',
@@ -93,11 +92,12 @@ export const DashboardPageComplete: React.FC = () => {
     }
   ];
 
-  const quickStats = [
-    { label: 'Response Time', value: `${stats.averageResponseTime}ms`, trend: '+5%', color: 'text-blue-600' },
-    { label: 'API Calls', value: stats.apiCallsToday.toLocaleString(), trend: '+12%', color: 'text-green-600' },
-    { label: 'Storage Used', value: `${stats.storageUsed}%`, trend: '+3%', color: 'text-orange-600' },
-    { label: 'Uptime', value: `${stats.uptime}%`, trend: '+0.1%', color: 'text-emerald-600' }
+  const quickStats: Array<{ label: string; value: string; trend: string; color: string }> = [
+    // { label: 'Response Time', value: `${stats.averageResponseTime}ms`, trend: '+5%', color: 'text-blue-600' },
+    // { label: 'API Calls', value: stats.apiCallsToday.toLocaleString(), trend: '+12%', color: 'text-green-600' },
+    // { label: 'Storage Used', value: `${stats.storageUsed}%`, trend: '+3%', color: 'text-orange-600' },
+    // { label: 'Uptime', value: `${stats.uptime}%`, trend: '+0.1%', color: 'text-emerald-600' }
+    { label: 'Last Check', value: `${status?.lastCheck}`, trend: 'N/A', color: 'text-gray-600' },
   ];
 
   const quickActions = [

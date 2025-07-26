@@ -64,8 +64,8 @@ Complete development guide for contributing to Kortex, including setup, workflow
 
    ```env
    # API Configuration
-   NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
-   NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
+   NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+   NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
    
    # Development Settings
    NODE_ENV=development
@@ -349,7 +349,7 @@ describe('API Integration', () => {
   setupApiMocks();
 
   const apiClient = new ApiClient({
-    baseUrl: 'http://localhost:3002',
+    baseUrl: 'http://localhost:3001',
   });
 
   describe('Server API', () => {

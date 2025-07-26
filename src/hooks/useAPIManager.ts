@@ -3,9 +3,9 @@
  * Hook personalizado para gerenciar API providers com state management integrado
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { apiManager, ConnectionTestResult } from '../lib/apiService';
 import { APIProvider } from '../types/APITypes';
-import { apiManager, ConnectionTestResult, ServiceResponse } from '../lib/apiService';
 
 interface UseAPIManagerReturn {
   // State
@@ -89,7 +89,7 @@ export function useAPIManager(): UseAPIManagerReturn {
                 requestsToday: statusData.metrics?.totalRequests || 0,
                 monthlyLimit: 999999,
                 costPerRequest: 0,
-                mcpEndpoint: 'http://127.0.0.1:3002',
+                mcpEndpoint: 'http://localhost:3001',
                 githubToken: '***',
                 azureToken: '***',
                 azureOrg: 'detected',

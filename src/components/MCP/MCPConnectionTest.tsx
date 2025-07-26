@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { CheckCircle, Clock, Database, Server, XCircle } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { mcpService, MCPStatus } from '../../lib/mcpService';
-import { CheckCircle, XCircle, Clock, Server, Database } from 'lucide-react';
 
 interface MCPConnectionTestProps {
   onConnectionChange?: (connected: boolean) => void;
@@ -25,7 +25,7 @@ export function MCPConnectionTest({ onConnectionChange }: MCPConnectionTestProps
         setStatus(serverStatus);
       } else {
         setStatus(null);
-        setError('Não foi possível conectar ao MCP Server em http://127.0.0.1:3002');
+        setError('Não foi possível conectar ao MCP Server em http://localhost:3001');
       }
       
       onConnectionChange?.(connected);

@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { MCPServerConfig, RateLimitStatus, PollingControl } from '../types';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { MCPServerConfig, PollingControl, RateLimitStatus } from '../types';
 
 interface WebSocketMessage {
   type: string;
@@ -124,8 +124,21 @@ export const useWebSocket = (url: string): UseWebSocketReturn => {
       };
       
       wsRef.current.onerror = (error) => {
+        if (reconnectTimeoutRef.current) {
+          clearTimeout(reconnectTimeoutRef.current);
+          reconnectTimeoutRef.current = null;
+        }
+        if (reconnectAttemptsRef.current >= maxReconnectAttempts) {
+          console.error('❌ Max reconnect attempts reached. WebSocket connection failed.');
+          return;
+        }
+        if (wsRef.current) {
+          wsRef.current.close(3001, 'WebSocket error');
+        }
         console.error('❌ WebSocket error:', error);
         setIsConnected(false);
+        reconnectAttemptsRef.current += 1;
+        console.log(`🔄 Reconnecting... Attempt ${reconnectAttemptsRef.current}/${maxReconnectAttempts}`);
       };
       
     } catch (error) {

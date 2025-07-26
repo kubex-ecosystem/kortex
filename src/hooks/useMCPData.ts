@@ -5,12 +5,28 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
+import mcpService from '../lib/mcpService';
 
 // Tipos locais para compatibilidade
 export interface MCPStatus {
   connected: boolean;
   lastCheck: Date;
   services: string[];
+  github_configured?: boolean;
+  azure_configured?: boolean;
+  gitlab_configured?: boolean;
+  bitbucket_configured?: boolean;
+  jenkins_configured?: boolean;
+  github_connected?: boolean;
+  azure_connected?: boolean;
+  gitlab_connected?: boolean;
+  bitbucket_connected?: boolean;
+  jenkins_connected?: boolean;
+  github_rate_limit?: number;
+  azure_rate_limit?: number;
+  gitlab_rate_limit?: number;
+  bitbucket_rate_limit?: number;
+  jenkins_rate_limit?: number;
 }
 
 export interface GitHubRepo {
@@ -27,6 +43,7 @@ export interface PullRequest {
   author: string;
   url: string;
   createdAt: Date;
+  draft: boolean;
 }
 
 export interface Pipeline {
@@ -36,6 +53,7 @@ export interface Pipeline {
   branch: string;
   startedAt: Date;
   duration?: number;
+  result?: 'succeeded' | 'failed' | 'cancelled';
 }
 
 export interface MemoryEntry {
@@ -157,11 +175,11 @@ export function useMCPData(): UseMCPDataReturn {
       ]);
 
       // Update states
-      setStatus(statusData);
-      setRepositories(reposData);
-      setPullRequests(prsData);
-      setPipelines(pipelinesData);
-      setMemory(memoryData);
+      setStatus(statusData as MCPStatus | null);
+      setRepositories(reposData as string[]);
+      setPullRequests(prsData as PullRequest[] | []);
+      setPipelines(pipelinesData as Pipeline[] | []);
+      setMemory(memoryData as MemoryEntry[] | []);
       setLastUpdated(new Date());
 
       console.log('📊 MCP Data refreshed:', {
@@ -187,7 +205,7 @@ export function useMCPData(): UseMCPDataReturn {
       if (success) {
         // Refresh memory data
         const memoryData = await mcpService.getMemory(20);
-        setMemory(memoryData);
+        setMemory(memoryData as MemoryEntry[] | []);
       }
       return success;
     } catch (err) {

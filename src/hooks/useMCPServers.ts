@@ -73,7 +73,7 @@ export function useMCPServers(): UseMCPServersReturn {
           {
             id: 'mcp-statusrafa-1',
             name: 'StatusRafa MCP Server',
-            hostname: 'localhost:3002',
+            hostname: 'localhost:3001',
             status: isOffline ? 'Offline' : 'Online',
             config: {
               place: 'local',
@@ -81,8 +81,8 @@ export function useMCPServers(): UseMCPServersReturn {
               connectionConfig: {
                 id: 'http-config-1',
                 type: 'HTTP',
-                baseURL: 'http://127.0.0.1:3002',
-                wsUrl: 'ws://127.0.0.1:3002',
+                baseURL: 'http://localhost:3001',
+                wsUrl: 'ws://localhost:3001',
                 apiKey: '',
                 enableWebSocket: false,
                 autoReconnect: true,
@@ -118,7 +118,7 @@ export function useMCPServers(): UseMCPServersReturn {
           {
             id: 'kosmos-server-1',
             name: 'Kosmos DevOps Server',
-            hostname: 'localhost:8000',
+            hostname: 'localhost:3001',
             status: isOffline ? 'Offline' : 'Warning',
             config: {
               place: 'local',
@@ -126,8 +126,8 @@ export function useMCPServers(): UseMCPServersReturn {
               connectionConfig: {
                 id: 'kosmos-config-1',
                 type: 'HTTP',
-                baseURL: 'http://127.0.0.1:8000',
-                wsUrl: 'ws://127.0.0.1:8000/ws',
+                baseURL: 'http://localhost:3001',
+                wsUrl: 'ws://localhost:3001/ws',
                 apiKey: '',
                 enableWebSocket: true,
                 autoReconnect: true,
@@ -171,8 +171,8 @@ export function useMCPServers(): UseMCPServersReturn {
               connectionConfig: {
                 id: 'fastmcp-config-1',
                 type: 'HTTP',
-                baseURL: 'http://127.0.0.1:3001',
-                wsUrl: 'ws://127.0.0.1:3001',
+                baseURL: 'http://localhost:3001',
+                wsUrl: 'ws://localhost:3001',
                 apiKey: '',
                 enableWebSocket: true,
                 autoReconnect: true,
@@ -218,7 +218,7 @@ export function useMCPServers(): UseMCPServersReturn {
         {
           id: 'emergency-server-1',
           name: 'Emergency Demo Server',
-          hostname: 'localhost:3002',
+          hostname: 'localhost:3001',
           status: 'Offline',
           config: {
             place: 'local',
@@ -226,7 +226,7 @@ export function useMCPServers(): UseMCPServersReturn {
             connectionConfig: {
               id: 'emergency-config-1',
               type: 'HTTP',
-              baseURL: 'http://127.0.0.1:3002',
+              baseURL: 'http://localhost:3001',
               wsUrl: '',
               apiKey: '',
               enableWebSocket: false,

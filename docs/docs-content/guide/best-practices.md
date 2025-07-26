@@ -490,8 +490,8 @@ interface EnvironmentConfig {
 
 const environments: Record<string, EnvironmentConfig> = {
   development: {
-    apiUrl: 'http://localhost:3002',
-    wsUrl: 'ws://localhost:3002/ws',
+    apiUrl: 'http://localhost:3001',
+    wsUrl: 'ws://localhost:3001/ws',
     logLevel: 'debug',
     features: {
       mockData: true,

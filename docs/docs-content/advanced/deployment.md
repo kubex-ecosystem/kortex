@@ -47,8 +47,8 @@ docker build -t kortex:latest .
 
 # Run container
 docker run -p 3000:3000 \
-  -e NEXT_PUBLIC_API_BASE_URL=http://localhost:3002 \
-  -e NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws \
+  -e NEXT_PUBLIC_API_BASE_URL=http://localhost:3001 \
+  -e NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws \
   -e GITHUB_TOKEN=your_token \
   kortex:latest
 ```
@@ -150,8 +150,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_BASE_URL=http://api:3002
-      - NEXT_PUBLIC_WS_URL=ws://api:3002/ws
+      - NEXT_PUBLIC_API_BASE_URL=http://api:3001
+      - NEXT_PUBLIC_WS_URL=ws://api:3001/ws
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - AZURE_DEVOPS_TOKEN=${AZURE_DEVOPS_TOKEN}
     depends_on:
@@ -166,7 +166,7 @@ services:
   api:
     image: kortex-api:latest
     ports:
-      - "3002:3002"
+      - "3002:3001"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DATABASE_URL}
@@ -190,8 +190,8 @@ services:
 ```bash
 # .env.docker
 NODE_ENV=production
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
-NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
 GITHUB_TOKEN=your_github_token_here
 AZURE_DEVOPS_TOKEN=your_azure_token_here
 AZURE_DEVOPS_ORGANIZATION=your_organization

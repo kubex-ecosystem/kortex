@@ -143,7 +143,7 @@ This will start both the Next.js application and the mock API server.
 **Access points:**
 
 - **Dashboard**: <http://localhost:3000>
-- **Mock API**: <http://localhost:3002>
+- **Mock API**: <http://localhost:3001>
 
 ---
 
@@ -198,8 +198,8 @@ Create a `.env.local` file in the project root:
 
 ```env
 # API Configuration
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
-NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
 
 # Production URLs (when ready)
 # NEXT_PUBLIC_API_BASE_URL=https://kosmos.statusrafa.com
@@ -367,8 +367,8 @@ npm run test:e2e
 npm run test:coverage
 
 # API endpoint testing
-curl http://localhost:3002/api/github/repos
-curl http://localhost:3002/api/mcp/servers
+curl http://localhost:3001/api/github/repos
+curl http://localhost:3001/api/mcp/servers
 ```
 
 ---
@@ -408,7 +408,7 @@ CMD ["npm", "start"]
 
 #### Development
 
-- Mock API server on localhost:3002
+- Mock API server on localhost:3001
 - Hot reload and debug tools
 - Comprehensive error logging
 

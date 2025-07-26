@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { X, Eye, EyeOff, TestTube, Check, AlertCircle } from 'lucide-react';
-import { APIProvider } from '../../types/APITypes';
+import { Check, Eye, EyeOff, TestTube, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { mcpService } from '../../lib/mcpService';
+import { APIProvider } from '../../types/APITypes';
 
 interface APIProviderModalProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
     monthlyLimit: 10000,
     costPerRequest: 0.002,
     // MCP specific fields
-    mcpEndpoint: 'http://127.0.0.1:3002',
+    mcpEndpoint: 'http://localhost:3001',
     githubToken: '',
     azureToken: '',
     azureOrg: '',
@@ -45,7 +45,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
         requestsToday: provider.requestsToday || 0,
         monthlyLimit: provider.monthlyLimit || 10000,
         costPerRequest: provider.costPerRequest || 0.002,
-        mcpEndpoint: provider.mcpEndpoint || 'http://127.0.0.1:3002',
+        mcpEndpoint: provider.mcpEndpoint || 'http://localhost:3001',
         githubToken: provider.githubToken || '',
         azureToken: provider.azureToken || '',
         azureOrg: provider.azureOrg || '',
@@ -61,7 +61,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
         requestsToday: 0,
         monthlyLimit: 10000,
         costPerRequest: 0.002,
-        mcpEndpoint: 'http://127.0.0.1:3002',
+        mcpEndpoint: 'http://localhost:3001',
         githubToken: '',
         azureToken: '',
         azureOrg: '',
@@ -102,11 +102,14 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
   };
 
   const testConnection = async () => {
-    setIsTesting(true);
+    if (isTesting) 
+      return;
+
     setTestResult(null);
+    setIsTesting(true);
 
     try {
-      if (formData.provider === 'StatusRafa MCP' && formData.mcpEndpoint) {
+      if (formData.mcpEndpoint) {
         // Test MCP connection
         const connected = await mcpService.testConnection();
         if (connected) {
@@ -118,26 +121,32 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
           handleInputChange('status', 'Disconnected');
         }
       } else {
-        // Simulate API provider test
-        setTimeout(() => {
-          const success = Math.random() > 0.3; // 70% success rate for demo
-          if (success) {
-            setTestResult(`✅ Conexão com ${formData.provider} bem-sucedida!`);
-            handleInputChange('status', 'Connected');
-          } else {
-            setTestResult(`❌ Falha na conexão com ${formData.provider}. Verifique a API key.`);
-            handleInputChange('status', 'Disconnected');
-          }
-          setIsTesting(false);
-        }, 2000);
-        return;
+        // Test API connection
+        const response = await fetch('/api/test-connection', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ apiKey: formData.keyPreview })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setTestResult(`✅ Conexão com ${formData.provider} bem-sucedida!`);
+          handleInputChange('status', 'Connected');
+        } else {
+          setTestResult(`❌ Falha na conexão com ${formData.provider}. Verifique a API key.`);
+          handleInputChange('status', 'Disconnected');
+        }
       }
     } catch (error) {
       setTestResult(`❌ Erro ao testar conexão: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
       handleInputChange('status', 'Disconnected');
     } finally {
-      setIsTesting(false);
+      setTimeout(() => setIsTesting(false), 300);
     }
+
+    setIsTesting(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -273,7 +282,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
                   className={`w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:text-white ${
                     errors.mcpEndpoint ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
                   }`}
-                  placeholder="http://127.0.0.1:3002"
+                  placeholder="http://localhost:3001"
                 />
                 {errors.mcpEndpoint && <p className="text-red-500 text-xs mt-1">{errors.mcpEndpoint}</p>}
               </div>

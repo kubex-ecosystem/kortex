@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   currentPage 
 }) => {
   const { notifications } = useApp();
-  const { isConnected, alerts } = useWebSocket('ws://127.0.0.1:3002/ws');
+  const { isConnected, alerts } = useWebSocket('ws://localhost:3001/ws');
   const [showNotifications, setShowNotifications] = useState(false);
   const unreadCount = notifications?.filter(n => !n.read).length;
   const hasActiveAlerts = alerts.length > 0;

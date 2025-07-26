@@ -4,6 +4,7 @@
  * Suporta configuração dinâmica, comandos do sistema e secrets criptografados
  */
 
+
 export interface MCPServerResponse<T = any> {
   success: boolean;
   message?: string;
@@ -201,17 +202,69 @@ export interface MemoryEntry {
 }
 
 export class MCPServerService {
-  private baseURL = 'http://127.0.0.1:3001'; // MCP Server v2.0 endpoint
-  private wsURL = 'ws://127.0.0.1:3001/ws'; // WebSocket endpoint
+  private baseURL = 'http://localhost:3001'; // MCP Server v2.0 endpoint
+  private wsURL = 'ws://localhost:3001/ws'; // WebSocket endpoint
 
   /**
    * Testa conectividade com o MCP Server
    */
   async testConnection(): Promise<boolean> {
+    let targetURL = new URL(this.baseURL);
+
+    try {
+      targetURL = new URL(`${this.baseURL}/api/status`);
+      if (!targetURL.protocol.startsWith('http')) {
+        throw new Error('Invalid URL protocol. Only HTTP or HTTPS is allowed.');
+      }
+      if (!targetURL.port) {
+        console.error('Porta não especificada na URL do MCP Server');
+        return false;
+      }
+      if (!targetURL.hostname) {
+        console.error('Hostname não especificado na URL do MCP Server');
+        return false;
+      }
+      if (isNaN(Number(targetURL.port))) {
+        console.error('Porta inválida especificada na URL do MCP Server');
+        return false;
+      }
+    } catch (error) {
+      console.error('Erro ao conectar com MCP Server:', error);
+      return false;
+    }
+
+    try {
+      const socket = new WebSocket(targetURL.toString());
+      socket.onopen = () => {
+        console.log('Conexão WebSocket estabelecida com o MCP Server');
+        socket.close();
+      };
+      socket.onerror = (error) => {
+        console.error('Erro ao conectar com MCP Server:', error);
+      };
+      socket.onclose = () => {
+        console.log('Conexão WebSocket fechada');
+      };
+      return true;
+    } catch (error) {
+      console.error('Erro ao conectar com MCP Server:', error);
+    }
+
+    // Testa a API HTTP para verificar se o servidor responde
     try {
       const response: Response | undefined = await fetch(`${this.baseURL}/api/status`);
-      const data: MCPServerResponse<MCPStatus> = await response.json();
-      return data.success && response.ok;
+      if (response && response.ok) {
+        try {
+          const data: MCPServerResponse<MCPStatus> = await response.json();
+          return data.success && response.ok;
+        } catch (error) {
+          console.error('Erro ao conectar com MCP Server:', error);
+          return false;
+        }
+      } else {
+        console.error('Erro ao conectar com MCP Server:', response?.statusText || 'Resposta inválida');
+        return false;
+      }
     } catch (error) {
       console.error('Erro ao conectar com MCP Server:', error);
       return false;

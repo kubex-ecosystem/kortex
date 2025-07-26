@@ -403,7 +403,7 @@ export class APIServiceFactory {
     switch (provider.provider) {
       case 'StatusRafa MCP':
         service = new MCPServerService({
-          baseURL: provider.mcpEndpoint || 'http://127.0.0.1:3001',
+          baseURL: provider.mcpEndpoint || 'http://localhost:3001',
           timeout: 10000,
           cache: true
         }, provider.id);

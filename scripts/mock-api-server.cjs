@@ -8,7 +8,7 @@
 const http = require('http');
 const url = require('url');
 
-const PORT = 3002;
+const PORT = 3001;
 
 // Sample data generators
 const generateGitHubStats = () => ({
@@ -39,7 +39,7 @@ const generateMCPServers = () => [
   {
     id: 'kosmos-1',
     name: 'Kosmos MCP Server',
-    hostname: 'localhost:8000',
+    hostname: 'localhost:3001',
     status: Math.random() > 0.3 ? 'Online' : 'Offline',
     responseTime: Math.floor(Math.random() * 200) + 20,
     lastSeen: new Date(Date.now() - Math.random() * 300000).toISOString(), // Random within 5 minutes
@@ -67,7 +67,7 @@ const generateMCPServers = () => [
   {
     id: 'local-mock-1',
     name: 'Local Mock Server',
-    hostname: 'localhost:3002',
+    hostname: 'localhost:3001',
     status: 'Online',
     responseTime: Math.floor(Math.random() * 100) + 25,
     lastSeen: new Date().toISOString(),

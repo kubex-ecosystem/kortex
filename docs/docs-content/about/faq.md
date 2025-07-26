@@ -83,8 +83,8 @@ Common questions and answers about Kortex, troubleshooting, and best practices.
 Example correct `.env.local`:
 
 ```env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
-NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
 GITHUB_TOKEN=ghp_your_token_here
 ```
 
@@ -452,7 +452,7 @@ const Dashboard = () => (
 1. **Verify server is running**:
 
    ```bash
-   curl http://localhost:3002/health
+   curl http://localhost:3001/health
    ```
 
 2. **Check network connectivity**

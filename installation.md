@@ -67,8 +67,8 @@ Create a `.env.local` file in the project root:
 
 ```env
 # API Configuration
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
-NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
 
 # Debug Mode
 NODE_ENV=development
@@ -114,8 +114,8 @@ npm run dev     # Should start on http://localhost:3000
 After starting Kortex, verify these endpoints:
 
 - **Frontend**: [http://localhost:3000](http://localhost:3000)
-- **Mock API**: [http://localhost:3002](http://localhost:3002)
-- **Health**: [http://localhost:3002/health](http://localhost:3002/health)
+- **Mock API**: [http://localhost:3001](http://localhost:3001)
+- **Health**: [http://localhost:3001/health](http://localhost:3001/health)
 
 ## Common Issues
 
@@ -140,7 +140,7 @@ If ports 3000 or 3002 are in use:
 ```bash
 # Check what's using the ports
 lsof -i :3000
-lsof -i :3002
+lsof -i :3001
 
 # Kill processes if needed
 kill -9 <PID>

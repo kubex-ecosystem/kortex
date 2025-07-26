@@ -152,7 +152,7 @@ export const useRealTimeMetrics = ({
   const wsRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:3002/metrics/${serverId}/${metricType}`);
+    const ws = new WebSocket(`ws://localhost:3001/metrics/${serverId}/${metricType}`);
     wsRef.current = ws;
 
     ws.onopen = () => {

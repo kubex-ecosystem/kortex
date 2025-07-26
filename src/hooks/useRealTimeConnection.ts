@@ -25,7 +25,7 @@ interface RealTimeStatus {
 export function useRealTimeConnection(config: RealTimeConnectionConfig = {}) {
   const {
     kosmosUrl = 'ws://localhost:8001', // Nosso mock server!
-    statusRafaUrl = 'ws://localhost:3002/ws', 
+    statusRafaUrl = 'ws://localhost:3001/ws', 
     mcpServerUrl = 'ws://localhost:3001/ws',
     autoConnect = true,
     retryOnFailure = true

@@ -43,7 +43,7 @@ const generateMCPServers = () => [
   {
     id: 'kosmos-1',
     name: 'Kosmos MCP Server',
-    hostname: 'localhost:8000',
+    hostname: 'localhost:3001',
     status: Math.random() > 0.3 ? 'Online' : 'Offline',
     responseTime: Math.floor(Math.random() * 200) + 20,
     lastSeen: new Date(Date.now() - Math.random() * 300000).toISOString(), // Random within 5 minutes
@@ -57,7 +57,7 @@ const generateMCPServers = () => [
   {
     id: 'statusrafa-1',
     name: 'StatusRafa MCP Server',
-    hostname: 'localhost:8001',
+    hostname: 'localhost:3001',
     status: Math.random() > 0.4 ? 'Online' : 'Offline',
     responseTime: Math.floor(Math.random() * 150) + 15,
     lastSeen: new Date(Date.now() - Math.random() * 180000).toISOString(), // Random within 3 minutes
@@ -71,7 +71,7 @@ const generateMCPServers = () => [
   {
     id: 'local-mock-1',
     name: 'Local Mock Server',
-    hostname: 'localhost:3002',
+    hostname: 'localhost:3001',
     status: 'Online',
     responseTime: Math.floor(Math.random() * 100) + 25,
     lastSeen: new Date().toISOString(),
