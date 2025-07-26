@@ -24,8 +24,8 @@
 </span><span id=__span-3-4><a id=__codelineno-3-4 name=__codelineno-3-4 href=#__codelineno-3-4></a><span class=c1># Edit the configuration</span>
 </span><span id=__span-3-5><a id=__codelineno-3-5 name=__codelineno-3-5 href=#__codelineno-3-5></a>nano<span class=w> </span>.env.local
 </span></code></pre></div> <p><strong><em>Required Environment Variables</em></strong></p> <div class="language-text highlight"><pre><span></span><code><span id=__span-4-1><a id=__codelineno-4-1 name=__codelineno-4-1 href=#__codelineno-4-1></a># API Configuration
-</span><span id=__span-4-2><a id=__codelineno-4-2 name=__codelineno-4-2 href=#__codelineno-4-2></a>NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
-</span><span id=__span-4-3><a id=__codelineno-4-3 name=__codelineno-4-3 href=#__codelineno-4-3></a>NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
+</span><span id=__span-4-2><a id=__codelineno-4-2 name=__codelineno-4-2 href=#__codelineno-4-2></a>NEXT_PUBLIC_API_BASE_URL=http://localhost:3001
+</span><span id=__span-4-3><a id=__codelineno-4-3 name=__codelineno-4-3 href=#__codelineno-4-3></a>NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
 </span><span id=__span-4-4><a id=__codelineno-4-4 name=__codelineno-4-4 href=#__codelineno-4-4></a>
 </span><span id=__span-4-5><a id=__codelineno-4-5 name=__codelineno-4-5 href=#__codelineno-4-5></a># Development Settings
 </span><span id=__span-4-6><a id=__codelineno-4-6 name=__codelineno-4-6 href=#__codelineno-4-6></a>NODE_ENV=development
@@ -217,7 +217,7 @@
 </span><span id=__span-16-6><a id=__codelineno-16-6 name=__codelineno-16-6 href=#__codelineno-16-6></a><span class=w>  </span><span class=nx>setupApiMocks</span><span class=p>();</span>
 </span><span id=__span-16-7><a id=__codelineno-16-7 name=__codelineno-16-7 href=#__codelineno-16-7></a>
 </span><span id=__span-16-8><a id=__codelineno-16-8 name=__codelineno-16-8 href=#__codelineno-16-8></a><span class=w>  </span><span class=kd>const</span><span class=w> </span><span class=nx>apiClient</span><span class=w> </span><span class=o>=</span><span class=w> </span><span class=ow>new</span><span class=w> </span><span class=nx>ApiClient</span><span class=p>({</span>
-</span><span id=__span-16-9><a id=__codelineno-16-9 name=__codelineno-16-9 href=#__codelineno-16-9></a><span class=w>    </span><span class=nx>baseUrl</span><span class=o>:</span><span class=w> </span><span class=s1>&#39;http://localhost:3002&#39;</span><span class=p>,</span>
+</span><span id=__span-16-9><a id=__codelineno-16-9 name=__codelineno-16-9 href=#__codelineno-16-9></a><span class=w>    </span><span class=nx>baseUrl</span><span class=o>:</span><span class=w> </span><span class=s1>&#39;http://localhost:3001&#39;</span><span class=p>,</span>
 </span><span id=__span-16-10><a id=__codelineno-16-10 name=__codelineno-16-10 href=#__codelineno-16-10></a><span class=w>  </span><span class=p>});</span>
 </span><span id=__span-16-11><a id=__codelineno-16-11 name=__codelineno-16-11 href=#__codelineno-16-11></a>
 </span><span id=__span-16-12><a id=__codelineno-16-12 name=__codelineno-16-12 href=#__codelineno-16-12></a><span class=w>  </span><span class=nx>describe</span><span class=p>(</span><span class=s1>&#39;Server API&#39;</span><span class=p>,</span><span class=w> </span><span class=p>()</span><span class=w> </span><span class=p>=&gt;</span><span class=w> </span><span class=p>{</span>

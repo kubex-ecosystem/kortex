@@ -2,82 +2,86 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://rafa-mori.github.io/kortex/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/about/RELEASE_NOTES/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/about/changelog/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/about/contributing/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/about/faq/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/about/license/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/advanced/api/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/advanced/architecture/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/advanced/deployment/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/advanced/development/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/advanced/typescript-scripts/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/examples/integration/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/features/extraction/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/getting-started/concepts/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/getting-started/installation/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/getting-started/quick-start/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/guide/best-practices/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/guide/commands/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/guide/configuration/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
+    </url>
+    <url>
+         <loc>https://rafa-mori.github.io/kortex/guide/testing-coverage/</loc>
+         <lastmod>2025-07-26</lastmod>
     </url>
     <url>
          <loc>https://rafa-mori.github.io/kortex/guide/workflows/</loc>
-         <lastmod>2025-07-25</lastmod>
+         <lastmod>2025-07-26</lastmod>
     </url>
 </urlset>
