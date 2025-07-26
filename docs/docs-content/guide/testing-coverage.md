@@ -48,7 +48,7 @@ Coverage Summary:
 
 **Problema:** Dependência circular com AppContext causando erro de inicialização
 
-```plaintext
+```text
 ReferenceError: Cannot access '_AppContext' before initialization
 ```
 
@@ -61,7 +61,7 @@ ReferenceError: Cannot access '_AppContext' before initialization
 
 **Problema:** Erro de contexto React sendo null
 
-```plaintext
+```text
 TypeError: Cannot read properties of null (reading 'useContext')
 ```
 
@@ -73,6 +73,7 @@ TypeError: Cannot read properties of null (reading 'useContext')
 ### 3. TaskCard.test.tsx
 
 **Problema:** Dependências complexas do AppContext e testes inadequados
+
 **Solução:**
 
 - Mock simplificado do `useApp`
@@ -112,7 +113,7 @@ it('renders when isOpen is true', () => {
 ## 📈 Benefícios Alcançados
 
 1. **Confiabilidade**: 100% dos testes passando sem falhas
-2. **Maintainability**: Infraestrutura de testes robusta e escalável  
+2. **Maintainability**: Infraestrutura de testes robusta e escalável
 3. **CI/CD Ready**: Configuração pronta para pipelines automatizados
 4. **Developer Experience**: Feedback rápido durante desenvolvimento
 5. **Quality Assurance**: Detecção precoce de regressões
@@ -126,7 +127,7 @@ it('renders when isOpen is true', () => {
 - [ ] Testes para `hooks/useAPI*` (0% atual)
 - [ ] Testes de integração end-to-end
 
-### Melhoria de Qualidade  
+### Melhoria de Qualidade
 
 - [ ] Implementar testes de snapshot para UI
 - [ ] Adicionar testes de performance

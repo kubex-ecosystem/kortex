@@ -15,7 +15,9 @@ Your comprehensive guide to the Kortex MCP Server Management Dashboard.
 
 - **[Configuration](guide/configuration.md)** - Complete configuration reference
 - **[Workflows](guide/workflows.md)** - Common usage patterns
-- **[Troubleshooting](guide/troubleshooting.md)** - Solutions to common issues
+- **[Testing Coverage](guide/testing-coverage.md)** - Test coverage improvement report
+- **[Best Practices](guide/best-practices.md)** - Development best practices
+- **[Commands](guide/commands.md)** - Available commands reference
 
 ### Features
 
