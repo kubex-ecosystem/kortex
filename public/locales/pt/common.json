@@ -1,0 +1,53 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "discord": "Discord",
+    "tasks": "Tasks",
+    "analytics": "Analytics", 
+    "config": "Configurações",
+    "custom": "Personalizado"
+  },
+  "actions": {
+    "toggleSidebar": "Alternar barra lateral",
+    "toggleTheme": "Alternar tema",
+    "toggleLanguage": "Alternar idioma",
+    "search": "Buscar",
+    "settings": "Configurações",
+    "logout": "Sair",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "create": "Criar",
+    "refresh": "Atualizar"
+  },
+  "status": {
+    "online": "Online",
+    "offline": "Offline",
+    "connecting": "Conectando",
+    "error": "Erro",
+    "loading": "Carregando",
+    "success": "Sucesso"
+  },
+  "common": {
+    "home": "Início",
+    "back": "Voltar",
+    "next": "Próximo",
+    "previous": "Anterior",
+    "close": "Fechar",
+    "open": "Abrir",
+    "view": "Visualizar",
+    "details": "Detalhes",
+    "more": "Mais",
+    "less": "Menos"
+  },
+  "themes": {
+    "light": "Claro",
+    "dark": "Escuro",
+    "system": "Sistema"
+  },
+  "language": {
+    "portuguese": "Português",
+    "english": "English"
+  }
+}

@@ -59,7 +59,7 @@ export default function DashboardPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="py-8 space-y-8"
+      className="p-6 space-y-8"
     >
       {/* Header */}
       <motion.div
