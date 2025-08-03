@@ -14,8 +14,8 @@ import {
   Download,
   Eye
 } from 'lucide-react';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { LoadingState } from '@/components/ui/LoadingSpinner';
+import { StatusBadge } from '@/components/UI/StatusBadge';
+import { LoadingState } from '@/components/UI/LoadingSpinner';
 import { mcpService } from '@/lib/mcpService';
 import { Task } from '@/types/MCP';
 

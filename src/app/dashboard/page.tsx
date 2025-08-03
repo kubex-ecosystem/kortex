@@ -15,12 +15,12 @@ import {
   Target,
   Settings
 } from 'lucide-react';
-import { StatsCard } from '@/components/ui/StatsCard';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { LoadingState } from '@/components/ui/LoadingSpinner';
-import { RefreshIndicator } from '@/components/ui/RefreshIndicator';
-import { useStableQuery } from '@/hooks/useStableQuery';
-import { mcpService } from '@/lib/mcpService';
+import { StatsCard } from '../../components/UI/StatsCard';
+import { StatusBadge } from '../../components/UI/StatusBadge';
+import { LoadingState } from '../../components/UI/LoadingSpinner';
+import { RefreshIndicator } from '../..//components/UI/RefreshIndicator';
+import { useStableQuery } from '../../hooks/useStableQuery';
+import { mcpService } from '../../lib/mcpService';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 
 export default function DashboardPage() {
