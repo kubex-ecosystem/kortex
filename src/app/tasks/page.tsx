@@ -15,12 +15,12 @@ import {
   Search,
   ChevronDown
 } from 'lucide-react';
-import { StatusBadge } from '@/components/UI/StatusBadge';
-import { LoadingState } from '@/components/UI/LoadingSpinner';
-import { RefreshIndicator } from '@/components/UI/RefreshIndicator';
-import { useStableQuery } from '@/hooks/useStableQuery';
-import { mcpService } from '@/lib/mcpService';
-import { ApprovalRequest } from '@/types/MCP';
+import { StatusBadge } from '../../components/UI/StatusBadge';
+import { LoadingState } from '../../components/UI/LoadingSpinner';
+import { RefreshIndicator } from '../../components/UI/RefreshIndicator';
+import { useStableQuery } from '../../hooks/useStableQuery';
+import { mcpService } from '../../lib/mcpService';
+import { ApprovalRequest } from '../../types/MCP';
 import toast from 'react-hot-toast';
 
 export default function TasksPage() {

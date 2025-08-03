@@ -162,7 +162,6 @@
       "prettier-plugin-tailwindcss"
     ]
   },
-
   "scripts": {
     "prepare": "husky install",
     "precommit": "lint-staged",
@@ -183,24 +182,8 @@
     "clean:environment": "PORT=3000 rm -rf ./node_modules ./yarn.lock ./package-lock.json ./.next ./out ./coverage || true"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-hook-form": "^7.43.1",
-    "react-i18next": "^14.0.0",
-    "react-icons": "^4.6.0",
-    "react-query": "^3.39.2",
-    "react-router-dom": "^5.3.0",
-    "react-toastify": "^9.1.2",
-    "react-use": "^17.4.0",
-    "react-window": "^1.8.6",
     "@tanstack/react-query": "^5.84.1",
     "autoprefixer": "^10.4.21",
-    "framer-motion": "^12.23.12",
-    "lucide-react": "^0.536.0",
-    "next": "15.4.5",
-    "postcss": "^8.5.6",
-    "react-hot-toast": "^2.5.2",
-    "recharts": "^3.1.0",
     "clsx": "^2.1.1",
     "erro": "^2.1.0",
     "error": "^10.4.0",
@@ -208,11 +191,25 @@
     "i18next-browser-languagedetector": "^8.2.0",
     "jszip": "^3.10.1",
     "lookatni-file-markers": "^1.1.0",
+    "lucide-react": "^0.536.0",
     "material-icons-react": "^1.0.4",
+    "next": "15.4.5",
     "next-i18next": "^15.4.2",
+    "postcss": "^8.5.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.43.1",
+    "react-hot-toast": "^2.5.2",
+    "react-i18next": "^14.0.0",
+    "react-icons": "^4.6.0",
+    "react-query": "^3.39.2",
+    "react-router-dom": "^5.3.0",
+    "react-toastify": "^9.1.2",
+    "react-use": "^17.4.0",
+    "react-window": "^1.8.6",
+    "recharts": "^3.1.0",
     "ws": "^8.18.3",
-    "zustand": "^4.0.0",
-    "tailwindcss": "^3.3.0"
+    "zustand": "^4.0.0"
   },
   "devDependencies": {
     "@babel/plugin-syntax-flow": "^7.27.1",
@@ -229,6 +226,7 @@
     "dependency-cruiser": "^16.10.4",
     "eslint": "^8",
     "eslint-config-next": "14.0.0",
+    "framer-motion": "^12.23.12",
     "globby": "^14.1.0",
     "husky": "^9.1.7",
     "jest": "^30.0.5",
@@ -236,6 +234,7 @@
     "postcss": "^8",
     "react-aria-components": "^1.10.1",
     "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5",
     "winston": "^3.17.0"
   },

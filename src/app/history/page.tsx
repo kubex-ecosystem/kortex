@@ -14,10 +14,10 @@ import {
   Download,
   Eye
 } from 'lucide-react';
-import { StatusBadge } from '@/components/UI/StatusBadge';
-import { LoadingState } from '@/components/UI/LoadingSpinner';
-import { mcpService } from '@/lib/mcpService';
-import { Task } from '@/types/MCP';
+import { StatusBadge } from '../../components/UI/StatusBadge';
+import { LoadingState } from '../../components/UI/LoadingSpinner';
+import { mcpService } from '../../lib/mcpService';
+import { Task } from '../../types/MCP';
 
 export default function HistoryPage() {
   const [searchTerm, setSearchTerm] = useState('');

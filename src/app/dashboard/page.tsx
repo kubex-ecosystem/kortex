@@ -18,7 +18,7 @@ import {
 import { StatsCard } from '../../components/UI/StatsCard';
 import { StatusBadge } from '../../components/UI/StatusBadge';
 import { LoadingState } from '../../components/UI/LoadingSpinner';
-import { RefreshIndicator } from '../..//components/UI/RefreshIndicator';
+import { RefreshIndicator } from '../../components/UI/RefreshIndicator';
 import { useStableQuery } from '../../hooks/useStableQuery';
 import { mcpService } from '../../lib/mcpService';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';

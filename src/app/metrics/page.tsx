@@ -15,9 +15,9 @@ import {
   LineChart as LineChartIcon,
   RefreshCw
 } from 'lucide-react';
-import { StatsCard } from '@/components/UI/StatsCard';
-import { LoadingState } from '@/components/UI/LoadingSpinner';
-import { mcpService } from '@/lib/mcpService';
+import { StatsCard } from '../../components/UI/StatsCard';
+import { LoadingState } from '../../components/UI/LoadingSpinner';
+import { mcpService } from '../../lib/mcpService';
 import { 
   LineChart, 
   Line, 

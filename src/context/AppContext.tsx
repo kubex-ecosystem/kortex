@@ -1,7 +1,6 @@
 // src/context/AppContext.tsx
 import { Context, createContext, ReactNode, useContext, useState } from 'react';
 import { LogEntry, Notification, Task } from '../types';
-import { MCPServerType } from '../types/MCP/Server';
 
 export interface AppNotification extends Partial<Notification> {
   id: string;
@@ -13,7 +12,6 @@ export interface AppNotification extends Partial<Notification> {
 
 export interface AppContextType {
   connectionStatus?: 'connected' | 'disconnected';
-  servers?: MCPServerType[];
   tasks?: Task[];
   logs?: LogEntry[];
   notifications?: AppNotification[];
@@ -28,15 +26,12 @@ export interface AppContextType {
   disconnect?: () => void;
   refreshData?: () => Promise<void>;
   addTask?: (task: Task) => void;
-  addServer?: (server: MCPServerType) => void;
   addLog?: (log: LogEntry) => void;
   removeTask?: (taskId: string) => void;
-  removeServer?: (serverId: string) => void;
   removeLog?: (logId: string) => void;
   markNotificationRead?: (id: string) => void;
   removeNotification?: (id: string) => void;
   clearNotifications?: () => void;
-  updateServer?: (server: MCPServerType) => void;
   updateTask?: (task: Task) => void;
   updateLog?: (log: LogEntry) => void;
   updateNotification?: (notification: AppNotification) => void;
@@ -46,7 +41,6 @@ export interface AppContextType {
 const AppContext: Context<AppContextType | undefined> = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [servers, setServers] = useState<MCPServerType[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [isDark, setIsDark] = useState<boolean>(false);
@@ -74,18 +68,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
   const addNotification = (notification: AppNotification) => {
     console.log('[📣 Notification]', notification);
-  };
-
-  const addServer = (server: MCPServerType) => {
-    console.log('[➕ Add Server]', server);
-  };
-
-  const updateServer = (server: MCPServerType) => {
-    console.log('[✏️ Update Server]', server);
-  };
-
-  const removeServer = (serverId: string) => {
-    console.log('[🗑️ Remove Server]', serverId);
   };
 
   const addTask = (task: Task) => {
@@ -141,7 +123,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const appContextValue: Context<AppContextType | undefined> = AppContext || createContext({
-    servers: servers,
     tasks: tasks,
     isConnected: isConnected,
     isLoading: isLoading,
@@ -155,9 +136,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     toggleTheme: toggleTheme,
     addTask: addTask,
     addNotification: addNotification,
-    addServer: addServer,
-    updateServer: updateServer,
-    removeServer: removeServer,
     removeTask: removeTask,
     updateTask: updateTask,
     addLog: addLog,
@@ -175,7 +153,6 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AppContext.Provider value={{
         ...appContextValue,
-        servers,
         tasks,
         isConnected,
         isLoading,

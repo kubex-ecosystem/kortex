@@ -1,6 +1,6 @@
 import { AlertCircle, Bell, BookOpen, Menu, Moon, Sun, Wifi, WifiOff } from 'lucide-react';
 import React, { useState } from 'react';
-import { useApp } from '../../../src/context/AppContext';
+import { useApp } from '../../context/AppContext';
 import { useWebSocket } from '../../hooks/useWebSocket';
 import { NotificationCenter } from '../UI/NotificationCenter';
 import { SearchBar } from '../UI/SearchBar';
