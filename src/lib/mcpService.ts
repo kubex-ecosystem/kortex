@@ -17,6 +17,7 @@ import { StorageManager } from './storageManager';ce - Resilient & In  private c
  * Gerencia comunicação com backend com fallbacks automáticos
  */
 
+import { MCPServerType } from '@/types/MCP/MCPTypes';
 import { MCPTask } from '../types/MCP/Task';
 import { mockManager } from './mockManager';
 
@@ -348,7 +349,7 @@ export class MCPService {
   /**
    * API Methods específicos
    */
-  async getSystemMetrics() {
+  async getSystemMetrics(): Promise<ServiceResponse<BackendSystemData | unknown>> {
     const response = await this.request('/api/v1/mcp/system/metrics');
     
     // 🔥 Mapear estrutura do backend para formato esperado pelo frontend
@@ -357,6 +358,10 @@ export class MCPService {
       
       // Converter estrutura do GoBE backend para interface SystemData do frontend
       const mappedData = {
+        cpu: backendData.cpu || 0,
+        memory: backendData.memory || 0,
+        disk: backendData.disk || 0,
+
         // Performance (mapeamento da estrutura aninhada do backend)
         cpuUsage: backendData.cpu?.usage || 0,
         memoryUsage: backendData.memory?.percentage || 0,
@@ -377,7 +382,7 @@ export class MCPService {
         
         // Adicionar dados extras do backend para debug
         _raw: backendData // Manter dados originais para debug
-      };
+      } as BackendSystemData;
       
       // 🔥 REMOVIDO: Log verboso que causava re-renders
       // console.log('🔥 SystemMetrics Mapping:', {
@@ -387,18 +392,21 @@ export class MCPService {
       
       return {
         ...response,
-        data: mappedData
+        data: mappedData,
+        isRealData: true,
+        source: 'api',
+        timestamp: Date.now()
       };
     }
     
     return response;
   }
   
-  async getServersList() {
+  async getServersList(): Promise<ServiceResponse<MCPServerType[] | unknown>> {
     return this.request('/api/v1/mcp/servers');
   }
-  
-  async getServerDetails(serverId: string) {
+
+  async getServerDetails(serverId: string): Promise<ServiceResponse<MCPServerType | unknown>> {
     return this.request(`/api/v1/mcp/servers/${serverId}`);
   }
 
@@ -410,24 +418,24 @@ export class MCPService {
     return this.request(`/api/v1/mcp/tasks/${taskId}`);
   }
   
-  async getSystemLogs(limit: number = 50) {
+  async getSystemLogs(limit: number = 50): Promise<ServiceResponse<any>> {
     return this.request(`/api/v1/mcp/logs?limit=${limit}`);
   }
-  
-  async startTask(taskConfig: any) {
+
+  async startTask(taskConfig: any): Promise<ServiceResponse<MCPTask | unknown>> {
     return this.request('/api/v1/mcp/tasks', {
       method: 'POST',
       body: JSON.stringify(taskConfig)
     });
   }
   
-  async stopTask(taskId: string) {
+  async stopTask(taskId: string): Promise<ServiceResponse<unknown>> {
     return this.request(`/api/v1/mcp/tasks/${taskId}/stop`, {
       method: 'POST'
     });
   }
   
-  async restartServer(serverId: string) {
+  async restartServer(serverId: string): Promise<ServiceResponse<unknown>> {
     return this.request(`/api/v1/mcp/servers/${serverId}/restart`, {
       method: 'POST'
     });
@@ -461,7 +469,13 @@ export class MCPService {
   /**
    * Estado do serviço
    */
-  getStatus() {
+  getStatus(): { 
+    isOnline: boolean; 
+    fallbackMode: boolean; 
+    baseURL: string; 
+    cacheSize: number; 
+    demoMode: boolean 
+  } {
     return {
       isOnline: this.isOnline,
       fallbackMode: this.fallbackMode,
@@ -474,7 +488,7 @@ export class MCPService {
   /**
    * Forçar modo demo
    */
-  setDemoMode(enabled: boolean) {
+  setDemoMode(enabled: boolean): void {
     mockManager.setDemoMode(enabled);
     this.fallbackMode = enabled;
   }
@@ -482,7 +496,7 @@ export class MCPService {
   /**
    * Cleanup
    */
-  destroy() {
+  destroy(): void {
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
     }
@@ -500,7 +514,7 @@ export class MCPService {
   /**
    * Iniciar limpeza automática do cache
    */
-  private startCacheCleanup() {
+  private startCacheCleanup(): void {
     this.cacheCleanupInterval = setInterval(() => {
       this.cleanupCache();
     }, this.CACHE_CLEANUP_INTERVAL);
@@ -509,7 +523,7 @@ export class MCPService {
   /**
    * Limpar cache expirado e manter limite de entradas
    */
-  private cleanupCache() {
+  private cleanupCache(): void {
     const now = Date.now();
     const entriesToDelete: string[] = [];
     
@@ -540,7 +554,7 @@ export class MCPService {
   /**
    * Limpar localStorage para evitar limite de 15MB
    */
-  private cleanupLocalStorage() {
+  private cleanupLocalStorage(): void {
     if (typeof window === 'undefined') return;
     
     try {
@@ -565,6 +579,24 @@ export class MCPService {
     } catch (e) {
       console.error('Error cleaning localStorage:', e);
     }
+  }
+  
+  // Métodos adicionais para compatibilidade com as páginas
+  async getPendingApprovals(): Promise<ServiceResponse<MCPTask[]>> {
+    // Retorna lista vazia por enquanto - implementar quando necessário (source: '"api" | "cache" | "mock" | "fallback"')
+    return Promise.resolve({ data: [] as MCPTask[], success: true, isRealData: false, source: 'mock', timestamp: Date.now() });
+  }
+
+  async approveTask(approvalId: string, taskId: string): Promise<ServiceResponse<unknown | null>> {
+    // Simula aprovação - implementar quando necessário (source: '"api" | "cache" | "mock" | "fallback"')
+    console.log(`Aprovando task ${taskId} com approval ${approvalId}`);
+    return Promise.resolve({ data: null, success: true, message: 'Task aprovada', source: 'mock', timestamp: Date.now() });
+  }
+
+  async rejectTask(approvalId: string, reason: string): Promise<ServiceResponse<unknown | null>> {
+    // Simula rejeição - implementar quando necessário
+    console.log(`Rejeitando approval ${approvalId} com razão: ${reason}`);
+    return Promise.resolve({ data: null, success: true, message: 'Task rejeitada', source: 'mock', timestamp: Date.now() });
   }
 }
 

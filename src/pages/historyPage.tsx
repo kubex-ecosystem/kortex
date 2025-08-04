@@ -1,5 +1,3 @@
-'use client';
-
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
@@ -12,10 +10,10 @@ import {
   XCircle
 } from 'lucide-react';
 import { useState } from 'react';
-import { LoadingState } from '../../components/UI/LoadingSpinner';
-import { StatusBadge } from '../../components/UI/StatusBadge';
-import { mcpService } from '../../lib/mcpService';
-import { Task } from '../../types/MCP';
+import { LoadingState } from '../components/UI/LoadingSpinner';
+import { StatusBadge } from '../components/UI/StatusBadge';
+import { mcpService } from '../lib/mcpService';
+import { Task } from '../types/MCP';
 
 export default function HistoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -285,4 +283,11 @@ export default function HistoryPage() {
       </div>
     </motion.main>
   );
+}
+
+// Force dynamic rendering
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
 }

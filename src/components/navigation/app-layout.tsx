@@ -1,7 +1,5 @@
-'use client';
-
-import { cn } from '@/lib/utils';
-import { useNavigationStore } from '@/store/navigation';
+import { cn } from '../../lib/utils';
+import { useNavigationStore } from '../../store/navigation';
 import { Sidebar } from './sidebar';
 import { TopBar } from './topbar';
 

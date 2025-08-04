@@ -3,32 +3,19 @@
 export default {
   trailingSlash: true,
   reactStrictMode: true,
-  cacheMaxMemorySize: 2048, // Aumentar cache para 2GB
   compress: true,
   cleanDistDir: true,
   staticPageGenerationTimeout: 60,
-  output: 'export',
-  experimental: {
-    scrollRestoration: true,
-    serverActions: {
-      enabled: true,
-      bodySizeLimit: '15mb', // Limite para Server Actions
-    },
-    // Configurações de cache e memória
-    // cacheHandler: null, // Esse aqui já foi descontinuado, da versão 14 pra cima
-    // serverComponentsExternalPackages: ['@emotion/react'],
-  },
-  poweredByHeader: false,
   eslint: {
     ignoreDuringBuilds: true,
-  },
-  turbopack: {
   },
   typescript: {
     ignoreBuildErrors: true,
   },
   images: {
     unoptimized: true,
+  },
+  turbopack: {
   },
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
 };

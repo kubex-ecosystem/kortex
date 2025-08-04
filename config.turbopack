@@ -1,0 +1,10 @@
+experimental: {
+  turbo: true,
+  turboMode: true,
+  turboServer: true,
+  turboServerComponents: true,
+  turboServerComponentsExternalPackages: ['@next/font', '@next/next-image'],
+  serverActions: true,
+  scrollRestoration: true,
+},
+turboServerComponentsExternalPackages: ['@next/font', '@next/next-image'],

@@ -1,5 +1,3 @@
-'use client';
-
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
@@ -15,17 +13,18 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { LoadingState } from '../../components/UI/LoadingSpinner';
-import { RefreshIndicator } from '../../components/UI/RefreshIndicator';
-import { StatusBadge } from '../../components/UI/StatusBadge';
-import { useStableQuery } from '../../hooks/useStableQuery';
-import { mcpService } from '../../lib/mcpService';
-import { ApprovalRequest } from '../../types/MCP';
+import { LoadingState } from '../components/UI/LoadingSpinner';
+import { RefreshIndicator } from '../components/UI/RefreshIndicator';
+import { StatusBadge } from '../components/UI/StatusBadge';
+import { useStableQuery } from '../hooks/useStableQuery';
+import { mcpService } from '../lib/mcpService';
+import { MCPTask } from '../types/MCP/Task';
+
 
 export default function TasksPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
-  const [selectedTask, setSelectedTask] = useState<ApprovalRequest | null>(null);
+  const [selectedTask, setSelectedTask] = useState<MCPTask | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const queryClient = useQueryClient();
 
@@ -35,6 +34,10 @@ export default function TasksPage() {
     queryFn: () => mcpService.getPendingApprovals(),
     refetchInterval: 30000, // Reduzido para 30 segundos
   });
+
+  if (isLoading && !approvals) {
+    return <LoadingState message="Carregando aprovações pendentes..." />;
+  }
 
   const approveMutation = useMutation({
     mutationFn: ({ approvalId, taskId }: { approvalId: string; taskId: string }) =>
@@ -63,15 +66,16 @@ export default function TasksPage() {
     },
   });
 
-  const filteredApprovals = approvals?.filter(approval => {
-    const matchesSearch = approval.task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         approval.task.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPriority = priorityFilter === 'all' || approval.priority === priorityFilter;
+  const taskslist = (approvals || []) as MCPTask[];
+  const filteredApprovals = taskslist.filter((approval) => {
+    const matchesSearch = approval.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (approval?.description || "").toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesPriority = priorityFilter === 'all' || (approval?.priority || 'low') === priorityFilter;
     return matchesSearch && matchesPriority;
   });
 
-  const handleApprove = (approval: ApprovalRequest) => {
-    approveMutation.mutate({ approvalId: approval.id, taskId: approval.taskId });
+  const handleApprove = (approval: MCPTask) => {
+    approveMutation.mutate({ approvalId: approval.id, taskId: approval.id });
   };
 
   const handleReject = () => {
@@ -178,24 +182,24 @@ export default function TasksPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {approval.task.title}
+                      {approval.title}
                     </h3>
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getPriorityColor(approval.priority)}`}>
-                      {approval.priority.toUpperCase()}
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getPriorityColor((approval.priority || 'low') as string)}`}>
+                      {((approval.priority || 'low') as string).toUpperCase()}
                     </span>
                   </div>
                   <p className="text-gray-600 dark:text-gray-400 mb-3">
-                    {approval.task.description}
+                    {approval.description}
                   </p>
                   
                   <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                     <div className="flex items-center gap-1">
                       <User className="w-4 h-4" />
-                      <span>Solicitado por: {approval.requestedBy}</span>
+                      <span>Solicitado por: {approval.createdBy}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      <span>{new Date(approval.requestedAt).toLocaleString('pt-BR')}</span>
+                      <span>{new Date(approval.createdAt).toLocaleString('pt-BR')}</span>
                     </div>
                   </div>
                   
@@ -204,7 +208,14 @@ export default function TasksPage() {
                       <MessageSquare className="w-4 h-4 text-gray-400" />
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Razão:</span>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{approval.reason}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{
+                      approval?.reasons?.map((reason, index) => (
+                        <span key={index}>
+                          {reason}
+                          {index < ((approval.reasons || []).length - 1) && ', '}
+                        </span>
+                      ))
+                    }</p>
                   </div>
                 </div>
               </div>
@@ -213,15 +224,15 @@ export default function TasksPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg">
                 <div>
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Provider:</span>
-                  <p className="text-gray-900 dark:text-white">{approval.task.provider}</p>
+                  <p className="text-gray-900 dark:text-white">{approval?.apiProvider}</p>
                 </div>
                 <div>
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Target:</span>
-                  <p className="text-gray-900 dark:text-white">{approval.task.target}</p>
+                  <p className="text-gray-900 dark:text-white">{approval?.apiModel}</p>
                 </div>
                 <div>
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Status:</span>
-                  <StatusBadge status={approval.task.status}>{approval.task.status}</StatusBadge>
+                  <StatusBadge status={approval?.status}>{approval?.status}</StatusBadge>
                 </div>
               </div>
 
@@ -241,7 +252,7 @@ export default function TasksPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setSelectedTask(approval)}
+                  onClick={() => {return approval ? setSelectedTask((approval as MCPTask)) : null}}
                   className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors"
                 >
                   <XCircle className="w-4 h-4" />
@@ -292,7 +303,7 @@ export default function TasksPage() {
               </div>
               
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                Você está prestes a rejeitar a task "{selectedTask.task.title}". 
+                Você está prestes a rejeitar a task "{selectedTask.title}". 
                 Por favor, forneça uma razão para a rejeição:
               </p>
               
@@ -337,4 +348,11 @@ export default function TasksPage() {
       />
     </motion.main>
   );
+}
+
+// Force dynamic rendering
+export async function getServerSideProps() {
+  return {
+    props: {},
+  };
 }

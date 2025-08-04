@@ -1,22 +1,21 @@
-'use client';
-
-import { cn } from '@/lib/utils';
-import { useTranslation } from '@/providers/i18n-provider';
-import { useNavigationStore, type BreadcrumbItem } from '@/store/navigation';
 import { motion } from 'framer-motion';
 import { ChevronRight, Languages, Monitor, Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { cn } from '../../lib/utils';
+import { useTranslation } from '../../providers/i18n-provider';
+import { useNavigationStore, type BreadcrumbItem } from '../../store/navigation';
 
 interface TopBarProps {
   className?: string;
 }
 
-export function TopBar({ className }: TopBarProps) {
+export function TopBar() {
   const { theme, setTheme } = useTheme();
   const { t, currentLanguage, changeLanguage, languages } = useTranslation();
-  const pathname = usePathname();
+  const router = useRouter();
+  const pathname = router.pathname;
   const {
       visibleBreadcrumbs,
       setBreadcrumbs,
@@ -100,7 +99,6 @@ export function TopBar({ className }: TopBarProps) {
         'sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md',
         'border-b border-gray-200 dark:border-gray-800',
         'px-6 py-4',
-        className
       )}
     >
       <div className="flex items-center justify-between">

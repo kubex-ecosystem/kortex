@@ -1,8 +1,7 @@
-'use client';
-
-import { useServersAndTasks } from '@/hooks/useServersAndTasks';
-import { useSystemData } from '@/hooks/useSystemData';
 import { Activity, AlertTriangle, CheckCircle, Clock, Database, RefreshCw, Server, XCircle } from 'lucide-react';
+import React from 'react';
+import { useServersAndTasks } from '../hooks/useServersAndTasks';
+import { useSystemData } from '../hooks/useSystemData';
 
 export default function Dashboard() {
   // 🔥 Separar hooks para reduzir re-renders
@@ -40,17 +39,20 @@ export default function Dashboard() {
 
   if (isLoading) {
     return (
+      <React.Fragment>
       <div className="p-6 flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
           <p className="text-gray-600 dark:text-gray-400">Carregando dados do sistema...</p>
         </div>
       </div>
+      </React.Fragment>
     );
   }
 
   if (error) {
     return (
+      <React.Fragment>
       <div className="p-6">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-4">
           <div className="flex items-center gap-3">
@@ -62,6 +64,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      </React.Fragment>
     );
   }
 
@@ -102,6 +105,7 @@ export default function Dashboard() {
   ];
 
   return (
+    <React.Fragment>
     <div className="p-6 space-y-6">
       {/* Header com Status */}
       <div className="flex items-center justify-between">
@@ -281,5 +285,6 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+    </React.Fragment>
   );
 }

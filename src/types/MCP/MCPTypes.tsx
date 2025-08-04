@@ -1,9 +1,7 @@
-import { Task, TaskState } from '../TaskTypes';
-import { LogEntry } from '../LogTypes';
-import { NotificationType } from '../NotificationTypes';
-import { MCPNotificationType } from './Notification';
-import { ServerStatus } from '../ServerTypes';
+import { LogEntry } from '../';
 import { ConnectionStatus } from '../SettingsTypes';
+import { MCPNotificationType } from './Notification';
+import { MCPTask } from './Task';
 
 export type MCPPlaceType = 'local' | 'remote' | 'cloud';
 export type MCPConnectionType = 'WebSocket' | 'HTTP' | 'HTTPS' | 'REST';
@@ -14,7 +12,7 @@ export type MCPStatisticType = 'tasks' | 'servers' | 'logs' | 'notifications';
 export type MCPStatusType = 'idle' | 'active' | 'error' | 'maintenance';
 
 export interface MCPStateType {
-  tasks: TaskState[];
+  tasks: MCPTask[];
   servers: MCPServerType[];
   logs: LogEntry[];
   isConnected: boolean;
@@ -70,7 +68,7 @@ export interface MCPAPIProviderConfigType {
 
 export interface MCPContextType {
   servers: MCPServerType[];
-  tasks: Task[];
+  tasks: MCPTask[];
   logs: LogEntry[];
   notifications: MCPNotificationType[];
   isConnected: boolean;
@@ -80,7 +78,7 @@ export interface MCPContextType {
   connect: () => Promise<void>;
   disconnect: () => void;
   refreshData: () => Promise<void>;
-  addTask: (task: Task) => void;
+  addTask: (task: MCPTask) => void;
   addServer: (server: MCPServerType) => void;
   addLog: (log: LogEntry) => void;
   removeTask: (taskId: string) => void;
@@ -89,7 +87,7 @@ export interface MCPContextType {
   markNotificationRead: (id: string) => void;
   clearNotifications: () => void;
   updateServer: (server: MCPServerType) => void;
-  updateTask: (task: Task) => void;
+  updateTask: (task: MCPTask) => void;
   updateLog: (log: LogEntry) => void;
   updateNotification: (notification: MCPNotificationType) => void;
   addNotification: (notification: MCPNotificationType) => void;
@@ -167,10 +165,10 @@ export interface MCPServerType {
   id: string;
   name: string;
   hostname: string;
-  status: ServerStatus;
+  status: MCPStatusType;
   config: MCPSettingsType;
   lastUpdated: Date;
-  tasks: Task[];
+  tasks: MCPTask[];
   logs: LogEntry[];
   notifications: MCPNotificationType[];
   stats: MCPStatsType;

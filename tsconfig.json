@@ -13,9 +13,9 @@
     "strict": true,
     "noEmit": true,
     "incremental": true,
-    "module": "esnext",
+    "module": "ESNext",
     "esModuleInterop": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
@@ -34,17 +34,19 @@
     ]
   },
   "include": [
+    "**/*.js",
+    "**/*.json",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
+    ".next/**/*.{js,ts,jsx,tsx,mdx}",
     "next-env.d.ts",
-    "out/types/**/*.ts",
+    "src/**/*.d.ts",
     "src/**/*.js",
     "src/**/*.json",
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "dist/types/**/*.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

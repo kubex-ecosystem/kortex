@@ -1,6 +1,5 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss";
+
 
 @layer base {
   :root {
@@ -40,17 +39,6 @@
     --destructive: 239 68 68; /* red-500 */
     --destructive-foreground: 255 255 255; /* white */
     --ring: 59 130 246; /* blue-500 */
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
