@@ -1,0 +1,3681 @@
+/// PROJECT_INFO ///
+Project: core
+Generated: 2025-08-04T04:00:34.982Z
+Total Files: 17
+Source: /srv/apps/LIFE/KUBEX/bkp/midgard/logz/internal/core
+
+/// config.go ///
+package core
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"path/filepath"
+	"strconv"
+	"sync"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/spf13/viper"
+
+	// "github.com/fsnotify/fsnotify"
+	// "github.com/spf13/viper"
+	//
+	// "encoding/json"
+	// "fmt"
+	// "log"
+	// "os"
+	// "path/filepath"
+	// "strconv"
+	// "strings"
+	// "sync"
+	// "time"
+	"strings"
+	"time"
+)
+
+const (
+	defaultPort        = "9999"
+	defaultBindAddress = "0.0.0.0"
+	defaultMode        = ModeStandalone
+)
+
+var defaultLogPath = "stdout"
+
+// Config interface defines the methods to access configuration settings.
+type Config interface {
+	Port() string
+	BindAddress() string
+	Address() string
+	PidFile() string
+	ReadTimeout() time.Duration
+	WriteTimeout() time.Duration
+	IdleTimeout() time.Duration
+	Output() string
+	SetOutput(configPath string)
+	NotifierManager() interface{}
+	Mode() interface{}
+	Level() string
+	SetLevel(VLevel interface{})
+	Format() string
+	SetFormat(LogFormat interface{})
+	GetInt(key string, value int) int
+	GetFormatter() interface{}
+}
+
+// ConfigImpl implements the Config interface and holds the configuration values.
+type ConfigImpl struct {
+	// Config is a constraint to implement Config interface
+	Config
+
+	VlLevel           LogLevel
+	VlFormat          LogFormat
+	VlPort            string
+	VlBindAddress     string
+	VlAddress         string
+	VlPidFile         string
+	VlReadTimeout     time.Duration
+	VlWriteTimeout    time.Duration
+	VlIdleTimeout     time.Duration
+	VlOutput          string
+	VlNotifierManager NotifierManager
+	VlMode            LogMode
+}
+
+func (c *ConfigImpl) GetFormatter() interface{} {
+	switch c.Format() {
+	case "json":
+		return &JSONFormatter{}
+	default:
+		return &TextFormatter{}
+	}
+}
+func (c *ConfigImpl) Port() string                 { return c.VlPort }
+func (c *ConfigImpl) BindAddress() string          { return c.VlBindAddress }
+func (c *ConfigImpl) Address() string              { return c.VlAddress }
+func (c *ConfigImpl) PidFile() string              { return c.VlPidFile }
+func (c *ConfigImpl) ReadTimeout() time.Duration   { return c.VlReadTimeout }
+func (c *ConfigImpl) WriteTimeout() time.Duration  { return c.VlWriteTimeout }
+func (c *ConfigImpl) IdleTimeout() time.Duration   { return c.VlIdleTimeout }
+func (c *ConfigImpl) NotifierManager() interface{} { return c.VlNotifierManager }
+func (c *ConfigImpl) Mode() interface{}            { return c.VlMode }
+func (c *ConfigImpl) Level() string                { return strings.ToUpper(string(c.VlLevel)) }
+func (c *ConfigImpl) SetLevel(VLevel interface{})  { c.VlLevel = LogLevel(VLevel.(string)) }
+func (c *ConfigImpl) Format() string               { return strings.ToLower(string(c.VlFormat)) }
+func (c *ConfigImpl) SetFormat(format interface{}) { c.VlFormat = LogFormat(format.(string)) }
+func (c *ConfigImpl) Output() string {
+	if c.VlOutput != "" {
+		return c.VlOutput
+	}
+	home, homeErr := os.UserHomeDir()
+	if homeErr != nil {
+		home, homeErr = os.UserConfigDir()
+		if homeErr != nil {
+			home, homeErr = os.UserCacheDir()
+			if homeErr != nil {
+				home = "/tmp"
+			}
+		}
+	}
+	logPath := filepath.Join(home, ".kubex", "logz", "logz.log")
+	if mkdirErr := os.MkdirAll(filepath.Dir(logPath), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+		return ""
+	}
+	if _, err := os.Stat(logPath); os.IsNotExist(err) {
+		if _, createErr := os.Create(logPath); createErr != nil {
+			return ""
+		}
+	}
+	return logPath
+}
+func (c *ConfigImpl) SetOutput(configPath string) {
+	c.VlOutput = configPath
+}
+func (c *ConfigImpl) GetInt(key string, defaultValue int) int {
+	viperInstance := viper.GetViper()
+
+	// Primeiro tenta buscar via Viper, se disponível
+	if viperInstance != nil {
+		// Obtém o valor como string para lidar com chaves configuradas em diferentes formatos
+		rawValue := viperInstance.GetString(key)
+		if rawValue != "" {
+			parsedVal, err := strconv.Atoi(rawValue) // Converte o valor para inteiro
+			if err == nil {
+				return parsedVal
+			}
+		}
+	}
+
+	// Caso não encontre ou a conversão falhe, retorna o valor padrão
+	return defaultValue
+}
+func (c *ConfigImpl) GetString(key string, defaultValue string) string {
+	viperInstance := viper.GetViper()
+
+	// Primeiro tenta buscar via Viper, se disponível
+	if viperInstance != nil {
+		// Obtém o valor como string para lidar com chaves configuradas em diferentes formatos
+		rawValue := viperInstance.GetString(key)
+		if rawValue != "" {
+			return rawValue
+		}
+	}
+
+	// Caso não encontre ou a conversão falhe, retorna o valor padrão
+	return defaultValue
+}
+
+// ConfigManager interface defines methods to manage configuration.
+type ConfigManager interface {
+	GetConfig() Config
+	GetPidPath() string
+	GetConfigPath() string
+	Output() string
+	SetOutput(configPath string)
+	LoadConfig() (Config, error)
+}
+
+// ConfigManagerImpl implements the ConfigManager interface.
+type ConfigManagerImpl struct {
+	VConfig Config
+	Mu      sync.RWMutex
+}
+
+func (cm *ConfigManagerImpl) checkConfig() {
+	cm.Mu.Lock()
+	defer cm.Mu.Unlock()
+	if cm.VConfig == nil {
+		cm.VConfig = &ConfigImpl{}
+	}
+	home, homeErr := os.UserHomeDir()
+	if homeErr != nil {
+		home, homeErr = os.UserConfigDir()
+		if homeErr != nil {
+			home, homeErr = os.UserCacheDir()
+			if homeErr != nil {
+				home = "/tmp"
+			}
+		}
+	}
+	configPath := filepath.Join(home, ".kubex", "logz", "VConfig.json")
+	if mkdirErr := os.MkdirAll(filepath.Dir(configPath), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+		return
+	}
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		if _, createErr := os.Create(configPath); createErr != nil {
+			return
+		}
+	}
+}
+
+func (cm *ConfigManagerImpl) Port() string {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+
+	cm.checkConfig()
+	if cm.VConfig != nil {
+		return cm.VConfig.Port()
+	}
+	return defaultPort
+}
+
+func (cm *ConfigManagerImpl) BindAddress() string {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+
+	cm.checkConfig()
+	if cm.VConfig != nil {
+		return cm.VConfig.BindAddress()
+	}
+	return defaultBindAddress
+}
+
+func (cm *ConfigManagerImpl) Address() string {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	if cm.VConfig != nil {
+		return cm.VConfig.Address()
+	}
+	return fmt.Sprintf("%s:%s", defaultBindAddress, defaultPort)
+}
+
+func (cm *ConfigManagerImpl) PidFile() string {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	if cm.VConfig != nil {
+		return cm.VConfig.PidFile()
+	}
+	return "logz_srv.pid"
+}
+
+func (cm *ConfigManagerImpl) ReadTimeout() time.Duration {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	if cm.VConfig != nil {
+		return cm.VConfig.ReadTimeout()
+	}
+	return time.Duration(15 * time.Second)
+}
+
+func (cm *ConfigManagerImpl) WriteTimeout() time.Duration {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	if cm.VConfig != nil {
+		return cm.VConfig.WriteTimeout()
+	}
+	return time.Duration(15 * time.Second)
+}
+
+func (cm *ConfigManagerImpl) IdleTimeout() time.Duration {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	if cm.VConfig != nil {
+		return cm.VConfig.IdleTimeout()
+	}
+	return time.Duration(60 * time.Second)
+}
+
+func (cm *ConfigManagerImpl) NotifierManager() interface{} {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	if cm.VConfig != nil {
+		return cm.VConfig.NotifierManager()
+	}
+	return nil
+}
+
+func (cm *ConfigManagerImpl) Mode() interface{} {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	if cm.VConfig != nil {
+		return cm.VConfig.Mode()
+	}
+	return defaultMode
+}
+
+func (cm *ConfigManagerImpl) Level() string {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	if cm.VConfig != nil {
+		return cm.VConfig.Level()
+	}
+	return strings.ToUpper(string(cm.VConfig.Level()))
+}
+
+func (cm *ConfigManagerImpl) Format() string {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	if cm.VConfig != nil {
+		return cm.VConfig.Format()
+	}
+	return strings.ToLower(string(cm.VConfig.Format()))
+}
+
+func (cm *ConfigManagerImpl) GetInt(key string, value int) int {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	viperInstance := viper.GetViper()
+	if viperInstance != nil {
+		rawValue := viperInstance.GetString(key)
+		if rawValue != "" {
+			parsedVal, err := strconv.Atoi(rawValue)
+			if err == nil {
+				return parsedVal
+			}
+		}
+	}
+	return value
+}
+
+func (cm *ConfigManagerImpl) GetConfig() Config {
+	cm.Mu.RLock()
+	defer cm.Mu.RUnlock()
+	return cm.VConfig
+}
+
+// GetPidPath returns the path to the PID file.
+func (cm *ConfigManagerImpl) GetPidPath() string {
+	cacheDir, cacheDirErr := os.UserCacheDir()
+	if cacheDirErr != nil {
+		cacheDir = "/tmp"
+	}
+	cacheDir = filepath.Join(cacheDir, "logz", cm.VConfig.PidFile())
+	if mkdirErr := os.MkdirAll(filepath.Dir(cacheDir), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+		return ""
+	}
+	return cacheDir
+}
+
+// GetConfigPath returns the path to the configuration file.
+func (cm *ConfigManagerImpl) GetConfigPath() string {
+	if cm.VConfig != nil {
+		if cm.VConfig.Output() != "" && cm.VConfig.Mode() == ModeService {
+			return cm.VConfig.Output()
+		}
+	}
+
+	home, homeErr := os.UserHomeDir()
+	if homeErr != nil {
+		home, homeErr = os.UserConfigDir()
+		if homeErr != nil {
+			home, homeErr = os.UserCacheDir()
+			if homeErr != nil {
+				home = "/tmp"
+			}
+		}
+	}
+	configPath := filepath.Join(home, ".kubex", "logz", "VConfig.json")
+	if mkdirErr := os.MkdirAll(filepath.Dir(configPath), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+		return ""
+	}
+	return configPath
+}
+
+// SetOutput sets the path to the default log file.
+func (cm *ConfigManagerImpl) SetOutput(output string) {
+	cm.Mu.Lock()
+	defer cm.Mu.Unlock()
+	if cm.VConfig != nil {
+		cm.VConfig.SetOutput(output)
+	} else {
+
+		if cm.VConfig.Mode() == ModeService {
+			VConfig, configErr := cm.LoadConfig()
+			if configErr != nil {
+				log.Printf("ErrorCtx loading configuration: %v\n", configErr)
+				return
+			}
+			VConfig.SetOutput(output)
+			cm.VConfig = VConfig
+		} else {
+			log.Printf("Cannot set output in standalone VMode\n")
+		}
+
+	}
+}
+
+// Output returns the path to the configuration file.
+func (cm *ConfigManagerImpl) Output() string {
+	if cm.VConfig != nil {
+		if cm.VConfig.Output() != "" {
+			return cm.VConfig.Output()
+		}
+	}
+	home, homeErr := os.UserHomeDir()
+	if homeErr != nil {
+		home, homeErr = os.UserConfigDir()
+		if homeErr != nil {
+			home, homeErr = os.UserCacheDir()
+			if homeErr != nil {
+				home = "/tmp"
+			}
+		}
+	}
+	logPath := filepath.Join(home, ".kubex", "logz", "logz.log")
+	if mkdirErr := os.MkdirAll(filepath.Dir(logPath), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+		return ""
+	}
+	if _, err := os.Stat(logPath); os.IsNotExist(err) {
+		if _, createErr := os.Create(logPath); createErr != nil {
+			return ""
+		}
+	}
+	return logPath
+}
+
+func (cm *ConfigManagerImpl) SetLevel(VLevel interface{}) {
+	cm.Mu.Lock()
+	defer cm.Mu.Unlock()
+	if cm.VConfig != nil {
+		cm.VConfig.SetLevel(VLevel)
+	} else {
+		VConfig, configErr := cm.LoadConfig()
+		if configErr != nil {
+			log.Printf("ErrorCtx loading configuration: %v\n", configErr)
+			return
+		}
+		VConfig.SetLevel(VLevel)
+		cm.VConfig = VConfig
+	}
+}
+
+func (cm *ConfigManagerImpl) SetFormat(format interface{}) {
+	cm.Mu.Lock()
+	defer cm.Mu.Unlock()
+	if cm.VConfig != nil {
+		cm.VConfig.SetFormat(format)
+	} else {
+		VConfig, configErr := cm.LoadConfig()
+		if configErr != nil {
+			log.Printf("ErrorCtx loading configuration: %v\n", configErr)
+			return
+		}
+		VConfig.SetFormat(format)
+		cm.VConfig = VConfig
+	}
+}
+
+// GetFormatter returns the formatter for the core.
+func (cm *ConfigManagerImpl) GetFormatter() interface{} {
+	switch cm.VConfig.Format() {
+	case "text":
+		return &TextFormatter{}
+	default:
+		return &JSONFormatter{}
+	}
+}
+
+// LoadConfig loads the configuration from the file and returns a Config instance.
+func (cm *ConfigManagerImpl) LoadConfig() (Config, error) {
+	cm.Mu.Lock()
+	defer cm.Mu.Unlock()
+	configPath := cm.GetConfigPath()
+	if err := ensureConfigExists(configPath); err != nil {
+		return nil, fmt.Errorf("failed to ensure VConfig exists: %w", err)
+	}
+
+	viperObj := viper.New()
+	viperObj.SetConfigFile(configPath)
+	viperObj.SetConfigType(getConfigType(configPath))
+
+	if readErr := viperObj.ReadInConfig(); readErr != nil {
+		return nil, fmt.Errorf("failed to read VConfig: %w", readErr)
+	}
+
+	notifierManager := NewNotifierManager(nil)
+	if notifierManager == nil {
+		return nil, fmt.Errorf("failed to create notifier manager")
+	}
+
+	VMode := LogMode(viperObj.GetString("VMode"))
+	if VMode != ModeService && VMode != ModeStandalone {
+		VMode = defaultMode
+	}
+
+	VConfig := ConfigImpl{
+		VlPort:            getOrDefault(viperObj.GetString("port"), defaultPort),
+		VlBindAddress:     getOrDefault(viperObj.GetString("bindAddress"), defaultBindAddress),
+		VlAddress:         fmt.Sprintf("%s:%s", defaultBindAddress, defaultPort),
+		VlPidFile:         viperObj.GetString("pidFile"),
+		VlReadTimeout:     viperObj.GetDuration("readTimeout"),
+		VlWriteTimeout:    viperObj.GetDuration("writeTimeout"),
+		VlIdleTimeout:     viperObj.GetDuration("idleTimeout"),
+		VlOutput:          getOrDefault(viperObj.GetString("defaultLogPath"), defaultLogPath),
+		VlNotifierManager: notifierManager,
+		VlMode:            VMode,
+	}
+
+	cm.VConfig = &VConfig
+
+	viperObj.WatchConfig()
+	viperObj.OnConfigChange(func(e fsnotify.Event) {
+		log.Printf("Configuration changed: %s", e.Name)
+		// Update Config dynamically, if necessary
+	})
+
+	return cm.VConfig, nil
+}
+
+// NewConfigManager creates a new instance of ConfigManager.
+func NewConfigManager() *ConfigManager {
+	cfgMgr := &ConfigManagerImpl{}
+
+	if cfg, err := cfgMgr.LoadConfig(); err != nil || cfg == nil {
+		log.Printf("ErrorCtx loading configuration: %v\n", err)
+		return nil
+	}
+
+	var cfgM ConfigManager = cfgMgr
+
+	return &cfgM
+}
+
+// ensureConfigExists checks if the configuration file exists, and creates it with default values if it does not.
+func ensureConfigExists(configPath string) error {
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		defaultConfig := ConfigImpl{
+			VlPort:            defaultPort,
+			VlBindAddress:     defaultBindAddress,
+			VlAddress:         fmt.Sprintf("%s:%s", defaultBindAddress, defaultPort),
+			VlPidFile:         "logz_srv.pid",
+			VlReadTimeout:     15 * time.Second,
+			VlWriteTimeout:    15 * time.Second,
+			VlIdleTimeout:     60 * time.Second,
+			VlOutput:          defaultLogPath,
+			VlNotifierManager: NewNotifierManager(nil),
+			VlMode:            defaultMode,
+		}
+		data, _ := json.MarshalIndent(defaultConfig, "", "  ")
+		if writeErr := os.WriteFile(configPath, data, 0644); writeErr != nil {
+			return fmt.Errorf("failed to create default VConfig: %w", writeErr)
+		}
+	}
+	return nil
+}
+
+func getConfigType(configPath string) string {
+	configType := filepath.Ext(configPath)
+	switch configType {
+	case ".yaml":
+		return "yaml"
+	case ".yml":
+		return "yaml"
+	case ".toml":
+		return "toml"
+	case ".ini":
+		return "ini"
+	default:
+		return "json"
+	}
+
+}
+
+// getOrDefault returns the value if it is not empty, otherwise returns the default value.
+func getOrDefault(value, defaultValue string) string {
+	if value == "" {
+		return defaultValue
+	}
+	return value
+}
+
+/// config_manager.go ///
+package core
+
+import (
+	//"fmt"
+	//c "github.com/rafa-mori/kubex-interfaces/config"
+
+	//c "github.com/rafa-mori/kubex-interfaces/config"
+	//"os"
+	//"path/filepath"
+	"time"
+)
+
+// LogzConfig specific to Logz
+type LogzConfig struct {
+	LogLevel     string
+	LogFormat    string
+	LogFilePath  string
+	ReadTimeout  time.Duration
+	WriteTimeout time.Duration
+	PidFile      string
+}
+
+//func (lc *LogzConfig) Validate() error {
+//	if lc.LogLevel == "" {
+//		return fmt.Errorf("LogLevel cannot be empty")
+//	}
+//	if lc.LogFilePath == "" {
+//		return fmt.Errorf("LogFilePath cannot be empty")
+//	}
+//	return nil
+//}
+//
+//// LogzConfigManager with validation support
+//type LogzConfigManager struct {
+//	*LogzConfig
+//	config *LogzConfig
+//}
+
+//func NewLogzConfigManager() *LogzConfigManager {
+//	return NewConfigManager()
+//	//return &LogzConfigManager{
+//	//	LogzConfig: &cfg
+//	//}
+//}
+
+//func (lcm *LogzConfigManager) ValidateConfig() error {
+//	if config, ok := any(lcm).(c.Configurable); ok {
+//		return config.Validate()
+//	}
+//	return fmt.Errorf("invalid configuration or validation not supported")
+//}
+//
+//func (lcm *LogzConfigManager) GetConfig() *LogzConfig { return lcm.config }
+//
+//// GetPidPath returns the path to the PID file.
+//func (lcm *LogzConfigManager) GetPidPath() string {
+//	cacheDir, cacheDirErr := os.UserCacheDir()
+//	if cacheDirErr != nil {
+//		cacheDir = "/tmp"
+//	}
+//	cacheDir = filepath.Join(cacheDir, "logz", lcm.config.PidFile)
+//	if mkdirErr := os.MkdirAll(filepath.Dir(cacheDir), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+//		return ""
+//	}
+//	return cacheDir
+//}
+//
+//// GetConfigPath returns the path to the configuration file.
+//func (lcm *LogzConfigManager) GetConfigPath() string {
+//	if lcm.config != nil {
+//		if lcm.Output() != "" {
+//			return lcm.Output()
+//		}
+//	}
+//
+//	home, homeErr := os.UserHomeDir()
+//	if homeErr != nil {
+//		home, homeErr = os.UserConfigDir()
+//		if homeErr != nil {
+//			home, homeErr = os.UserCacheDir()
+//			if homeErr != nil {
+//				home = "/tmp"
+//			}
+//		}
+//	}
+//	configPath := filepath.Join(home, ".kubex", "logz", "VConfig.json")
+//	if mkdirErr := os.MkdirAll(filepath.Dir(configPath), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+//		return ""
+//	}
+//	return configPath
+//}
+//
+//// SetOutput sets the path to the default log file.
+//func (lcm *LogzConfigManager) SetOutput(output string) {
+//	if lcm.config != nil {
+//		lcm.SetOutput(output)
+//	} else {
+//		fmt.Println("Cannot set output in standalone VMode")
+//	}
+//}
+//
+//// Output returns the path to the configuration file.
+//func (lcm *LogzConfigManager) Output() string {
+//	if lcm.config != nil {
+//		if lcm.Output() != "" {
+//			return lcm.Output()
+//		}
+//	}
+//	home, homeErr := os.UserHomeDir()
+//	if homeErr != nil {
+//		home, homeErr = os.UserConfigDir()
+//		if homeErr != nil {
+//			home, homeErr = os.UserCacheDir()
+//			if homeErr != nil {
+//				home = "/tmp"
+//			}
+//		}
+//	}
+//	logPath := filepath.Join(home, ".kubex", "logz", "logz.log")
+//	if mkdirErr := os.MkdirAll(filepath.Dir(logPath), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+//		return ""
+//	}
+//	if _, err := os.Stat(logPath); os.IsNotExist(err) {
+//		if _, createErr := os.Create(logPath); createErr != nil {
+//			return ""
+//		}
+//	}
+//	return logPath
+//}
+//
+//func (lcm *LogzConfigManager) SetLevel(level LogLevel) { lcm.config.LogLevel = string(level) }
+//
+//func (lcm *LogzConfigManager) SetFormat(format LogFormat) {
+//	lcm.config.LogFormat = string(format)
+//}
+//
+//// GetFormatter returns the formatter for the core.
+//func (lcm *LogzConfigManager) GetFormatter() LogFormatter {
+//	switch lcm.config.LogFormat {
+//	case "text":
+//		return &TextFormatter{}
+//	default:
+//		return &JSONFormatter{}
+//	}
+//}
+
+// LoadConfig loads the configuration from the file and returns a Config instance.
+// func (lcm *LogzConfigManager) LoadConfig() (*LogzConfig, error) {
+// 	cfg, err := InitConfigManager()
+// 	if err != nil {
+// 		return nil, fmt.Errorf("failed to initialize the configuration manager: %w", err)
+// 	}
+
+// 	// Load the configuration from the file
+// 	cf := cfg.GetConfig()
+
+// 	// Validate the configuration
+// 	if err := cf.Validate(); err != nil {
+// 		return nil, fmt.Errorf("failed to validate the configuration: %w", err)
+// 	}
+
+// 	// Save the configuration
+// 	lcm.VConfig = &cf
+
+// 	return lcm.VConfig, nil
+// }
+
+/// formatters.go ///
+package core
+
+import (
+	"encoding/json"
+	"fmt"
+	"os"
+	"reflect"
+	"runtime"
+	"strings"
+
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
+)
+
+// LogFormatter defines the contract for formatting log entries.
+type LogFormatter interface {
+	// Format converts a log entry to a formatted string.
+	// Returns the formatted string and an error if formatting fails.
+	Format(entry LogzEntry) (string, error)
+}
+
+// JSONFormatter formats the log in JSON format.
+type JSONFormatter struct{}
+
+// Format converts the log entry to JSON.
+// Returns the JSON string and an error if marshalling fails.
+func (f *JSONFormatter) Format(entry LogzEntry) (string, error) {
+	data, err := json.Marshal(entry)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+// TextFormatter formats the log in plain text.
+type TextFormatter struct{}
+
+// Format converts the log entry to a formatted string with colors and icons.
+// Returns the formatted string and an error if formatting fails.
+func (f *TextFormatter) Format(entry LogzEntry) (string, error) {
+
+	// Check for environment variables
+	noColor := os.Getenv("LOGZ_NO_COLOR") != "" || runtime.GOOS == "windows"
+	noIcon := os.Getenv("LOGZ_NO_ICON") != ""
+
+	icon, levelStr := "", ""
+
+	if !noIcon {
+		switch entry.GetLevel() {
+		case NOTICE:
+			icon = "\033[33m📝\033[0m "
+		case TRACE:
+			icon = "\033[36m🔍\033[0m "
+		case SUCCESS:
+			icon = "\033[32m✅\033[0m "
+		case DEBUG:
+			icon = "\033[34m🐛\033[0m "
+		case INFO:
+			icon = "\033[32mℹ️\033[0m "
+		case WARN:
+			icon = "\033[33m⚠️\033[0m "
+		case ERROR:
+			icon = "\033[31m❌\033[0m "
+		case FATAL:
+			icon = "\033[35m💀\033[0m "
+		default:
+			icon = ""
+		}
+	} else {
+		icon = ""
+	}
+
+	// Configure colors and icons by VLevel
+	if !noColor {
+		switch entry.GetLevel() {
+		case NOTICE:
+			levelStr = "\033[33mNOTICE\033[0m"
+		case TRACE:
+			levelStr = "\033[36mTRACE\033[0m"
+		case SUCCESS:
+			levelStr = "\033[32mSUCCESS\033[0m"
+		case DEBUG:
+			levelStr = "\033[34mDEBUG\033[0m"
+		case INFO:
+			levelStr = "\033[32mINFO\033[0m"
+		case WARN:
+			levelStr = "\033[33mWARN\033[0m"
+		case ERROR:
+			levelStr = "\033[31mERROR\033[0m"
+		case FATAL:
+			levelStr = "\033[35mFATAL\033[0m"
+		default:
+			levelStr = string(entry.GetLevel())
+		}
+	} else {
+		levelStr = string(entry.GetLevel())
+	}
+
+	systemLocale := os.Getenv("LANG")
+	tag, _ := language.Parse(systemLocale)
+	p := message.NewPrinter(tag)
+
+	// Context and Metadata
+	context := ""
+	metadata := ""
+	timestamp := ""
+	if len(entry.GetMetadata()) > 0 {
+		if sc, exist := entry.GetMetadata()["showContext"]; exist {
+			tp := reflect.TypeOf(sc)
+			if tp.Kind() == reflect.Bool {
+				if sc.(bool) {
+					if c, exists := entry.GetMetadata()["context"]; exists {
+						context = c.(string)
+					}
+				}
+			} else if tp.Kind() == reflect.String {
+				if sc.(string) == "true" {
+					metadata = fmt.Sprintf("\n%s", formatMetadata(entry))
+				}
+			}
+
+		} else if map[LogLevel]bool{DEBUG: true, INFO: true}[entry.GetLevel()] {
+			if c, exists := entry.GetMetadata()["context"]; exists {
+				context = c.(string)
+			}
+		}
+		if smd, exist := entry.GetMetadata()["showData"]; exist {
+			tp := reflect.TypeOf(smd)
+			if tp.Kind() == reflect.Bool {
+				if smd.(bool) {
+					metadata = fmt.Sprintf("\n%s", formatMetadata(entry))
+				}
+			} else if tp.Kind() == reflect.String {
+				if smd.(string) == "true" {
+					metadata = fmt.Sprintf("\n%s", formatMetadata(entry))
+				}
+			}
+		} else if entry.GetLevel() == DEBUG {
+			metadata = fmt.Sprintf("\n%s", formatMetadata(entry))
+		}
+		if stp, exist := entry.GetMetadata()["showTimestamp"]; exist {
+			tp := reflect.TypeOf(stp)
+			if tp.Kind() == reflect.Bool {
+				if stp.(bool) {
+					timestamp = fmt.Sprintf("[%s]", entry.GetTimestamp().Format(p.Sprintf("%d-%m-%Y %H:%M:%S")))
+				}
+			} else if tp.Kind() == reflect.String {
+				if stp.(string) == "true" {
+					metadata = fmt.Sprintf("\n%s", formatMetadata(entry))
+				}
+			}
+		}
+	}
+
+	// Construct the header
+	header := fmt.Sprintf("%s [%s] %s %s - ", timestamp, levelStr, context, icon)
+
+	// Return the formatted log entry
+	return fmt.Sprintf("%s%s%s", header, entry.GetMessage(), metadata), nil
+}
+
+type TableFormatter struct{}
+
+// Format formats the log entry as a table string.
+// It uses the FormatRow method to get the rows and then constructs a string representation.
+func (f *TableFormatter) Format(entry LogzEntry) (string, error) {
+	rows, err := f.FormatRow(entry)
+	if err != nil {
+		return "", err
+	}
+
+	var sb strings.Builder
+	for _, row := range rows {
+		sb.WriteString(strings.Join(row, " | "))
+		sb.WriteString("\n")
+	}
+
+	return sb.String(), nil
+}
+
+// FormatRow formats the log entry as a table.
+func (f *TableFormatter) FormatRow(entry LogzEntry) ([][]string, error) {
+	level := entry.GetLevel()
+	context := entry.GetContext()
+	message := entry.GetMessage()
+	timestamp := entry.GetTimestamp()
+	source := entry.GetSource()
+
+	table := [][]string{
+		{"Timestamp", "Level", "Context", "Source", "Message"},
+		{timestamp.Format("2006-01-02 15:04:05"), string(level), context, source, message},
+	}
+
+	return table, nil
+}
+
+/// integration_test.go ///
+package core
+
+//func TestIntegrationLogger(t *testing.T) {
+//	configManager := NewConfigManager()
+//	if configManager == nil {
+//		t.Fatal("ErrorCtx initializing ConfigManager.")
+//	}
+//	cfgMgr := *configManager
+//	config, err := cfgMgr.LoadConfig()
+//	if err != nil {
+//		t.Fatalf("ErrorCtx loading configuration: %v", err)
+//	}
+//	logger := NewLogger(config)
+//	if logger == nil {
+//		t.Fatal("ErrorCtx creating core.")
+//	}
+//
+//	var buf bytes.Buffer
+//	logger.SetWriter(NewDefaultWriter(&buf, &TextFormatter{}))
+//
+//	logger.DebugCtx("debug message", nil)
+//	if !bytes.Contains(buf.Bytes(), []byte("DEBUG")) {
+//		t.Errorf("Expected 'DEBUG' log entry, got '%s'", buf.String())
+//	}
+//
+//	logger.InfoCtx("info message", nil)
+//	if !bytes.Contains(buf.Bytes(), []byte("INFO")) {
+//		t.Errorf("Expected 'INFO' log entry, got '%s'", buf.String())
+//	}
+//
+//	logger.WarnCtx("warn message", nil)
+//	if !bytes.Contains(buf.Bytes(), []byte("WARN")) {
+//		t.Errorf("Expected 'WARN' log entry, got '%s'", buf.String())
+//	}
+//
+//	logger.ErrorCtx("error message", nil)
+//	if !bytes.Contains(buf.Bytes(), []byte("ERROR")) {
+//		t.Errorf("Expected 'ERROR' log entry, got '%s'", buf.String())
+//	}
+//}
+//
+//func TestIntegrationConcurrentAccess(t *testing.T) {
+//	configManager := NewConfigManager()
+//	if configManager == nil {
+//		t.Fatal("ErrorCtx initializing ConfigManager.")
+//	}
+//	cfgMgr := *configManager
+//	config, err := cfgMgr.LoadConfig()
+//	if err != nil {
+//		t.Fatalf("ErrorCtx loading configuration: %v", err)
+//	}
+//	logger := NewLogger(config)
+//	if logger == nil {
+//		t.Fatal("ErrorCtx creating core.")
+//	}
+//
+//	var wg sync.WaitGroup
+//	for i := 0; i < 100; i++ {
+//		wg.Add(1)
+//		go func(i int) {
+//			defer wg.Done()
+//			logger.SetMetadata("key", i)
+//			logger.DebugCtx("concurrent message", nil)
+//		}(i)
+//	}
+//	wg.Wait()
+//}
+//
+//func TestIntegrationLogRotation(t *testing.T) {
+//	configManager := NewConfigManager()
+//	if configManager == nil {
+//		t.Fatal("ErrorCtx initializing ConfigManager.")
+//	}
+//	cfgMgr := *configManager
+//	config, err := cfgMgr.LoadConfig()
+//	if err != nil {
+//		t.Fatalf("ErrorCtx loading configuration: %v", err)
+//	}
+//	logger := NewLogger(config)
+//	if logger == nil {
+//		t.Fatal("ErrorCtx creating core.")
+//	}
+//
+//	logFile := config.Output()
+//	defer os.Remove(logFile)
+//
+//	for i := 0; i < 1000; i++ {
+//		logger.InfoCtx("log rotation test message", nil)
+//	}
+//
+//	err = CheckLogSize(config)
+//	if err != nil {
+//		t.Fatalf("ErrorCtx checking log size: %v", err)
+//	}
+//
+//	_, err = os.Stat(logFile + ".tar.gz")
+//	if os.IsNotExist(err) {
+//		t.Errorf("Expected log rotation to create archive, but it did not.")
+//	}
+//}
+//
+//func TestIntegrationDynamicConfigChanges(t *testing.T) {
+//	configManager := NewConfigManager()
+//	if configManager == nil {
+//		t.Fatal("ErrorCtx initializing ConfigManager.")
+//	}
+//	cfgMgr := *configManager
+//	config, err := cfgMgr.LoadConfig()
+//	if err != nil {
+//		t.Fatalf("ErrorCtx loading configuration: %v", err)
+//	}
+//	logger := NewLogger(config)
+//	if logger == nil {
+//		t.Fatal("ErrorCtx creating core.")
+//	}
+//
+//	viper.Set("logLevel", "DEBUG")
+//	time.Sleep(1 * time.Second)
+//
+//	if logger.GetLevel() != DEBUG {
+//		t.Errorf("Expected log VLevel to be 'DEBUG', got '%v'", logger.GetLevel())
+//	}
+//}
+//
+//func TestIntegrationNotifierManager(t *testing.T) {
+//	configManager := NewConfigManager()
+//	if configManager == nil {
+//		t.Fatal("ErrorCtx initializing ConfigManager.")
+//	}
+//	cfgMgr := *configManager
+//	config, err := cfgMgr.LoadConfig()
+//	if err != nil {
+//		t.Fatalf("ErrorCtx loading configuration: %v", err)
+//	}
+//	logger := NewLogger(config)
+//	if logger == nil {
+//		t.Fatal("ErrorCtx creating core.")
+//	}
+//
+//	notifierManager := config.NotifierManager()
+//	if notifierManager == nil {
+//		t.Fatal("ErrorCtx initializing NotifierManager.")
+//	}
+//
+//	notifierManager.AddNotifier("testNotifier", NewHTTPNotifier("http://example.com", ""))
+//	if _, ok := notifierManager.GetNotifier("testNotifier"); !ok {
+//		t.Errorf("Expected 'testNotifier' to be added, but it was not.")
+//	}
+//
+//	notifierManager.RemoveNotifier("testNotifier")
+//	if _, ok := notifierManager.GetNotifier("testNotifier"); ok {
+//		t.Errorf("Expected 'testNotifier' to be removed, but it was not.")
+//	}
+//}
+//
+//func TestIntegrationService(t *testing.T) {
+//	go func() {
+//		if err := Run(); err != nil {
+//			t.Fatalf("ErrorCtx running service: %v", err)
+//		}
+//	}()
+//	time.Sleep(1 * time.Second)
+//
+//	resp, err := http.Get("http://localhost:9999/health")
+//	if err != nil {
+//		t.Fatalf("ErrorCtx making HTTP request: %v", err)
+//	}
+//	defer resp.Body.Close()
+//
+//	if resp.StatusCode != http.StatusOK {
+//		t.Errorf("Expected status code 200, got %d", resp.StatusCode)
+//	}
+//
+//	if err := Stop(); err != nil {
+//		t.Fatalf("ErrorCtx stopping service: %v", err)
+//	}
+//}
+
+/// interface.go ///
+package core
+
+// LogzLogger combines the existing core with the standard Go log methods.
+type LogzLogger interface {
+	LogzCore
+	// GetLevel returns the current log VLevel.
+	// Method signature:
+	// GetLevel() interface{}
+	GetLevel() interface{}
+	// SetLevel sets the log VLevel.
+	// Method signature:
+	// SetLevel(VLevel interface{})
+	// The VLevel is an LogLevel type or string.
+	SetLevel(interface{})
+}
+
+// LogzCore is the interface with the basic methods of the existing il.
+type LogzCore interface {
+
+	// SetMetadata sets a VMetadata key-value pair.
+	// If the key is empty, it returns all VMetadata.
+	// Returns the value and a boolean indicating if the key exists.
+	SetMetadata(string, interface{})
+	// TraceCtx logs a trace message with context.
+	// Method signature:
+	// TraceCtx(message string, context map[string]interface{})
+	// The message is a string.
+	// The context is a map of key-value pairs.
+	TraceCtx(string, map[string]interface{})
+	// NoticeCtx logs a notice message with context.
+	// Method signature:
+	// NoticeCtx(message string, context map[string]interface{})
+	// The message is a string.
+	// The context is a map of key-value pairs.
+	NoticeCtx(string, map[string]interface{})
+	// SuccessCtx logs a success message with context.
+	// Method signature:
+	// SuccessCtx(message string, context map[string]interface{})
+	// The message is a string.
+	// The context is a map of key-value pairs.
+	SuccessCtx(string, map[string]interface{})
+	// DebugCtx logs a debug message with context.
+	// Method signature:
+	// DebugCtx(message string, context map[string]interface{})
+	// The message is a string.
+	// The context is a map of key-value pairs.
+	DebugCtx(string, map[string]interface{})
+	// InfoCtx logs an informational message with context.
+	// Method signature:
+	// InfoCtx(message string, context map[string]interface{})
+	// The message is a string.
+	// The context is a map of key-value pairs.
+	InfoCtx(string, map[string]interface{})
+	// WarnCtx logs a warning message with context.
+	// Method signature:
+	// WarnCtx(message string, context map[string]interface{})
+	// The message is a string.
+	// The context is a map of key-value pairs.
+	WarnCtx(string, map[string]interface{})
+	// ErrorCtx logs an error message with context.
+	// Method signature:
+	// ErrorCtx(message string, context map[string]interface{})
+	// The message is a string.
+	// The context is a map of key-value pairs.
+	ErrorCtx(string, map[string]interface{})
+	// FatalCtx logs a fatal message with context and exits the application.
+	// Method signature:
+	// FatalCtx(message string, context map[string]interface{})
+	// The message is a string.
+	// The context is a map of key-value pairs.
+	FatalCtx(string, map[string]interface{})
+	// GetWriter returns the current VWriter.
+	// Method signature:
+	// GetWriter() interface{}
+	// The VWriter is an interface that implements the LogWriter interface.
+	GetWriter() interface{}
+	// SetWriter sets the VWriter.
+	// Method signature:
+	// SetWriter(VWriter interface{})
+	// The VWriter is an interface that implements the LogWriter interface or io.Writer.
+	SetWriter(interface{})
+	// GetConfig returns the current configuration.
+	// Method signature:
+	// GetConfig() interface{}
+	// The configuration is an interface that implements the Config interface.
+	GetConfig() interface{}
+	// SetConfig sets the configuration.
+	SetConfig(interface{})
+	// SetFormat sets the format for the log entries.
+	SetFormat(interface{})
+	//// GetLevel returns the current log VLevel.
+	//// Method signature:
+	//// GetLevel() interface{}
+	//GetLevel() interface{}
+	//// SetLevel sets the log VLevel.
+	//// Method signature:
+	//// SetLevel(VLevel interface{})
+	//// The VLevel is an LogLevel type or string.
+	//SetLevel(interface{})
+}
+
+/// log_rotate.go ///
+package core
+
+import (
+	"archive/tar"
+	"archive/zip"
+	"compress/gzip"
+	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
+)
+
+// CheckLogSize checks and manages the size of the logs
+func CheckLogSize(config Config) error {
+	logDir := config.Output()
+	files, err := os.ReadDir(logDir)
+	if err != nil {
+		fmt.Println("ErrorCtx reading the log directory:", err)
+		return err
+	}
+
+	// Fetch maximum log sizes from the configuration
+	maxLogSize := config.GetInt("maxLogSize", 20*1024*1024)      // Default 20 MB
+	moduleLogSize := config.GetInt("moduleLogSize", 5*1024*1024) // Default 5 MB
+
+	var totalSize int64
+	filesToRotate := []string{}
+
+	for _, file := range files {
+		if strings.HasSuffix(file.Name(), ".log") {
+			fileInfo, err := file.Info()
+			if err != nil {
+				fmt.Println("ErrorCtx getting file information:", err)
+				continue
+			}
+			totalSize += fileInfo.Size()
+			if fileInfo.Size() > int64(moduleLogSize) {
+				filesToRotate = append(filesToRotate, filepath.Join(logDir, file.Name()))
+			}
+		}
+	}
+
+	// Rotation based on total size
+	if totalSize > int64(maxLogSize) {
+		fmt.Println("Archiving logs due to excessive size...")
+		if err := ArchiveLogs(filesToRotate); err != nil {
+			fmt.Println("ErrorCtx archiving logs:", err)
+			return err
+		}
+	}
+
+	// Individual rotation of large files
+	if len(filesToRotate) > 0 {
+		fmt.Println("Rotating large log files...")
+		if err := RotateLogFiles(filesToRotate); err != nil {
+			fmt.Println("ErrorCtx rotating log files:", err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+// RotateLogFiles compresses and recreates the log files
+func RotateLogFiles(files []string) error {
+	for _, logFile := range files {
+		if err := RotateLogFile(logFile); err != nil {
+			fmt.Println("ErrorCtx rotating the log file:", err)
+			continue
+		}
+		fmt.Println("Log file rotated successfully:", logFile)
+	}
+	return nil
+}
+
+// RotateLogFile compresses a single log file
+func RotateLogFile(logFilePath string) error {
+	archivePath := fmt.Sprintf("%s.tar.gz", logFilePath)
+	if err := CreateTarGz(archivePath, []string{logFilePath}); err != nil {
+		return err
+	}
+
+	if err := os.Remove(logFilePath); err != nil {
+		return fmt.Errorf("error removing the log file: %v", err)
+	}
+
+	if err := os.WriteFile(logFilePath, []byte{}, 0644); err != nil {
+		return fmt.Errorf("error recreating the log file: %v", err)
+	}
+	return nil
+}
+
+// CreateTarGz creates a tar.gz file from the logs
+func CreateTarGz(archivePath string, files []string) error {
+	archiveFile, err := os.Create(archivePath)
+	if err != nil {
+		return fmt.Errorf("error creating the tar.gz file: %v", err)
+	}
+	defer archiveFile.Close()
+
+	gw := gzip.NewWriter(archiveFile)
+	defer gw.Close()
+
+	tw := tar.NewWriter(gw)
+	defer tw.Close()
+
+	for _, file := range files {
+		if err := addFileToTar(tw, file); err != nil {
+			return err
+		}
+	}
+	fmt.Println("Logs archived successfully:", archivePath)
+	return nil
+}
+
+// addFileToTar adds a file to the tar archive
+func addFileToTar(tw *tar.Writer, filePath string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("error opening the file: %v", err)
+	}
+	defer file.Close()
+
+	info, err := file.Stat()
+	if err != nil {
+		return fmt.Errorf("error getting file information: %v", err)
+	}
+
+	header, err := tar.FileInfoHeader(info, "")
+	if err != nil {
+		return fmt.Errorf("error creating the tar header: %v", err)
+	}
+	header.Name = filepath.Base(filePath)
+
+	if err := tw.WriteHeader(header); err != nil {
+		return fmt.Errorf("error writing the tar header: %v", err)
+	}
+
+	if _, err := io.Copy(tw, file); err != nil {
+		return fmt.Errorf("error copying the file content to the tar: %v", err)
+	}
+
+	return nil
+}
+
+// ArchiveLogs archives old logs into a zip file
+func ArchiveLogs(files []string) error {
+	logDir := GetLogPath()
+	if len(files) == 0 {
+		err := filepath.Walk(logDir, func(path string, info os.FileInfo, err error) error {
+			if strings.HasSuffix(info.Name(), ".log") {
+				files = append(files, path)
+			}
+			return nil
+		})
+		if err != nil {
+			return fmt.Errorf("error listing the log files: %v", err)
+		}
+	}
+	tempDir := os.TempDir()
+	archiveName := fmt.Sprintf("logs_archive_%s.zip", time.Now().Format("20060102_150405"))
+	archivePath := filepath.Join(tempDir, archiveName)
+
+	zipFile, err := os.Create(archivePath)
+	if err != nil {
+		return fmt.Errorf("error creating the zip file: %v", err)
+	}
+	defer zipFile.Close()
+
+	zipWriter := zip.NewWriter(zipFile)
+	defer zipWriter.Close()
+
+	for _, file := range files {
+		if err := addFileToZip(zipWriter, file); err != nil {
+			return err
+		}
+	}
+
+	fmt.Println("Logs archived successfully:", archivePath)
+	return nil
+}
+
+// addFileToZip adds a file to the zip archive
+func addFileToZip(zipWriter *zip.Writer, filePath string) error {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("error opening the file for zip: %v", err)
+	}
+	defer file.Close()
+
+	info, err := file.Stat()
+	if err != nil {
+		return fmt.Errorf("error getting file information: %v", err)
+	}
+
+	header, err := zip.FileInfoHeader(info)
+	if err != nil {
+		return fmt.Errorf("error creating the zip header: %v", err)
+	}
+	header.Name = filepath.Base(filePath)
+
+	writer, err := zipWriter.CreateHeader(header)
+	if err != nil {
+		return fmt.Errorf("error creating the file in the zip: %v", err)
+	}
+
+	if _, err := io.Copy(writer, file); err != nil {
+		return fmt.Errorf("error copying the file content to the zip: %v", err)
+	}
+
+	return nil
+}
+
+func GetLogDirectorySize(directory string) (int64, error) {
+	if directory == "" {
+		directory = filepath.Dir(GetLogPath())
+	}
+	var totalSize int64
+
+	// Traverse the specified directory
+	err := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return fmt.Errorf("error accessing the path %s: %v", path, err)
+		}
+
+		// Only files are considered in the total size
+		if !info.IsDir() {
+			totalSize += info.Size()
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return 0, fmt.Errorf("error calculating the directory size: %v", err)
+	}
+
+	return totalSize, nil
+}
+
+/// logentry.go ///
+package core
+
+import (
+	"errors"
+	"fmt"
+	"runtime"
+	"time"
+)
+
+// LogLevel represents the severity VLevel of a log entry.
+type LogLevel string
+
+const (
+	DEBUG   LogLevel = "DEBUG"
+	TRACE   LogLevel = "TRACE"
+	NOTICE  LogLevel = "NOTICE"
+	INFO    LogLevel = "INFO"
+	SUCCESS LogLevel = "SUCCESS"
+	WARN    LogLevel = "WARN"
+	ERROR   LogLevel = "ERROR"
+	FATAL   LogLevel = "FATAL"
+	SILENT  LogLevel = "SILENT"
+)
+
+// LogzEntry represents a single log entry with various attributes.
+type LogzEntry interface {
+	// WithLevel sets the log VLevel for the LogEntry.
+	WithLevel(level LogLevel) LogzEntry
+	// WithSource sets the source for the LogEntry.
+	WithSource(source string) LogzEntry
+	// WithContext sets the context for the LogEntry.
+	WithContext(context string) LogzEntry
+	// WithMessage sets the message for the LogEntry.
+	WithMessage(message string) LogzEntry
+	// WithProcessID sets the process ID for the LogEntry.
+	WithProcessID(pid int) LogzEntry
+	// WithHostname sets the hostname for the LogEntry.
+	WithHostname(hostname string) LogzEntry
+	// WithSeverity sets the severity VLevel for the LogEntry.
+	WithSeverity(severity int) LogzEntry
+	// WithTraceID sets the trace ID for the LogEntry.
+	WithTraceID(traceID string) LogzEntry
+	// AddTag adds a tag to the LogEntry.
+	AddTag(key, value string) LogzEntry
+	// AddMetadata adds VMetadata to the LogEntry.
+	AddMetadata(key string, value interface{}) LogzEntry
+	// GetMetadata returns the VMetadata of the LogEntry.
+	GetMetadata() map[string]interface{}
+	// GetContext returns the context of the LogEntry.
+	GetContext() string
+	// GetTimestamp returns the timestamp of the LogEntry.
+	GetTimestamp() time.Time
+	// GetMessage returns the message of the LogEntry.
+	GetMessage() string
+	// GetLevel returns the log VLevel of the LogEntry.
+	GetLevel() LogLevel
+	// GetSource returns the source of the LogEntry.
+	GetSource() string
+	// Validate checks if the LogEntry has all required fields set.
+	Validate() error
+	// String returns a string representation of the LogEntry.
+	String() string
+}
+
+// LogEntry represents a single log entry with various attributes.
+type LogEntry struct {
+	Timestamp time.Time              `json:"timestamp"`           // The time when the log entry was created.
+	Level     LogLevel               `json:"VLevel"`              // The severity VLevel of the log entry.
+	Source    string                 `json:"source"`              // The source of the log entry.
+	Context   string                 `json:"context,omitempty"`   // Additional context for the log entry.
+	Message   string                 `json:"message"`             // The log message.
+	Tags      map[string]string      `json:"tags,omitempty"`      // Optional tags associated with the log entry.
+	Metadata  map[string]interface{} `json:"VMetadata,omitempty"` // Optional VMetadata associated with the log entry.
+	ProcessID int                    `json:"pid,omitempty"`       // The process ID associated with the log entry.
+	Hostname  string                 `json:"hostname,omitempty"`  // The hostname where the log entry was created.
+	Severity  int                    `json:"severity"`            // The severity VLevel as an integer.
+	TraceID   string                 `json:"trace_id,omitempty"`  // Optional trace ID for tracing logs.
+	Caller    string                 `json:"caller,omitempty"`    // The caller of the log entry.
+}
+
+// NewLogEntry creates a new instance of LogEntry with the current timestamp and initialized maps.
+func NewLogEntry() LogzEntry {
+	le := LogEntry{
+		Timestamp: time.Now(),
+		Tags:      make(map[string]string),
+		Metadata:  make(map[string]interface{}),
+		Caller:    getCallerInfo(3),
+	}
+	return &le
+}
+
+// WithLevel sets the log VLevel for the LogEntry.
+func (le *LogEntry) WithLevel(level LogLevel) LogzEntry {
+	le.Level = level
+	return le
+}
+
+// WithSource sets the source for the LogEntry.
+func (le *LogEntry) WithSource(source string) LogzEntry {
+	le.Source = source
+	return le
+}
+
+// WithContext sets the context for the LogEntry.
+func (le *LogEntry) WithContext(context string) LogzEntry {
+	le.Context = context
+	return le
+}
+
+// WithMessage sets the message for the LogEntry.
+func (le *LogEntry) WithMessage(message string) LogzEntry {
+	le.Message = message
+	return le
+}
+
+// WithProcessID sets the process ID for the LogEntry.
+func (le *LogEntry) WithProcessID(pid int) LogzEntry {
+	le.ProcessID = pid
+	return le
+}
+
+// WithHostname sets the hostname for the LogEntry.
+func (le *LogEntry) WithHostname(hostname string) LogzEntry {
+	le.Hostname = hostname
+	return le
+}
+
+// WithSeverity sets the severity VLevel for the LogEntry.
+func (le *LogEntry) WithSeverity(severity int) LogzEntry {
+	le.Severity = severity
+	return le
+}
+
+// WithTraceID sets the trace ID for the LogEntry.
+func (le *LogEntry) WithTraceID(traceID string) LogzEntry {
+	le.TraceID = traceID
+	return le
+}
+
+// AddTag adds a tag to the LogEntry.
+func (le *LogEntry) AddTag(key, value string) LogzEntry {
+	if le.Tags == nil {
+		le.Tags = make(map[string]string)
+	}
+	le.Tags[key] = value
+	return le
+}
+
+// GetLevel returns the log VLevel of the LogEntry.
+func (le *LogEntry) GetLevel() LogLevel { return le.Level }
+
+// AddMetadata adds VMetadata to the LogEntry.
+func (le *LogEntry) AddMetadata(key string, value interface{}) LogzEntry {
+	if le.Metadata == nil {
+		le.Metadata = make(map[string]interface{})
+	}
+	le.Metadata[key] = value
+	return le
+}
+
+// GetMetadata returns the VMetadata of the LogEntry.
+func (le *LogEntry) GetMetadata() map[string]interface{} { return le.Metadata }
+
+// GetContext returns the context of the LogEntry.
+func (le *LogEntry) GetContext() string { return le.Context }
+
+// GetTimestamp returns the timestamp of the LogEntry.
+func (le *LogEntry) GetTimestamp() time.Time { return le.Timestamp }
+
+// GetMessage returns the message of the LogEntry.
+func (le *LogEntry) GetMessage() string { return le.Message }
+
+// GetSource returns the source of the LogEntry.
+func (le *LogEntry) GetSource() string { return le.Source }
+
+// Validate checks if the LogEntry has all required fields set.
+func (le *LogEntry) Validate() error {
+	if le.Timestamp.IsZero() {
+		return errors.New("timestamp is required")
+	}
+	if le.Level == "" {
+		return errors.New("VLevel is required")
+	}
+	if le.Message == "" {
+		return errors.New("message is required")
+	}
+	if le.Severity <= 0 {
+		return errors.New("severity must be greater than zero")
+	}
+	return nil
+}
+
+// String returns a string representation of the LogEntry.
+func (le *LogEntry) String() string {
+	return fmt.Sprintf("[%s] %s - %s",
+		le.Timestamp.Format(time.RFC3339),
+		le.Level,
+		le.Message)
+}
+
+// getCallerInfo returns the caller information for the log entry.
+func getCallerInfo(skip int) string {
+	pc, file, line, ok := runtime.Caller(skip)
+	if !ok {
+		return "unknown"
+	}
+	funcName := runtime.FuncForPC(pc).Name()
+	return fmt.Sprintf("%s:%d %s", trimFilePath(file), line, funcName)
+}
+
+/// logger.go ///
+package core
+
+import (
+	"io"
+	"sync/atomic"
+
+	//"io"
+	"log"
+	"os"
+	"strings"
+	"sync"
+)
+
+type LogMode string
+type LogFormat string
+
+const (
+	JSON LogFormat = "json"
+	TEXT LogFormat = "text"
+	YAML LogFormat = "yaml"
+	XML  LogFormat = "xml"
+	RAW  LogFormat = "raw"
+)
+
+const (
+	ModeService    LogMode = "service"    // Indicates that the core is being used by a detached process
+	ModeStandalone LogMode = "standalone" // Indicates that the core is being used locally (e.g., CLI)
+)
+
+var logLevels = map[LogLevel]int{
+	DEBUG:   1,
+	TRACE:   2,
+	INFO:    3,
+	NOTICE:  4,
+	SUCCESS: 5,
+	WARN:    6,
+	ERROR:   7,
+	FATAL:   8,
+	SILENT:  9,
+}
+
+// LogzCoreImpl represents a core with configuration and VMetadata.
+type LogzCoreImpl struct {
+	// LogzLogger is a constraint to implement this interface
+	LogzLogger
+
+	// Logger is a promoted global Go Logger
+	log.Logger
+
+	out       io.Writer                   // destination for output
+	prefix    atomic.Pointer[string]      // prefix on each line to identify the logger (but see Lmsgprefix)
+	prefixX   atomic.Pointer[*LogzLogger] // prefix on each line to identify the logger (but see Lmsgprefix)
+	flag      atomic.Int32                // properties
+	isDiscard atomic.Bool
+
+	VLevel    LogLevel
+	VWriter   LogWriter[any]
+	VConfig   Config
+	VMetadata map[string]interface{}
+	VMode     LogMode // Mode control: service or standalone
+	Mu        sync.RWMutex
+}
+
+// NewLogger creates a new instance of LogzCoreImpl with the provided configuration.
+func NewLogger(prefix string) LogzLogger { //VConfig Config) LogzLogger {
+	level := INFO // Default log VLevel
+
+	//if VConfig == nil {
+	// If no VConfig is provided, create a new default VConfig
+	// Create a new ConfigManager
+	//if cfgMgr := NNewConfigManager(); cfgMgr != nil {
+	//	configMgr := *cfgMgr
+	//	VConfig = configMgr.GetConfig()
+	//} else {
+	//	log.Println("ErrorCtx creating ConfigManager")
+	//	return nil
+	//}
+	//}
+
+	// Set the log VLevel from the Config
+	//VLevel = LogLevel(VConfig.Level()) // Method VConfig.Level() returns the log VLevel as a string
+
+	//var out *os.File
+	//var err error
+	//// Set the output to stdout if not specified or if the output is invalid
+	//if strings.ToLower(VConfig.Output()) == "stdout" || VConfig.Output() == "" || VConfig.Output() == os.Stdout.Name() {
+	//	out = os.Stdout
+	//} else {
+	//	fmt.Println("Output: ", VConfig.Output())
+	//	// Ensure the log file exists and has the correct permissions
+	//	if _, err = os.Stat(VConfig.Output()); os.IsNotExist(err) {
+	//		if err = os.MkdirAll(filepath.Dir(VConfig.Output()), 0755); err != nil {
+	//			log.Printf("ErrorCtx creating log directory: %v\nRedirecting to stdout...\n", err)
+	//			out = os.Stdout
+	//		} else {
+	//			out, err = os.OpenFile(VConfig.Output(), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	//			if err != nil {
+	//				log.Printf("ErrorCtx opening log file: %v\nRedirecting to stdout...\n", err)
+	//				out = os.Stdout
+	//			}
+	//		}
+	//	} else {
+	//		out, err = os.OpenFile(VConfig.Output(), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	//		if err != nil {
+	//			log.Printf("ErrorCtx opening log file: %v\nRedirecting to stdout...\n", err)
+	//			out = os.Stdout
+	//		}
+	//	}
+	//}
+	//
+	//// Initialize the formatter (JSON or text)
+	//var formatter LogFormatter
+	//if VConfig.Format() == "json" {
+	//	formatter = &JSONFormatter{}
+	//} else {
+	//	formatter = &TextFormatter{}
+	//}
+	writer := NewDefaultWriter[any](os.Stdout, &TextFormatter{}) //out, formatter)
+
+	// Read the VMode from Config
+	//VMode := VConfig.Mode()
+	//if VMode != ModeService && VMode != ModeStandalone {
+	mode := ModeStandalone // Default to standalone if not specified
+	//}
+
+	lgr := &LogzCoreImpl{
+		VLevel:  level,
+		VWriter: writer,
+		//VConfig:   VConfig,
+		VMetadata: make(map[string]interface{}),
+		VMode:     mode,
+	}
+	lgr.prefix.Store(&prefix)
+	return lgr
+}
+
+// SetMetadata sets a VMetadata key-value pair for the LogzCoreImpl.
+func (l *LogzCoreImpl) SetMetadata(key string, value interface{}) {
+	l.Mu.Lock()
+	defer l.Mu.Unlock()
+	l.VMetadata[key] = value
+}
+
+// shouldLog checks if the log VLevel should be logged.
+func (l *LogzCoreImpl) shouldLog(level LogLevel) bool {
+	return logLevels[level] >= logLevels[l.VLevel]
+}
+
+// log logs a message with the specified VLevel and context.
+func (l *LogzCoreImpl) log(level LogLevel, msg string, ctx map[string]interface{}) {
+	if !l.shouldLog(level) {
+		return
+	}
+
+	l.Mu.RLock()
+	defer l.Mu.RUnlock()
+
+	entry := NewLogEntry().
+		WithLevel(level).
+		WithMessage(msg).
+		WithSeverity(logLevels[level])
+
+	// Merge global and local VMetadata
+	finalContext := mergeContext(l.VMetadata, ctx)
+	for k, v := range finalContext {
+		entry.AddMetadata(k, v)
+	}
+
+	// Merge global and local VMetadata
+	finalMetadata := mergeMetadata(l.VMetadata, ctx)
+	for k, v := range finalMetadata {
+		entry.AddMetadata(k, v)
+	}
+
+	if level != SILENT {
+		// Write the log using the configured VWriter
+		if err := l.VWriter.Write(entry); err != nil {
+			log.Printf("ErrorCtx writing log: %v", err)
+		}
+	}
+
+	// Only in service VMode, notify via Notifiers
+	//if l.VMode == ModeService && l.VConfig != nil {
+	// for _, name := range l.VConfig.NotifierManager().ListNotifiers() {
+	//	if notifier, ok := l.VConfig.NotifierManager().GetNotifier(name); ok {
+	//		if notifier != nil {
+	//			ntf := notifier
+	//			if ntfErr := ntf.Notify(entry); ntfErr != nil {
+	//				log.Printf("ErrorCtx notifying %s: %v", name, ntfErr)
+	//			}
+	//		}
+	//	}
+	// }
+	//}
+
+	// Update metrics in PrometheusManager, if enabled
+	if l.VMode == ModeService {
+		pm := GetPrometheusManager()
+		if pm.IsEnabled() {
+			pm.IncrementMetric("logs_total", 1)
+			pm.IncrementMetric("logs_total_"+string(level), 1)
+		}
+	}
+
+	// Terminate the process in case of FATAL log
+	if level == FATAL {
+		os.Exit(1)
+	}
+}
+
+// TraceCtx logs a trace message with context.
+func (l *LogzCoreImpl) TraceCtx(msg string, ctx map[string]interface{}) { l.log(TRACE, msg, ctx) }
+
+// NoticeCtx logs a notice message with context.
+func (l *LogzCoreImpl) NoticeCtx(msg string, ctx map[string]interface{}) { l.log(NOTICE, msg, ctx) }
+
+// SuccessCtx logs a success message with context.
+func (l *LogzCoreImpl) SuccessCtx(msg string, ctx map[string]interface{}) { l.log(SUCCESS, msg, ctx) }
+
+// DebugCtx logs a debug message with context.
+func (l *LogzCoreImpl) DebugCtx(msg string, ctx map[string]interface{}) { l.log(DEBUG, msg, ctx) }
+
+// InfoCtx logs an info message with context.
+func (l *LogzCoreImpl) InfoCtx(msg string, ctx map[string]interface{}) { l.log(INFO, msg, ctx) }
+
+// WarnCtx logs a warning message with context.
+func (l *LogzCoreImpl) WarnCtx(msg string, ctx map[string]interface{}) { l.log(WARN, msg, ctx) }
+
+// ErrorCtx logs an error message with context.
+func (l *LogzCoreImpl) ErrorCtx(msg string, ctx map[string]interface{}) { l.log(ERROR, msg, ctx) }
+
+// FatalCtx logs a fatal message with context and terminates the process.
+func (l *LogzCoreImpl) FatalCtx(msg string, ctx map[string]interface{}) { l.log(FATAL, msg, ctx) }
+
+func (l *LogzCoreImpl) SetLevel(level interface{}) {
+	l.Mu.Lock()
+	defer l.Mu.Unlock()
+	if lvl, ok := level.(LogLevel); ok {
+		l.VLevel = lvl
+	} else if lvlStr, ok := level.(string); ok {
+		l.VLevel = LogLevel(lvlStr)
+	} else {
+		log.Println("Invalid log level type")
+	}
+}
+func (l *LogzCoreImpl) GetLevel() interface{} {
+	l.Mu.RLock()
+	defer l.Mu.RUnlock()
+
+	if l.VLevel == "" {
+		l.VLevel = INFO
+	}
+	return l.VLevel
+}
+
+func (l *LogzCoreImpl) SetWriter(writer any) {
+	l.Mu.Lock()
+	defer l.Mu.Unlock()
+	if osFile, ok := writer.(*os.File); ok {
+		l.VWriter = NewDefaultWriter[any](osFile, &TextFormatter{})
+	} else if logWriter, ok := writer.(LogWriter[any]); ok {
+		l.VWriter = logWriter
+	} else {
+		log.Println("Invalid writer type")
+	}
+}
+func (l *LogzCoreImpl) GetWriter() interface{} {
+	l.Mu.RLock()
+	defer l.Mu.RUnlock()
+	if l.VWriter == nil {
+		l.VWriter = NewDefaultWriter[any](os.Stdout, &TextFormatter{})
+	}
+	return l.VWriter
+}
+
+func (l *LogzCoreImpl) GetMode() interface{} {
+	l.Mu.RLock()
+	defer l.Mu.RUnlock()
+	if l.VMode == "" {
+		l.VMode = ModeStandalone
+	}
+	return l.VMode
+}
+
+func (l *LogzCoreImpl) SetConfig(config interface{}) {
+	l.Mu.Lock()
+	defer l.Mu.Unlock()
+	if cfg, ok := config.(Config); ok {
+		l.VConfig = cfg
+	} else {
+		log.Println("Invalid config type")
+	}
+}
+func (l *LogzCoreImpl) GetConfig() interface{} {
+	l.Mu.RLock()
+	defer l.Mu.RUnlock()
+	if l.VConfig == nil {
+		c := NewConfigManager()
+		c2 := *c
+		c3 := c2.GetConfig()
+		l.VConfig = c3
+	}
+	return l.VConfig
+}
+
+// trimFilePath trims the file path to show only the last two segments.
+func trimFilePath(filePath string) string {
+	parts := strings.Split(filePath, "/")
+	if len(parts) > 2 {
+		return strings.Join(parts[len(parts)-2:], "/")
+	}
+	return filePath
+}
+
+// mergeContext merges global and local context maps.
+func mergeContext(global, local map[string]interface{}) map[string]interface{} {
+	merged := make(map[string]interface{})
+	for k, v := range global {
+		merged[k] = v
+	}
+	for k, v := range local {
+		merged[k] = v
+	}
+	return merged
+}
+
+// mergeMetadata merges global and local context maps.
+func mergeMetadata(global, local map[string]interface{}) map[string]interface{} {
+	merged := make(map[string]interface{})
+	for k, v := range global {
+		merged[k] = v
+	}
+	for k, v := range local {
+		merged[k] = v
+	}
+	return merged
+}
+
+/// logger_test.go ///
+package core
+
+/*func TestNewLogger(t *testing.T) {
+	configManager := NewConfigManager()
+	if configManager == nil {
+		t.Fatal("ErrorCtx initializing ConfigManager.")
+	}
+	cfgMgr := *configManager
+	config, err := cfgMgr.LoadConfig()
+	if err != nil {
+		t.Fatalf("ErrorCtx loading configuration: %v", err)
+	}
+	logger := NewLogger(config)
+	if logger == nil {
+		t.Fatal("ErrorCtx creating core.")
+	}
+}
+
+func TestSetMetadata(t *testing.T) {
+	configManager := NewConfigManager()
+	if configManager == nil {
+		t.Fatal("ErrorCtx initializing ConfigManager.")
+	}
+	cfgMgr := *configManager
+	config, err := cfgMgr.LoadConfig()
+	if err != nil {
+		t.Fatalf("ErrorCtx loading configuration: %v", err)
+	}
+	logger := NewLogger(config)
+	if logger == nil {
+		t.Fatal("ErrorCtx creating core.")
+	}
+
+	logger.SetMetadata("key", "value")
+	if logger.metadata["key"] != "value" {
+		t.Errorf("Expected VMetadata 'key' to be 'value', got '%v'", logger.metadata["key"])
+	}
+}
+
+func TestLogMethods(t *testing.T) {
+	configManager := NewConfigManager()
+	if configManager == nil {
+		t.Fatal("ErrorCtx initializing ConfigManager.")
+	}
+	cfgMgr := *configManager
+	config, err := cfgMgr.LoadConfig()
+	if err != nil {
+		t.Fatalf("ErrorCtx loading configuration: %v", err)
+	}
+	logger := NewLogger(config)
+	if logger == nil {
+		t.Fatal("ErrorCtx creating core.")
+	}
+
+	var buf bytes.Buffer
+	logger.SetWriter(NewDefaultWriter[any](&buf, &TextFormatter{}))
+
+	logger.DebugCtx("debug message", nil)
+	if !bytes.Contains(buf.Bytes(), []byte("DEBUG")) {
+		t.Errorf("Expected 'DEBUG' log entry, got '%s'", buf.String())
+	}
+
+	logger.InfoCtx("info message", nil)
+	if !bytes.Contains(buf.Bytes(), []byte("INFO")) {
+		t.Errorf("Expected 'INFO' log entry, got '%s'", buf.String())
+	}
+
+	logger.WarnCtx("warn message", nil)
+	if !bytes.Contains(buf.Bytes(), []byte("WARN")) {
+		t.Errorf("Expected 'WARN' log entry, got '%s'", buf.String())
+	}
+
+	logger.ErrorCtx("error message", nil)
+	if !bytes.Contains(buf.Bytes(), []byte("ERROR")) {
+		t.Errorf("Expected 'ERROR' log entry, got '%s'", buf.String())
+	}
+}
+
+func TestConcurrentAccess(t *testing.T) {
+	configManager := NewConfigManager()
+	if configManager == nil {
+		t.Fatal("ErrorCtx initializing ConfigManager.")
+	}
+	cfgMgr := *configManager
+	config, err := cfgMgr.LoadConfig()
+	if err != nil {
+		t.Fatalf("ErrorCtx loading configuration: %v", err)
+	}
+	logger := NewLogger(config)
+	if logger == nil {
+		t.Fatal("ErrorCtx creating core.")
+	}
+
+	var wg sync.WaitGroup
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			logger.SetMetadata("key", i)
+			logger.DebugCtx("concurrent message", nil)
+		}(i)
+	}
+	wg.Wait()
+}
+
+func TestLogRotation(t *testing.T) {
+	configManager := NewConfigManager()
+	if configManager == nil {
+		t.Fatal("ErrorCtx initializing ConfigManager.")
+	}
+	cfgMgr := *configManager
+	config, err := cfgMgr.LoadConfig()
+	if err != nil {
+		t.Fatalf("ErrorCtx loading configuration: %v", err)
+	}
+	logger := NewLogger(config)
+	if logger == nil {
+		t.Fatal("ErrorCtx creating core.")
+	}
+
+	logFile := config.Output()
+	defer os.Remove(logFile)
+
+	for i := 0; i < 1000; i++ {
+		logger.InfoCtx("log rotation test message", nil)
+	}
+
+	err = CheckLogSize(config)
+	if err != nil {
+		t.Fatalf("ErrorCtx checking log size: %v", err)
+	}
+
+	_, err = os.Stat(logFile + ".tar.gz")
+	if os.IsNotExist(err) {
+		t.Errorf("Expected log rotation to create archive, but it did not.")
+	}
+}
+
+func TestDynamicConfigChanges(t *testing.T) {
+	configManager := NewConfigManager()
+	if configManager == nil {
+		t.Fatal("ErrorCtx initializing ConfigManager.")
+	}
+	cfgMgr := *configManager
+	config, err := cfgMgr.LoadConfig()
+	if err != nil {
+		t.Fatalf("ErrorCtx loading configuration: %v", err)
+	}
+	logger := NewLogger(config)
+	if logger == nil {
+		t.Fatal("ErrorCtx creating core.")
+	}
+
+	viper.Set("logLevel", "DEBUG")
+	time.Sleep(1 * time.Second)
+
+	if logger.GetLevel() != DEBUG {
+		t.Errorf("Expected log VLevel to be 'DEBUG', got '%v'", logger.GetLevel())
+	}
+}
+*/
+
+/// logz_manager.go ///
+package core
+
+/*import (
+	iKbxCfg "github.com/rafa-mori/kubex-interfaces/config"
+
+	"fmt"
+	"sync"
+)
+
+type LogInterface interface {
+	Initialize(config iKbxCfg.ConfigManager[iKbxCfg.Configurable]) error
+	Log(message string)
+	Stop()
+}
+
+var (
+	loggerRegistry = make(map[string]*LoggerInstance)
+	registryMutex  sync.Mutex
+)
+
+type LoggerInstance struct {
+	LogChannel  chan string
+	DoneChannel chan bool
+	Config      *iKbxCfg.ConfigManager[LogzConfig]
+}
+
+func (li *LoggerInstance) Start() {
+	go func() {
+		for {
+			select {
+			case log := <-li.LogChannel:
+				fmt.Println("Log:", log)
+			case <-li.DoneChannel:
+				fmt.Println("Logger finalizado.")
+				return
+			}
+		}
+	}()
+}
+
+func GetLoggerInstance(name string, config *iKbxCfg.ConfigManager[LogzConfig]) (*LoggerInstance, error) {
+	// Validate the configuration
+	if config == nil {
+		return nil, fmt.Errorf("configuração inválida")
+	}
+
+	// Necessary to validate the configuration because of the pointer receiver
+	cfg := config.GetConfig()
+
+	// Validate the configuration
+	if err := cfg.Validate(); err != nil {
+		return nil, fmt.Errorf("configuração inválida: %v", err)
+	}
+
+	registryMutex.Lock()
+	defer registryMutex.Unlock()
+
+	if logger, exists := loggerRegistry[name]; exists {
+		return logger, nil
+	}
+
+	newLogger := &LoggerInstance{
+		LogChannel:  make(chan string, 100),
+		DoneChannel: make(chan bool),
+		Config:      config,
+	}
+	newLogger.Start()
+	loggerRegistry[name] = newLogger
+	return newLogger, nil
+}
+*/
+
+/// multi_writer.go ///
+package core
+
+import (
+	"encoding/json"
+	"os"
+)
+
+// LogMultiWriter defines the contract for writing logs to multiple writers.
+type LogMultiWriter[T any] interface {
+	Write(entry T) error
+	AddWriter(w LogWriter[T])
+	GetWriters() []LogWriter[T]
+}
+
+// MultiWriter is a writer that can write to multiple LogWriters.
+// It implements the LogMultiWriter interface.
+// It allows adding new writers dynamically and writing log entries to all of them.
+// It can be used to aggregate logs from different sources or formats.
+type MultiWriter[T any] struct {
+	writers []LogWriter[T]
+}
+
+// NewMultiWriter creates a new instance of MultiWriter with the provided writers.
+func NewMultiWriter[T any](writers ...LogWriter[T]) *MultiWriter[T] {
+	return &MultiWriter[T]{writers: writers}
+}
+
+func (mw *MultiWriter[T]) AddWriter(w LogWriter[T]) {
+	mw.writers = append(mw.writers, w)
+}
+
+func (mw *MultiWriter[T]) Write(entry T) error {
+	for _, w := range mw.writers {
+		if err := w.Write(entry); err != nil {
+			return err
+		}
+	}
+
+	/* structTest := json.Marshal(entry)
+	if structTest != nil {
+		if strEntry, ok := entry.(string); ok {
+			for _, w := range mw.writers {
+				if err := w.Write(strEntry); err != nil {
+					return err
+				}
+			}
+		}
+	} */
+
+	json.NewEncoder(os.Stdout).Encode(entry)
+
+	return nil
+}
+
+func (mw *MultiWriter[T]) GetWriters() []LogWriter[T] { return mw.writers }
+
+/// notifier.go ///
+package core
+
+import (
+	"github.com/godbus/dbus/v5"
+	"github.com/gorilla/websocket"
+
+	"fmt"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+// Notifier defines the interface for a log notifier.
+type Notifier interface {
+	// Notify sends a log entry notification.
+	Notify(entry LogzEntry) error
+
+	// Enable activates the notifier.
+	Enable()
+
+	// Disable deactivates the notifier.
+	Disable()
+
+	// Enabled checks if the notifier is active.
+	Enabled() bool
+
+	// WebServer returns the HTTP server instance.
+	WebServer() *http.Server
+
+	// Websocket returns the WebSocket instance.
+	Websocket() *websocket.Conn
+
+	// WebClient returns the HTTP client instance.
+	WebClient() *http.Client
+	// DBusClient returns the DBus connection instance.
+	DBusClient() *dbus.Conn
+}
+
+// NotifierImpl is the implementation of the Notifier interface.
+type NotifierImpl struct {
+	NotifierManager NotifierManager // Manager for notifier instances.
+	EnabledFlag     bool            // Flag indicating if the notifier is enabled.
+	WebhookURL      string          // URL for webhook notifications.
+	HTTPMethod      string          // HTTP method for webhook notifications.
+	AuthToken       string          // Authentication token for notifications.
+	LogLevel        string          // Log VLevel for filtering notifications.
+	WsEndpoint      string          // WebSocket endpoint for notifications.
+	Whitelist       []string        // Whitelist of sources for notifications.
+}
+
+// NewNotifier creates a new NotifierImpl instance.
+func NewNotifier(manager NotifierManager, enabled bool, webhookURL, HTTPMethod, authToken, logLevel, wsEndpoint string, whitelist []string) Notifier {
+	if whitelist == nil {
+		whitelist = []string{}
+	}
+	return &NotifierImpl{
+		NotifierManager: manager,
+		EnabledFlag:     enabled,
+		WebhookURL:      webhookURL,
+		HTTPMethod:      HTTPMethod,
+		AuthToken:       authToken,
+		LogLevel:        logLevel,
+		WsEndpoint:      wsEndpoint,
+		Whitelist:       whitelist,
+	}
+}
+
+// Notify sends a log entry notification based on the configured settings.
+func (n *NotifierImpl) Notify(entry LogzEntry) error {
+	if !n.EnabledFlag {
+		return nil
+	}
+
+	// Validate log VLevel
+	if n.LogLevel != "" && n.LogLevel != string(entry.GetLevel()) {
+		return nil
+	}
+
+	// Validate Whitelist
+	if len(n.Whitelist) > 0 && !contains(n.Whitelist, entry.GetSource()) {
+		return nil
+	}
+
+	// HTTP Notification
+	if n.WebhookURL != "" {
+		if err := n.httpNotify(entry); err != nil {
+			return err
+		}
+	}
+
+	// WebSocket Notification
+	if n.WsEndpoint != "" {
+		if err := n.wsNotify(entry); err != nil {
+			return err
+		}
+	}
+
+	// DBus Notification
+	if n.DBusClient() != nil {
+		if err := n.dbusNotify(entry); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// httpNotify sends an HTTP notification.
+func (n *NotifierImpl) httpNotify(entry LogzEntry) error {
+	if n.HTTPMethod == "POST" {
+		req, err := http.NewRequest("POST", n.WebhookURL, strings.NewReader(entry.GetMessage()))
+		if err != nil {
+			return fmt.Errorf("HTTP request creation error: %w", err)
+		}
+		if n.AuthToken != "" {
+			req.Header.Set("Authorization", "Bearer "+n.AuthToken)
+		}
+		req.Header.Set("Content-Type", "application/json")
+		resp, err := n.WebClient().Do(req)
+		if err != nil {
+			return fmt.Errorf("HTTP request error: %w", err)
+		}
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			return fmt.Errorf("HTTP request failed: %s", resp.Status)
+		}
+	} else {
+		return fmt.Errorf("unsupported HTTP method: %s", n.HTTPMethod)
+	}
+	return nil
+}
+
+// wsNotify sends a WebSocket notification.
+func (n *NotifierImpl) wsNotify(entry LogzEntry) error {
+	_ = n.AuthToken + "|" + entry.GetMessage()
+	ws, _, err := websocket.DefaultDialer.Dial(n.WsEndpoint, nil)
+	if err != nil {
+		return fmt.Errorf("WebSocket connection error: %w", err)
+	}
+	defer ws.Close()
+	if err := ws.WriteJSON(entry); err != nil {
+		return fmt.Errorf("WebSocket write error: %w", err)
+	}
+
+	// Optionally, you can read a message from the WebSocket server to confirm the connection.
+	// msg, _, err := ws.ReadMessage()
+	if _, _, err := ws.ReadMessage(); err != nil {
+		return fmt.Errorf("WebSocket read error: %w", err)
+	}
+
+	// Optionally, you can handle the response from the WebSocket server here.
+	// For now, we just read a message to confirm the connection is working.
+	if _, _, err := ws.ReadMessage(); err != nil {
+		return fmt.Errorf("WebSocket read error: %w", err)
+	}
+
+	// Print the response message for debugging purposes.
+	// You can uncomment or remove this line in production code.
+	// This is just an example; you might want to handle the response differently.
+	// fmt.Printf("WebSocket response: %s\n", msg)
+	return nil
+}
+
+// dbusNotify sends a DBus notification.
+func (n *NotifierImpl) dbusNotify(entry LogzEntry) error {
+	output := n.AuthToken + "|" + entry.GetMessage()
+	dbusObj := n.DBusClient().Object("org.freedesktop.Notifications", "/org/freedesktop/Notifications")
+	if call := dbusObj.Call("org.freedesktop.Notifications.Notify", 0, "", uint32(0), "", output, []string{}, map[string]dbus.Variant{}, int32(5000)); call.Err != nil {
+		return fmt.Errorf("DBus call error: %w", call.Err)
+	}
+	return nil
+}
+
+// Enable activates the notifier.
+func (n *NotifierImpl) Enable() { n.EnabledFlag = true }
+
+// Disable deactivates the notifier.
+func (n *NotifierImpl) Disable() { n.EnabledFlag = false }
+
+// Enabled checks if the notifier is active.
+func (n *NotifierImpl) Enabled() bool { return n.EnabledFlag }
+
+// WebServer returns the HTTP server instance.
+func (n *NotifierImpl) WebServer() *http.Server { return n.NotifierManager.WebServer() }
+
+// Websocket returns the Gorilla WebSocket connection instance.
+func (n *NotifierImpl) Websocket() *websocket.Conn { return n.NotifierManager.Websocket() }
+
+// WebClient returns the HTTP client instance.
+func (n *NotifierImpl) WebClient() *http.Client { return n.NotifierManager.WebClient() }
+
+// DBusClient returns the DBus connection instance.
+func (n *NotifierImpl) DBusClient() *dbus.Conn { return n.NotifierManager.DBusClient() }
+
+// contains checks if a slice contains a specific value.
+func contains(slice []string, value string) bool {
+	for _, item := range slice {
+		if item == value {
+			return true
+		}
+	}
+	return false
+}
+
+// HTTPNotifier is a notifier that sends HTTP notifications.
+type HTTPNotifier struct {
+	NotifierImpl
+}
+
+// NewHTTPNotifier creates a new HTTPNotifier instance.
+func NewHTTPNotifier(webhookURL, authToken string) *HTTPNotifier {
+	return &HTTPNotifier{
+		NotifierImpl: NotifierImpl{
+			WebhookURL: webhookURL,
+			AuthToken:  authToken,
+			HTTPMethod: "POST",
+		},
+	}
+}
+
+// Notify sends an HTTP notification.
+func (n *HTTPNotifier) Notify(entry LogzEntry) error {
+	if !n.EnabledFlag {
+		return nil
+	}
+	req, err := http.NewRequest(n.HTTPMethod, n.WebhookURL, strings.NewReader(entry.GetMessage()))
+	if err != nil {
+		return fmt.Errorf("HTTPNotifier request creation error: %w", err)
+	}
+	if n.AuthToken != "" {
+		req.Header.Set("Authorization", "Bearer "+n.AuthToken)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := n.WebClient().Do(req)
+	if err != nil {
+		return fmt.Errorf("HTTPNotifier request error: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("HTTPNotifier request failed: %s", resp.Status)
+	}
+	return nil
+}
+
+// WebSocketNotifier is a notifier that sends WebSocket notifications.
+type WebSocketNotifier struct {
+	NotifierImpl
+}
+
+// NewWebSocketNotifier creates a new WebSocketNotifier instance.
+func NewWebSocketNotifier(endpoint string) *WebSocketNotifier {
+	return &WebSocketNotifier{
+		NotifierImpl: NotifierImpl{
+			WsEndpoint: endpoint,
+		},
+	}
+}
+
+// Notify sends a WebSocket notification.
+func (n *WebSocketNotifier) Notify(entry LogzEntry) error {
+	if !n.EnabledFlag {
+		return nil
+	}
+	if n.WsEndpoint == "" {
+		return nil
+	}
+	ws, _, err := websocket.DefaultDialer.Dial(n.WsEndpoint, nil)
+	if err != nil {
+		return fmt.Errorf("WebSocketNotifier error: %w", err)
+	}
+	defer ws.Close()
+	return nil
+}
+
+// DBusNotifier is a notifier that sends DBus notifications.
+type DBusNotifier struct {
+	NotifierImpl
+}
+
+// NewDBusNotifier creates a new DBusNotifier instance.
+func NewDBusNotifier() *DBusNotifier {
+	return &DBusNotifier{
+		NotifierImpl: NotifierImpl{},
+	}
+}
+
+// Notify sends a DBus notification.
+func (n *DBusNotifier) Notify(entry LogzEntry) error {
+	if !n.EnabledFlag {
+		return nil
+	}
+	output := n.AuthToken + "|" + entry.GetMessage()
+	dbusObj := n.DBusClient().Object("org.freedesktop.Notifications", "/org/freedesktop/Notifications")
+	if call := dbusObj.Call("org.freedesktop.Notifications.Notify", 0, "", uint32(0), "", output, []string{}, map[string]dbus.Variant{}, int32(5000)); call.Err != nil {
+		return fmt.Errorf("DBusNotifier error: %w", call.Err)
+	}
+	return nil
+}
+
+func GetLogPath() string {
+	home, homeErr := os.UserHomeDir()
+	if homeErr != nil {
+		home, homeErr = os.UserConfigDir()
+		if homeErr != nil {
+			home, homeErr = os.UserCacheDir()
+			if homeErr != nil {
+				home = "/tmp"
+			}
+		}
+	}
+	configPath := filepath.Join(home, ".kubex", "logz", "VConfig.json")
+	if mkdirErr := os.MkdirAll(filepath.Dir(configPath), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+		return ""
+	}
+	return configPath
+}
+
+/// notifier_manager.go ///
+package core
+
+import (
+	"context"
+	"crypto/tls"
+	"net"
+	"time"
+
+	"github.com/godbus/dbus/v5"
+	"github.com/gorilla/websocket"
+	"github.com/spf13/viper"
+
+	"fmt"
+	"net/http"
+	"net/url"
+	"sync"
+)
+
+type NotifierWebSocketConfig struct {
+	TLSClientConfig  *tls.Config
+	HandshakeTimeout time.Duration
+	Jar              http.CookieJar
+
+	WriteBufferPool                 websocket.BufferPool
+	ReadBufferSize, WriteBufferSize int
+	Subprotocols                    []string
+
+	EnableCompression bool
+
+	NetDial           func(network, addr string) (net.Conn, error)
+	NetDialContext    func(ctx context.Context, network, addr string) (net.Conn, error)
+	NetDialTLSContext func(ctx context.Context, network, addr string) (net.Conn, error)
+	Proxy             func(*http.Request) (*url.URL, error)
+}
+
+// NotifierManager defines the interface for managing notifiers.
+type NotifierManager interface {
+	// WebServer returns the HTTP server instance.
+	WebServer() *http.Server
+
+	// Websocket returns the Gorilla WebSocket connection instance.
+	Websocket() *websocket.Conn
+
+	// WebClient returns the HTTP client instance.
+	WebClient() *http.Client
+
+	// DBusClient returns the DBus connection instance.
+	DBusClient() *dbus.Conn
+
+	// AddNotifier adds or updates a notifier with the given name.
+	AddNotifier(name string, notifier Notifier)
+
+	// RemoveNotifier removes the notifier with the given name.
+	RemoveNotifier(name string)
+
+	// GetNotifier retrieves the notifier with the given name.
+	GetNotifier(name string) (Notifier, bool)
+
+	// ListNotifiers lists all registered notifier names.
+	ListNotifiers() []string
+
+	// UpdateFromConfig updates notifiers dynamically based on the provided configuration.
+	UpdateFromConfig() error
+}
+
+// NotifierManagerImpl is the implementation of the NotifierManager interface.
+type NotifierManagerImpl struct {
+	webServer  *http.Server
+	websocket  *websocket.Conn
+	webClient  *http.Client
+	dbusClient *dbus.Conn
+	notifiers  map[string]Notifier
+	mu         sync.RWMutex
+}
+
+// NewNotifierManager creates a new instance of NotifierManagerImpl.
+func NewNotifierManager(notifiers map[string]Notifier) NotifierManager {
+	if notifiers == nil {
+		notifiers = make(map[string]Notifier)
+	}
+	return &NotifierManagerImpl{
+		notifiers: notifiers,
+	}
+}
+
+// AddNotifier adds or updates a notifier with the given name.
+func (nm *NotifierManagerImpl) AddNotifier(name string, notifier Notifier) {
+	nm.mu.Lock()
+	defer nm.mu.Unlock()
+	nm.notifiers[name] = notifier
+	fmt.Printf("Notifier '%s' added/updated.\n", name)
+}
+
+// RemoveNotifier removes the notifier with the given name.
+func (nm *NotifierManagerImpl) RemoveNotifier(name string) {
+	nm.mu.Lock()
+	defer nm.mu.Unlock()
+	delete(nm.notifiers, name)
+	fmt.Printf("Notifier '%s' removed.\n", name)
+}
+
+// GetNotifier retrieves the notifier with the given name.
+func (nm *NotifierManagerImpl) GetNotifier(name string) (Notifier, bool) {
+	nm.mu.RLock()
+	defer nm.mu.RUnlock()
+	notifier, ok := nm.notifiers[name]
+	return notifier, ok
+}
+
+// ListNotifiers lists all registered notifier names.
+func (nm *NotifierManagerImpl) ListNotifiers() []string {
+	nm.mu.RLock()
+	defer nm.mu.RUnlock()
+	keys := make([]string, 0, len(nm.notifiers))
+	for name := range nm.notifiers {
+		keys = append(keys, name)
+	}
+	return keys
+}
+
+// UpdateFromConfig updates notifiers dynamically based on the provided configuration.
+func (nm *NotifierManagerImpl) UpdateFromConfig() error {
+	var configNotifiers map[string]map[string]interface{}
+	if err := viper.UnmarshalKey("notifiers", &configNotifiers); err != nil {
+		return fmt.Errorf("failed to parse notifiers VConfig: %w", err)
+	}
+
+	// Update or recreate notifiers dynamically
+	for name, conf := range configNotifiers {
+		typ, ok := conf["type"].(string)
+		if !ok {
+			fmt.Printf("Notifier '%s' does not specify a type and will be ignored.\n", name)
+			continue
+		}
+
+		switch typ {
+		case "http":
+			webhookURL, _ := conf["webhookURL"].(string)
+			authToken, _ := conf["authToken"].(string)
+			notifier := NewHTTPNotifier(webhookURL, authToken)
+			nm.AddNotifier(name, notifier)
+		case "websocket":
+			endpoint, _ := conf["endpoint"].(string)
+			notifier := NewWebSocketNotifier(endpoint)
+			nm.AddNotifier(name, notifier)
+		case "dbus":
+			notifier := NewDBusNotifier()
+			nm.AddNotifier(name, notifier)
+		default:
+			fmt.Printf("Unknown notifier type '%s' for notifier '%s'.\n", typ, name)
+		}
+	}
+	return nil
+}
+
+// WebServer returns the HTTP server instance.
+func (nm *NotifierManagerImpl) WebServer() *http.Server {
+	if nm.webServer == nil {
+		nm.webServer = Server()
+	}
+	return nm.webServer
+}
+
+// Websocket returns the Gorilla WebSocket connection instance.
+// If the WebSocket connection is not initialized, it will create a new one.
+// If the connection fails, it will return nil and log the error.
+// This is useful for lazy initialization of the WebSocket connection.
+func (nm *NotifierManagerImpl) Websocket() *websocket.Conn {
+	if nm.websocket == nil {
+		var err error
+		dialer := websocket.Dialer{
+			// Configure the WebSocket dialer if needed
+		}
+		nm.websocket, _, err = dialer.Dial("ws://localhost:8080/ws", nil)
+		if err != nil {
+			fmt.Printf("Failed to initialize WebSocket: %v\n", err)
+			return nil
+		}
+	}
+	return nm.websocket
+}
+
+// WebClient returns the HTTP client instance.
+func (nm *NotifierManagerImpl) WebClient() *http.Client {
+	if nm.webClient == nil {
+		nm.webClient = Client()
+	}
+	return nm.webClient
+}
+
+// DBusClient returns the DBus connection instance.
+func (nm *NotifierManagerImpl) DBusClient() *dbus.Conn {
+	if nm.dbusClient == nil {
+		nm.dbusClient = DBus()
+	}
+	return nm.dbusClient
+}
+
+/// prometheus.go ///
+package core
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strings"
+	"sync"
+)
+
+// Regular expression to validate metric names
+var metricNameRegex = regexp.MustCompile(`^[a-zA-Z_:][a-zA-Z0-9_:]*$`)
+
+// validateMetricName checks if the given metric name is valid according to the Prometheus naming conventions.
+func validateMetricName(name string) error {
+	if !metricNameRegex.MatchString(name) {
+		return fmt.Errorf("invalid metric name '%s': must match [a-zA-Z_:][a-zA-Z0-9_:]*", name)
+	}
+	return nil
+}
+
+// Metric represents a single Prometheus metric with a value and optional VMetadata.
+type Metric struct {
+	Value    float64           `json:"value"`
+	Metadata map[string]string `json:"VMetadata,omitempty"`
+}
+
+// PrometheusManager manages Prometheus metrics, including enabling/disabling the HTTP server,
+// loading/saving metrics, and handling metric operations.
+type PrometheusManager struct {
+	enabled         bool
+	metrics         map[string]Metric
+	mutex           sync.RWMutex
+	metricsFile     string          // path to the persistence file
+	exportWhitelist map[string]bool // If not empty, only these metrics will be exported to Prometheus
+	httpServer      *http.Server    // HTTP server to expose metrics
+}
+
+// Singleton instance of PrometheusManager
+var prometheusManagerInstance *PrometheusManager
+
+// getMetricsFilePath returns the path to the metrics persistence file, using an environment variable if set,
+// or a default location in the user's cache directory.
+func getMetricsFilePath() string {
+	if envPath := os.Getenv("LOGZ_METRICS_FILE"); envPath != "" {
+		return envPath
+	}
+	cacheDir, err := os.UserCacheDir()
+	if err != nil {
+		cacheDir = "/tmp"
+	}
+	dir := filepath.Join(cacheDir, "kubex", "logz")
+	_ = os.MkdirAll(dir, 0755)
+	return filepath.Join(dir, "metrics.json")
+}
+
+// GetPrometheusManager returns the singleton instance of PrometheusManager, initializing it if necessary.
+func GetPrometheusManager() *PrometheusManager {
+	if prometheusManagerInstance == nil {
+		prometheusManagerInstance = &PrometheusManager{
+			enabled:         false,
+			metrics:         make(map[string]Metric),
+			metricsFile:     getMetricsFilePath(),
+			exportWhitelist: make(map[string]bool),
+		}
+		if err := prometheusManagerInstance.loadMetrics(); err != nil {
+			fmt.Printf("Warning: could not load metrics: %v\n", err)
+		}
+	}
+	return prometheusManagerInstance
+}
+
+// loadMetrics loads metrics from the persistence file into the PrometheusManager instance.
+func (pm *PrometheusManager) loadMetrics() error {
+	pm.mutex.Lock()
+	defer pm.mutex.Unlock()
+	data, err := os.ReadFile(pm.metricsFile)
+	if err != nil {
+		if os.IsNotExist(err) {
+			pm.metrics = make(map[string]Metric)
+			return nil
+		}
+		return err
+	}
+	var loaded map[string]Metric
+	if err := json.Unmarshal(data, &loaded); err != nil {
+		return err
+	}
+	pm.metrics = loaded
+	return nil
+}
+
+// saveMetrics saves the current metrics to the persistence file.
+func (pm *PrometheusManager) saveMetrics() error {
+	pm.mutex.RLock()
+	defer pm.mutex.RUnlock()
+	data, err := json.MarshalIndent(pm.metrics, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(pm.metricsFile, data, 0644)
+}
+
+// Enable starts the Prometheus HTTP server on the specified port to expose metrics.
+func (pm *PrometheusManager) Enable(port string) {
+	pm.mutex.Lock()
+	defer pm.mutex.Unlock()
+	if pm.enabled {
+		fmt.Println("Prometheus metrics are already enabled.")
+		return
+	}
+	pm.enabled = true
+
+	// Start the HTTP server to expose metrics
+	mux := http.NewServeMux()
+	mux.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+		metrics := pm.GetMetrics()
+		w.Header().Set("Content-Type", "text/plain; version=0.0.4")
+		for name, value := range metrics {
+			_, fPrintFErr := fmt.Fprintf(w, "# TYPE %s gauge\n%s %f\n", name, name, value)
+			if fPrintFErr != nil {
+				return
+			}
+		}
+	})
+	pm.httpServer = &http.Server{
+		Addr:    fmt.Sprintf(":%s", port),
+		Handler: mux,
+	}
+	go func() {
+		if err := pm.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			fmt.Printf("ErrorCtx starting Prometheus metrics server: %v\n", err)
+		}
+	}()
+	fmt.Println("Prometheus metrics enabled.")
+}
+
+// Disable stops the Prometheus HTTP server and disables metric exposure.
+func (pm *PrometheusManager) Disable() {
+	pm.mutex.Lock()
+	defer pm.mutex.Unlock()
+	if !pm.enabled {
+		fmt.Println("Prometheus metrics are already disabled.")
+		return
+	}
+	pm.enabled = false
+	if pm.httpServer != nil {
+		_ = pm.httpServer.Close()
+	}
+	fmt.Println("Prometheus metrics disabled.")
+}
+
+// GetMetrics returns the current metrics, filtered by the export whitelist if defined.
+func (pm *PrometheusManager) GetMetrics() map[string]float64 {
+	pm.mutex.RLock()
+	defer pm.mutex.RUnlock()
+	filteredMetrics := make(map[string]float64)
+	for name, metric := range pm.metrics {
+		// Respect the exportWhitelist, if defined
+		if len(pm.exportWhitelist) > 0 && !pm.exportWhitelist[name] {
+			continue
+		}
+		filteredMetrics[name] = metric.Value
+	}
+	return filteredMetrics
+}
+
+// SetExportWhitelist sets the list of metrics that are allowed to be exported to Prometheus.
+func (pm *PrometheusManager) SetExportWhitelist(metrics []string) {
+	pm.mutex.Lock()
+	defer pm.mutex.Unlock()
+	pm.exportWhitelist = make(map[string]bool)
+	for _, m := range metrics {
+		pm.exportWhitelist[m] = true
+	}
+	fmt.Println("Export whitelist updated for Prometheus metrics.")
+}
+
+// IsEnabled returns whether the Prometheus metrics exposure is enabled.
+func (pm *PrometheusManager) IsEnabled() bool {
+	pm.mutex.RLock()
+	defer pm.mutex.RUnlock()
+	return pm.enabled
+}
+
+// AddMetric adds or updates a metric with the given name, value, and VMetadata.
+func (pm *PrometheusManager) AddMetric(name string, value float64, metadata map[string]string) {
+	if err := validateMetricName(name); err != nil {
+		fmt.Printf("ErrorCtx adding metric: %v\n", err)
+		return
+	}
+	pm.mutex.Lock()
+	defer pm.mutex.Unlock()
+	pm.metrics[name] = Metric{
+		Value:    value,
+		Metadata: metadata,
+	}
+	fmt.Printf("Metric '%s' added/updated with value: %f\n", name, value)
+	if err := pm.saveMetrics(); err != nil {
+		fmt.Printf("ErrorCtx saving metrics: %v\n", err)
+	}
+}
+
+// RemoveMetric removes a metric with the given name.
+func (pm *PrometheusManager) RemoveMetric(name string) {
+	pm.mutex.Lock()
+	defer pm.mutex.Unlock()
+	delete(pm.metrics, name)
+	fmt.Printf("Metric '%s' removed.\n", name)
+	if err := pm.saveMetrics(); err != nil {
+		fmt.Printf("ErrorCtx saving metrics: %v\n", err)
+	}
+}
+
+// IncrementMetric increments the value of a metric by the given delta.
+func (pm *PrometheusManager) IncrementMetric(name string, delta float64) {
+	if err := validateMetricName(name); err != nil {
+		fmt.Printf("ErrorCtx incrementing metric: %v\n", err)
+		return
+	}
+	pm.mutex.Lock()
+	defer pm.mutex.Unlock()
+	metric, exists := pm.metrics[name]
+	if !exists {
+		metric = Metric{Value: 0, Metadata: nil}
+	}
+	metric.Value += delta
+	pm.metrics[name] = metric
+	fmt.Printf("Metric '%s' incremented by %f, new value: %f\n", name, delta, metric.Value)
+	if err := pm.saveMetrics(); err != nil {
+		fmt.Printf("ErrorCtx saving metrics: %v\n", err)
+	}
+}
+
+// ListMetrics prints all registered metrics to the console.
+func (pm *PrometheusManager) ListMetrics() {
+	pm.mutex.RLock()
+	defer pm.mutex.RUnlock()
+	if len(pm.metrics) == 0 {
+		fmt.Println("No metrics registered.")
+		return
+	}
+	fmt.Println("Registered metrics:")
+	for name, metric := range pm.metrics {
+		fmt.Printf("- %s: %f", name, metric.Value)
+		if len(metric.Metadata) > 0 {
+			metadataJSON, _ := json.Marshal(metric.Metadata)
+			fmt.Printf(" (VMetadata: %s)", string(metadataJSON))
+		}
+		fmt.Println()
+	}
+}
+
+// setPrometheusSysConfig configures the Prometheus system to scrape metrics from this application.
+func (pm *PrometheusManager) setPrometheusSysConfig() error {
+	// Logz specific configuration for Prometheus
+	prometheusConfig := `
+scrape_configs:
+  - job_name: 'logz'
+    static_configs:
+      - targets: ['localhost:2112']
+`
+
+	configFilePath := "/etc/prometheus/prometheus.yml"
+
+	// Check if the configuration file exists
+	_, err := os.Stat(configFilePath)
+	if os.IsNotExist(err) {
+		// Create the configuration file if it does not exist
+		if err := os.WriteFile(configFilePath, []byte(prometheusConfig), 0644); err != nil {
+			return fmt.Errorf("failed to create Prometheus configuration file: %w", err)
+		}
+		fmt.Println("Prometheus configuration file created successfully.")
+	} else if err == nil {
+		// Check if there is already a configuration for 'logz'
+		configContent, readErr := os.ReadFile(configFilePath)
+		if readErr != nil {
+			return fmt.Errorf("failed to read Prometheus configuration file: %w", readErr)
+		}
+
+		if strings.Contains(string(configContent), "job_name: 'logz'") {
+			fmt.Println("Prometheus configuration for 'logz' already exists.")
+		} else {
+			// Add the configuration to the existing file
+			f, openErr := os.OpenFile(configFilePath, os.O_APPEND|os.O_WRONLY, 0644)
+			if openErr != nil {
+				return fmt.Errorf("failed to open Prometheus configuration file: %w", openErr)
+			}
+			defer func(f *os.File) {
+				_ = f.Close()
+			}(f)
+
+			if _, writeErr := f.WriteString(prometheusConfig); writeErr != nil {
+				return fmt.Errorf("failed to append to Prometheus configuration file: %w", writeErr)
+			}
+			fmt.Println("Prometheus configuration for 'logz' added successfully.")
+		}
+	} else {
+		return fmt.Errorf("failed to check Prometheus configuration file: %w", err)
+	}
+
+	return nil
+}
+
+// initPrometheus initializes the Prometheus metrics and system configuration.
+func (pm *PrometheusManager) initPrometheus() error {
+	if !pm.IsEnabled() {
+		return fmt.Errorf("prometheus is not enabled")
+	}
+
+	defaultMetrics := []string{"infoCount", "warnCount", "errorCount", "debugCount", "successCount"}
+	for _, metric := range defaultMetrics {
+		if err := validateMetricName(metric); err != nil {
+			fmt.Printf("ErrorCtx initializing metric '%s': %v\n", metric, err)
+			continue
+		}
+		pm.AddMetric(metric, 0, nil) // Initialize with value 0 and no VMetadata
+	}
+
+	if err := pm.setPrometheusSysConfig(); err != nil {
+		return fmt.Errorf("failed to configure Prometheus system: %w", err)
+	}
+
+	fmt.Println("Prometheus initialized successfully with default metrics.")
+	return nil
+}
+
+/// reader.go ///
+// Package core provides the core functionality for reading logs from files.
+package core
+
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"log"
+	"os"
+	"strconv"
+	"time"
+)
+
+// LogReader defines the contract for reading logs.
+type LogReader interface {
+	// Tail reads the log file in real-time and sends the new lines to the
+	// provided VWriter or prints them to the terminal. The operation can be interrupted
+	// by sending a signal through the stopChan channel.
+	Tail(filePath string, stopChan <-chan struct{}) error
+}
+
+// FileLogReader implements the LogReader interface by reading from a file.
+type FileLogReader struct {
+	// pollInterval is the polling interval to check for new lines.
+	pollInterval time.Duration
+}
+
+// NewFileLogReader creates a new instance of FileLogReader.
+// The polling interval is read from the LOGZ_TAIL_POLL_INTERVAL environment variable (in milliseconds),
+// or defaults to 500ms.
+func NewFileLogReader() *FileLogReader {
+	intervalMs := 500 // default in milliseconds
+	if val := os.Getenv("LOGZ_TAIL_POLL_INTERVAL"); val != "" {
+		if parsed, err := strconv.Atoi(val); err == nil && parsed > 0 {
+			intervalMs = parsed
+		} else {
+			log.Printf("Invalid LOGZ_TAIL_POLL_INTERVAL value, using default 500ms: %v", err)
+		}
+	}
+	return &FileLogReader{
+		pollInterval: time.Duration(intervalMs) * time.Millisecond,
+	}
+}
+
+// Tail follows the log file from the end and prints new lines as they are added.
+// The stopChan channel allows interrupting the operation (e.g., via Ctrl+C).
+func (fr *FileLogReader) Tail(filePath string, stopChan <-chan struct{}) error {
+	// Open the log file
+	f, err := os.Open(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to open log file: %w", err)
+	}
+	defer f.Close()
+
+	// Position the pointer at the end of the file to read only new lines
+	_, err = f.Seek(0, io.SeekEnd)
+	if err != nil {
+		return fmt.Errorf("failed to seek to the end of the file: %w", err)
+	}
+
+	reader := bufio.NewReader(f)
+
+	// Main loop to read new lines
+	for {
+		select {
+		case <-stopChan:
+			log.Println("Tail operation interrupted by stop signal")
+			return nil
+		default:
+			line, err := reader.ReadString('\n')
+			if err != nil {
+				if err == io.EOF {
+					time.Sleep(fr.pollInterval)
+					continue
+				}
+				return fmt.Errorf("error reading log file: %w", err)
+			}
+			// Print the line immediately; can be adapted to send to another channel if needed.
+			fmt.Print(line)
+		}
+	}
+}
+
+/// service.go ///
+package core
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"log"
+	"net/http"
+	"net/url"
+	"os"
+	"os/exec"
+	"os/signal"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"sync"
+	"syscall"
+	"time"
+
+	"github.com/godbus/dbus/v5"
+	"github.com/spf13/viper"
+)
+
+const (
+	// pidFile is the name of the PID file used to track the running service.
+	pidFile = "logz_srv.pid"
+)
+
+var (
+	lSrv    *http.Server
+	lClient *http.Client
+	// Temporarily disabled due to external dependency on zmq4
+	// Uncomment and ensure the required libraries are installed if needed in the future
+	//lSocket      *zmq4.Socket
+	lDBus        *dbus.Conn
+	globalLogger LogzLogger // Global core for the service
+	startTime    = time.Now()
+	mu           sync.RWMutex
+)
+
+// Run starts the logging service.
+func Run() error {
+	mu.Lock()
+	defer mu.Unlock()
+
+	// Check if the service is already running to avoid multiple instances
+	if IsRunning() {
+		if stopErr := shutdown(); stopErr != nil {
+			return stopErr
+		}
+	}
+
+	// Initialize the ConfigManager and load the configuration
+	configManager := NewConfigManager()
+	if configManager == nil {
+		return errors.New("failed to initialize VConfig manager")
+	}
+	cfgMgr := *configManager
+
+	config, err := cfgMgr.LoadConfig()
+	if err != nil {
+		return fmt.Errorf("failed to load VConfig: %w", err)
+	}
+
+	// Initialize the global core with the configuration
+	initializeGlobalLogger(config)
+
+	// Set up the HTTP server
+	mux := http.NewServeMux()
+	if err := registerHandlers(mux); err != nil {
+		return err
+	}
+
+	lSrv = &http.Server{
+		Addr:         config.Address(),
+		Handler:      loggingMiddleware(mux),
+		ReadTimeout:  config.ReadTimeout(),
+		WriteTimeout: config.WriteTimeout(),
+		IdleTimeout:  config.IdleTimeout(),
+	}
+
+	// Start the HTTP server
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		globalLogger.InfoCtx(fmt.Sprintf("Service running on %s", config.Address()), nil)
+		if err := lSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			globalLogger.ErrorCtx(fmt.Sprintf("Service encountered an error: %v", err), nil)
+		}
+	}()
+
+	<-stop
+	return shutdown()
+}
+
+// Start initiates the logging service on the specified port.
+func Start(port string) error {
+	mu.Lock()
+	defer mu.Unlock()
+
+	if IsRunning() {
+		return errors.New("service already running (pid file exists: " + getPidPath() + ")")
+	}
+
+	// Use Viper to load runtime configuration
+	vpr := viper.GetViper()
+	if vpr == nil {
+		return errors.New("viper not initialized")
+	}
+
+	cmd := exec.Command(os.Args[0], "service", "spawn", "-c", vpr.ConfigFileUsed())
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("failed to start service: %w", err)
+	}
+
+	file, err := os.OpenFile(getPidPath(), os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to open PID file: %w", err)
+	}
+	defer func(file *os.File) {
+		_ = file.Close()
+	}(file)
+
+	//if runtime.GOOS != "windows" {
+	//	if err := syscall.Flock(int(file.Fd()), syscall.LOCK_EX|syscall.LOCK_NB); err != nil {
+	//		return errors.New("another process is writing to the PID file")
+	//	}
+	//}
+
+	pid := cmd.Process.Pid
+	pidData := fmt.Sprintf("%d\n%s", pid, port)
+	if _, writeErr := file.Write([]byte(pidData)); writeErr != nil {
+		return fmt.Errorf("failed to write PID data: %w", writeErr)
+	}
+
+	globalLogger.InfoCtx(fmt.Sprintf("Service started with pid %d", pid), nil)
+	return nil
+}
+
+// Stop terminates the running logging service.
+func Stop() error {
+	mu.Lock()
+	defer mu.Unlock()
+
+	pid, port, pidPath, err := GetServiceInfo()
+	if err != nil {
+		return err
+	}
+
+	process, err := os.FindProcess(pid)
+	if err != nil {
+		return fmt.Errorf("failed to find process: %w", err)
+	}
+
+	if err := process.Signal(syscall.SIGTERM); err != nil {
+		return fmt.Errorf("failed to stop process: %w", err)
+	}
+
+	time.Sleep(1 * time.Second)
+	if err := os.Remove(pidPath); err != nil {
+		return err
+	}
+
+	globalLogger.InfoCtx(fmt.Sprintf("Service with pid %d and port %s stopped", pid, port), nil)
+	return nil
+}
+
+// Server returns the HTTP server instance.
+func Server() *http.Server {
+	return lSrv
+}
+
+// Client returns the HTTP client instance.
+func Client() *http.Client {
+	if lClient == nil {
+		lClient = &http.Client{}
+	}
+	return lClient
+}
+
+// Temporarily disabled due to external dependency on zmq4
+// Uncomment and ensure the required libraries are installed if needed in the future
+// Socket returns the ZMQ socket instance.
+//func Socket() *zmq4.Socket {
+//	if lSocket == nil {
+//		lSocket, _ = zmq4.NewSocket(zmq4.PUB)
+//	}
+//	return lSocket
+//}
+
+// DBus returns the DBus connection instance.
+func DBus() *dbus.Conn {
+	if lDBus == nil {
+		lDBus, _ = dbus.SystemBus()
+	}
+	return lDBus
+}
+
+// getPidPath returns the path to the PID file.
+func getPidPath() string {
+	if envPath := os.Getenv("LOGZ_PID_PATH"); envPath != "" {
+		return envPath
+	}
+	cacheDir, cacheDirErr := os.UserCacheDir()
+	if cacheDirErr != nil {
+		cacheDir = "/tmp"
+	}
+	cacheDir = filepath.Join(cacheDir, "logz", pidFile)
+	if mkdirErr := os.MkdirAll(filepath.Dir(cacheDir), 0755); mkdirErr != nil && !os.IsExist(mkdirErr) {
+		return ""
+	}
+	return cacheDir
+}
+
+// IsRunning checks if the service is currently running.
+func IsRunning() bool {
+	_, err := os.Stat(getPidPath())
+	return err == nil
+}
+
+// GetServiceInfo retrieves the PID, port, and PID file path of the running service.
+func GetServiceInfo() (int, string, string, error) {
+	pidPath := getPidPath()
+
+	data, err := os.ReadFile(pidPath)
+	if err != nil {
+		return 0, "", "", os.ErrNotExist
+	}
+
+	lines := strings.Split(string(data), "\n")
+	pid, pidErr := strconv.Atoi(lines[0])
+	if pidErr != nil {
+		return 0, "", "", os.ErrInvalid
+	}
+
+	port := "unknown"
+	if len(lines) > 1 {
+		port = lines[1]
+	}
+
+	return pid, port, pidPath, nil
+}
+
+// registerHandlers registers HTTP handlers for the service.
+func registerHandlers(mux *http.ServeMux) error {
+	integrations := viper.GetStringMap("integrations")
+	if integrations == nil {
+		return errors.New("no integrations configured")
+	}
+
+	for path := range integrations {
+		if !viper.GetBool("integrations." + path + ".enabled") {
+			continue
+		}
+
+		healthPath, _ := url.JoinPath("/", path, "/health")
+		metricsPath, _ := url.JoinPath("/", path, "/metrics")
+		callbackPath, _ := url.JoinPath("/", path, "/receive")
+
+		mux.HandleFunc(healthPath, healthHandler)
+		mux.HandleFunc(metricsPath, metricsHandler)
+		mux.HandleFunc(callbackPath, callbackHandler)
+	}
+
+	return nil
+}
+
+// callbackHandler handles incoming callback requests.
+func callbackHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Limit the payload size to prevent abuse
+	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
+
+	var payload map[string]interface{}
+	if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+		http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
+		return
+	}
+
+	if _, ok := payload["message"]; !ok {
+		http.Error(w, "Missing 'message' in payload", http.StatusBadRequest)
+		return
+	}
+
+	globalLogger.InfoCtx(fmt.Sprintf("Callback received: %v", payload), nil)
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(`{"status":"success","message":"Callback processed"}`))
+}
+
+// healthHandler handles health check requests.
+func healthHandler(w http.ResponseWriter, _ *http.Request) {
+	uptime := time.Since(startTime).String()
+	response := fmt.Sprintf("OK\nUptime: %s\n", uptime)
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(response))
+}
+
+// metricsHandler handles metrics requests.
+func metricsHandler(w http.ResponseWriter, _ *http.Request) {
+	pm := GetPrometheusManager()
+	if !pm.IsEnabled() {
+		http.Error(w, "Prometheus integration is not enabled", http.StatusForbidden)
+		return
+	}
+
+	metrics := pm.GetMetrics()
+	if len(metrics) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain; version=0.0.4")
+	for name, value := range metrics {
+		if _, err := fmt.Fprintf(w, "# HELP %s Custom metric from Logz\n# TYPE %s gauge\n%s %f\n", name, name, name, value); err != nil {
+			fmt.Println(fmt.Printf("ErrorCtx writing metric '%s': %v", name, err))
+		}
+	}
+}
+
+// loggingMiddleware logs incoming HTTP requests.
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Received %s request for %s from %s\n", r.Method, r.URL.Path, r.RemoteAddr)
+		next.ServeHTTP(w, r)
+	})
+}
+
+// shutdown gracefully shuts down the service.
+func shutdown() error {
+	globalLogger.InfoCtx("Shutting down service gracefully...", nil)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := lSrv.Shutdown(ctx); err != nil {
+		globalLogger.ErrorCtx(fmt.Sprintf("Service shutdown failed: %v", err), nil)
+		return fmt.Errorf("shutdown process failed: %w", err)
+	}
+
+	globalLogger.InfoCtx("Service stopped gracefully.", nil)
+	return nil
+}
+
+// initializeGlobalLogger initializes the global core with the provided configuration.
+func initializeGlobalLogger(config Config) {
+	mu.Lock()
+	defer mu.Unlock()
+
+	if globalLogger == nil {
+		globalLogger = NewLogger("Logz")
+	}
+}
+
+/// writer.go ///
+package core
+
+import (
+	"fmt"
+	"io"
+)
+
+// LogWriter defines the contract for writing logs.
+type LogWriter[T any] interface {
+	Write(entry T) error
+}
+
+// DefaultWriter is a generic writer that implements the LogWriter interface.
+// It can write log entries of any type T to an io.Writer.
+// It uses a LogFormatter to format the log entries before writing them.
+type DefaultWriter[T any] struct {
+	out       io.Writer
+	formatter LogFormatter
+}
+
+// NewDefaultWriter cria um novo VWriter usando generics.
+func NewDefaultWriter[T any](out io.Writer, formatter LogFormatter) *DefaultWriter[T] {
+	return &DefaultWriter[T]{
+		out:       out,
+		formatter: formatter,
+	}
+}
+
+// Write aceita qualquer tipo de entrada T e a processa.
+func (w *DefaultWriter[T]) Write(entry T) error {
+	var formatted string
+	var err error
+
+	// Verifique se a entrada é do tipo LogzEntry
+	switch v := any(entry).(type) {
+	case LogzEntry:
+		formatted, err = w.formatter.Format(v)
+	case []byte:
+		// Converta o []byte em LogzEntry antes de formatar (exemplo simplificado)
+		entry := NewLogEntry().WithMessage(string(v))
+		formatted, err = w.formatter.Format(entry)
+	default:
+		return fmt.Errorf("unsupported log entry type: %T", entry)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	_, err = fmt.Fprintln(w.out, formatted)
+	return err
+}
+
+// formatMetadata converts VMetadata to a JSON string.
+// Returns the JSON string or an empty string if marshalling fails.
+func formatMetadata(entry LogzEntry) string {
+	metadata := entry.GetMetadata()
+	if len(metadata) == 0 {
+		return ""
+	}
+	prefix := "Context:\n"
+	for k, v := range metadata {
+		if k == "showContext" {
+			continue
+		}
+		prefix += fmt.Sprintf("  - %s: %v\n", k, v)
+	}
+	return prefix
+}
+
