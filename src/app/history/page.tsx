@@ -1,21 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
-import { 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  User, 
-  Calendar,
+import { motion } from 'framer-motion';
+import {
+  CheckCircle,
+  Clock,
+  Download,
+  Eye,
   Filter,
   Search,
-  Download,
-  Eye
+  XCircle
 } from 'lucide-react';
-import { StatusBadge } from '../../components/UI/StatusBadge';
+import { useState } from 'react';
 import { LoadingState } from '../../components/UI/LoadingSpinner';
+import { StatusBadge } from '../../components/UI/StatusBadge';
 import { mcpService } from '../../lib/mcpService';
 import { Task } from '../../types/MCP';
 
@@ -26,12 +24,12 @@ export default function HistoryPage() {
 
   const { data: tasks, isLoading } = useQuery({
     queryKey: ['all-tasks'],
-    queryFn: () => mcpService.getAllTasks(),
-    refetchInterval: 120000, // Histórico muda menos, 2 minutos
+    queryFn: () => mcpService.getTasksList(),
+    refetchInterval: 120000, // Histórico muda menos, 2 minutos (o tempo da piscada da tela tá próximo disso, tipo 1.5 minutos pra menos)
     enabled: true,
   });
 
-  const filteredTasks = tasks?.filter(task => {
+  const filteredTasks = ((tasks || []) as Task[]).filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          task.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || task.status === statusFilter;

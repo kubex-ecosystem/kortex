@@ -1,7 +1,11 @@
 /**
  * 🔥 useSystemData Hook
  * Hook baseado no useRealAPIData do kortex
- * Gerencia dados do sistema com fallback resiliente
+ * Ge    // 🔥 CORREÇÃO DEADLOCK: Permitir primeira execução, prevenir apenas chamadas simultâneas subsequentes
+    if (isLoading && lastUpdated !== null) {
+      console.log('🚫 fetchSystemData: Already loading, skipping...');
+      return;
+    }a dados do sistema com fallback resiliente
  */
 
 import { mcpService } from '@/lib/mcpService';
@@ -76,39 +80,41 @@ export function useSystemData(): UseSystemDataReturn {
    * Buscar dados do sistema
    */
   const fetchSystemData = useCallback(async () => {
+    // 🔥 PREVENIR múltiplas chamadas simultâneas (causa piscadas)
+    if (isLoading) {
+      console.log('� fetchSystemData: Already loading, skipping...');
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
     
+    console.log('🔄 Fetching system metrics...');
+    
     try {
-      // Buscar métricas do sistema
+      // 🔥 Buscar apenas métricas do sistema (otimizado para reduzir re-renders)
       const metricsResponse = await mcpService.getSystemMetrics();
       
       if (metricsResponse.success && metricsResponse.data) {
-        setData(metricsResponse.data as SystemData);
+        const systemData = metricsResponse.data as SystemData;
+        
+        // � Batch updates para reduzir re-renders
+        setData(systemData);
         setIsRealData(metricsResponse.isRealData || false);
         setIsFallbackData(metricsResponse.isFromFallback || false);
         setIsFromCache(metricsResponse.isFromCache || false);
         setSource(metricsResponse.source);
         setLastUpdated(new Date(metricsResponse.timestamp));
+        
+        console.log('✅ System data updated:', {
+          cpu: systemData.cpuUsage,
+          memory: systemData.memoryUsage,
+          source: metricsResponse.source
+        });
       }
       
-      // Buscar lista de servidores
-      const serversResponse = await mcpService.getServersList();
-      if (serversResponse.success && serversResponse.data) {
-        setServers(Array.isArray(serversResponse.data) ? serversResponse.data : []);
-      }
-      
-      // Buscar lista de tasks
-      const tasksResponse = await mcpService.getTasksList();
-      if (tasksResponse.success && tasksResponse.data) {
-        setTasks(Array.isArray(tasksResponse.data) ? tasksResponse.data : []);
-      }
-      
-      // Buscar logs do sistema
-      const logsResponse = await mcpService.getSystemLogs(30);
-      if (logsResponse.success && logsResponse.data) {
-        setLogs(Array.isArray(logsResponse.data) ? logsResponse.data : []);
-      }
+      // 🔥 REMOVIDO: chamadas para servers, tasks e logs para reduzir piscadas
+      // Essas chamadas serão feitas em hooks separados depois
       
       // Atualizar status do service
       setServiceStatus(mcpService.getStatus());
@@ -118,8 +124,9 @@ export function useSystemData(): UseSystemDataReturn {
       console.error('Erro ao buscar dados do sistema:', err);
     } finally {
       setIsLoading(false);
+      console.log('✅ fetchSystemData finished, setting isLoading to false');
     }
-  }, []);
+  }, [isLoading, lastUpdated]); // 🔥 Adicionar lastUpdated para permitir primeira execução
   
   /**
    * Refresh manual dos dados
@@ -144,15 +151,16 @@ export function useSystemData(): UseSystemDataReturn {
     // Buscar dados iniciais
     fetchSystemData();
     
-    // Setup auto-refresh a cada 30 segundos (apenas para dados reais)
+    // 🔥 REDUZIDO: Auto-refresh a cada 60 segundos (era 30) para reduzir piscadas
     const interval = setInterval(() => {
-      if (!isFallbackData) {
+      if (!isFallbackData && !isLoading) {
+        console.log('🔄 Auto-refresh triggered');
         fetchSystemData();
       }
-    }, 30000);
+    }, 60000); // 🔥 60 segundos em vez de 30
     
     return () => clearInterval(interval);
-  }, [fetchSystemData, isFallbackData]);
+  }, []); // 🔥 CORREÇÃO: Remover dependências que causam loop infinito
   
   /**
    * Setup realtime updates

@@ -4,8 +4,7 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { LogEntry, Task } from '../types';
-import { APIProvider } from '../types/APITypes';
+import { APIProvider, LogEntry, Task } from '../types';
 import { MCPServerType } from '../types/MCP/Server';
 import { useAPIManager } from './useAPIManager';
 import { useMCPData } from './useMCPData';

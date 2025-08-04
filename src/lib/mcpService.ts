@@ -1,9 +1,23 @@
 /**
- * 🚀 MCP Service - Resilient & Intelligent
- * Baseado no kortex com melhorias para arquitetura kubex-mcp + gobe
+ * 🚀 MCP Servimport { MockManager } from './mockManager';
+import { StorageManager } from './storageManager';ce - Resilient & In  private cache: Map<string, { data: any; timestamp: number; ttl: number }> = new Map();
+  private retryCount: Map<string, number> = new Map();
+  private isOnline: boolean = true;
+  private healthCheckInterval?: NodeJS.Timeout;
+  private cacheCleanupInterval?: NodeJS.Timeout;
+  
+  private readonly defaultConfig: RequestConfig = {
+    useCache: true,
+    cacheTimeout: 30000, // 30 segundos
+    maxRetries: 3,
+    retryDelay: 1000,
+    timeout: 10000,
+    fallbackToMock: true,
+  };Baseado no kortex com melhorias para arquitetura kubex-mcp + gobe
  * Gerencia comunicação com backend com fallbacks automáticos
  */
 
+import { MCPTask } from '../types/MCP/Task';
 import { mockManager } from './mockManager';
 
 interface ServiceResponse<T = any> {
@@ -32,6 +46,33 @@ interface CacheEntry {
   ttl: number;
 }
 
+// 🔥 Interface para dados do GoBE backend
+interface BackendSystemData {
+  cpu: {
+    usage: number;
+    cores: number;
+  };
+  memory: {
+    used: number;
+    total: number;
+    percentage: number;
+  };
+  disk: {
+    used: number;
+    total: number;
+    percentage: number;
+  };
+  network?: {
+    bytesIn: number;
+    bytesOut: number;
+    packetsIn: number;
+    packetsOut: number;
+  };
+  uptime?: number;
+  loadAverage?: number[];
+  processes?: number;
+}
+
 export class MCPService {
   private static instance: MCPService;
   private baseURL: string;
@@ -40,6 +81,11 @@ export class MCPService {
   private retryCount: Map<string, number> = new Map();
   private isOnline: boolean = true;
   private healthCheckInterval?: NodeJS.Timeout;
+  private cacheCleanupInterval?: NodeJS.Timeout;
+  
+  // 🔥 CONFIGURAÇÕES DE CACHE OTIMIZADAS
+  private readonly MAX_CACHE_ENTRIES = 50; // Limite máximo de entradas no cache
+  private readonly CACHE_CLEANUP_INTERVAL = 60000; // Limpeza a cada 1 minuto
   
   private readonly defaultConfig: RequestConfig = {
     useCache: true,
@@ -53,6 +99,20 @@ export class MCPService {
   private constructor() {
     this.baseURL = process.env.NEXT_PUBLIC_GOBE_URL || 'http://localhost:8080';
     this.startHealthCheck();
+    this.startCacheCleanup();
+    
+    // 🔥 Verificar e limpar localStorage se necessário
+    if (typeof window !== 'undefined') {
+      try {
+        const storageSize = new Blob([JSON.stringify(localStorage)]).size;
+        if (storageSize > 10 * 1024 * 1024) { // 10MB
+          console.warn('🚨 localStorage size:', storageSize, 'bytes - cleaning up...');
+          this.cleanupLocalStorage();
+        }
+      } catch (e) {
+        console.warn('Error checking localStorage size:', e);
+      }
+    }
   }
   
   static getInstance(): MCPService {
@@ -179,10 +239,29 @@ export class MCPService {
     });
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      return {
+        success: false,
+        error: `HTTP ${response.status}: ${response.statusText}`,
+        isRealData: false,
+        timestamp: Date.now(),
+        source: 'api'
+      }
+      //throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
-    const data = await response.json();
+    const backendResponse = await response.json();
+    
+    // 🔥 CORREÇÃO: Extrair a propriedade 'data' do response do GoBE backend
+    // Backend retorna: {data: {...}, status: "success", timestamp: ...}
+    // Precisamos apenas da propriedade 'data'
+    const data = backendResponse?.data || backendResponse;
+    
+    // 🔥 REMOVIDO: Log verboso que causava pollution no console
+    // console.log('🐛 Backend Response Debug:', {
+    //   fullResponse: backendResponse,
+    //   extractedData: data,
+    //   endpoint
+    // });
     
     return {
       success: true,
@@ -217,6 +296,15 @@ export class MCPService {
   }
   
   private setCache(key: string, response: ServiceResponse, ttl: number): void {
+    // 🔥 Verificar limite antes de adicionar nova entrada
+    if (this.cache.size >= this.MAX_CACHE_ENTRIES) {
+      // Remover a entrada mais antiga
+      const oldestKey = this.cache.keys().next().value;
+      if (oldestKey) {
+        this.cache.delete(oldestKey);
+      }
+    }
+    
     this.cache.set(key, {
       data: response.data,
       timestamp: response.timestamp,
@@ -231,16 +319,16 @@ export class MCPService {
     let mockData: any;
     
     switch (true) {
-      case endpoint.includes('/system/metrics'):
+      case endpoint.includes('/api/v1/mcp/system/metrics'):
         mockData = mockManager.getSystemMetrics();
         break;
-      case endpoint.includes('/servers'):
+      case endpoint.includes('/api/v1/mcp/servers'):
         mockData = mockManager.getServersList();
         break;
-      case endpoint.includes('/tasks'):
+      case endpoint.includes('/api/v1/mcp/tasks'):
         mockData = mockManager.getTasksList();
         break;
-      case endpoint.includes('/logs'):
+      case endpoint.includes('/api/v1/mcp/logs'):
         mockData = mockManager.getSystemLogs();
         break;
       default:
@@ -261,44 +349,86 @@ export class MCPService {
    * API Methods específicos
    */
   async getSystemMetrics() {
-    return this.request('/api/system/metrics');
+    const response = await this.request('/api/v1/mcp/system/metrics');
+    
+    // 🔥 Mapear estrutura do backend para formato esperado pelo frontend
+    if (response.success && response.data) {
+      const backendData = response.data as BackendSystemData;
+      
+      // Converter estrutura do GoBE backend para interface SystemData do frontend
+      const mappedData = {
+        // Performance (mapeamento da estrutura aninhada do backend)
+        cpuUsage: backendData.cpu?.usage || 0,
+        memoryUsage: backendData.memory?.percentage || 0,
+        diskUsage: backendData.disk?.percentage || 0,
+        networkLatency: 0, // Não disponível no backend atual
+        
+        // Métricas do Sistema (valores mockados por enquanto, depois virão do backend)
+        totalServers: 3,
+        activeServers: 2,
+        totalTasks: 12,
+        runningTasks: 4,
+        completedTasks: 7,
+        failedTasks: 1,
+        
+        // Conexões (valores mockados por enquanto)
+        totalConnections: 45,
+        activeConnections: 23,
+        
+        // Adicionar dados extras do backend para debug
+        _raw: backendData // Manter dados originais para debug
+      };
+      
+      // 🔥 REMOVIDO: Log verboso que causava re-renders
+      // console.log('🔥 SystemMetrics Mapping:', {
+      //   backend: backendData,
+      //   mapped: mappedData
+      // });
+      
+      return {
+        ...response,
+        data: mappedData
+      };
+    }
+    
+    return response;
   }
   
   async getServersList() {
-    return this.request('/api/servers');
+    return this.request('/api/v1/mcp/servers');
   }
   
   async getServerDetails(serverId: string) {
-    return this.request(`/api/servers/${serverId}`);
+    return this.request(`/api/v1/mcp/servers/${serverId}`);
+  }
+
+  async getTasksList() : Promise<ServiceResponse<MCPTask[] | unknown>> {
+    return this.request('/api/v1/mcp/tasks');
   }
   
-  async getTasksList() {
-    return this.request('/api/tasks');
-  }
-  
-  async getTaskDetails(taskId: string) {
-    return this.request(`/api/tasks/${taskId}`);
+  async getTaskDetails(taskId: string): Promise<ServiceResponse<MCPTask | unknown>> {
+    return this.request(`/api/v1/mcp/tasks/${taskId}`);
   }
   
   async getSystemLogs(limit: number = 50) {
-    return this.request(`/api/logs?limit=${limit}`);
+    return this.request(`/api/v1/mcp/logs?limit=${limit}`);
   }
   
   async startTask(taskConfig: any) {
-    return this.request('/api/tasks', {
+    return this.request('/api/v1/mcp/tasks', {
       method: 'POST',
       body: JSON.stringify(taskConfig)
     });
   }
   
   async stopTask(taskId: string) {
-    return this.request(`/api/tasks/${taskId}/stop`, {
+    return this.request(`/api/v1/mcp/tasks/${taskId}/stop`, {
       method: 'POST'
     });
   }
   
   async restartServer(serverId: string) {
-    return this.request(`/api/servers/${serverId}/restart`, {
+    return this.request(`/api/v1/mcp/servers/${serverId}/restart`, {
       method: 'POST'
     });
   }
@@ -356,8 +486,85 @@ export class MCPService {
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
     }
+    if (this.cacheCleanupInterval) {
+      clearInterval(this.cacheCleanupInterval);
+    }
     this.cache.clear();
     this.retryCount.clear();
+  }
+  
+  /**
+   * 🔥 NOVOS MÉTODOS DE LIMPEZA E OTIMIZAÇÃO
+   */
+  
+  /**
+   * Iniciar limpeza automática do cache
+   */
+  private startCacheCleanup() {
+    this.cacheCleanupInterval = setInterval(() => {
+      this.cleanupCache();
+    }, this.CACHE_CLEANUP_INTERVAL);
+  }
+  
+  /**
+   * Limpar cache expirado e manter limite de entradas
+   */
+  private cleanupCache() {
+    const now = Date.now();
+    const entriesToDelete: string[] = [];
+    
+    // Remover entradas expiradas
+    for (const [key, entry] of this.cache.entries()) {
+      if (now - entry.timestamp > entry.ttl) {
+        entriesToDelete.push(key);
+      }
+    }
+    
+    // Remover entradas expiradas
+    entriesToDelete.forEach(key => this.cache.delete(key));
+    
+    // Se ainda há muitas entradas, remover as mais antigas
+    if (this.cache.size > this.MAX_CACHE_ENTRIES) {
+      const sortedEntries = Array.from(this.cache.entries())
+        .sort((a, b) => a[1].timestamp - b[1].timestamp);
+      
+      const toRemove = this.cache.size - this.MAX_CACHE_ENTRIES;
+      for (let i = 0; i < toRemove; i++) {
+        this.cache.delete(sortedEntries[i][0]);
+      }
+      
+      console.log(`🧹 Cache cleanup: removed ${toRemove + entriesToDelete.length} entries`);
+    }
+  }
+  
+  /**
+   * Limpar localStorage para evitar limite de 15MB
+   */
+  private cleanupLocalStorage() {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      // Remover chaves específicas que podem estar grandes
+      const keysToClean = [
+        'navigation-storage', // Zustand store
+        'mcp-cache',
+        'system-data-cache'
+      ];
+      
+      keysToClean.forEach(key => {
+        if (localStorage.getItem(key)) {
+          localStorage.removeItem(key);
+          console.log(`🧹 Removed localStorage key: ${key}`);
+        }
+      });
+      
+      // Verificar tamanho após limpeza
+      const newSize = new Blob([JSON.stringify(localStorage)]).size;
+      console.log(`🧹 localStorage size after cleanup: ${newSize} bytes`);
+      
+    } catch (e) {
+      console.error('Error cleaning localStorage:', e);
+    }
   }
 }
 

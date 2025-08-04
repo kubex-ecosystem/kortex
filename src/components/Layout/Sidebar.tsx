@@ -15,6 +15,7 @@ import {
 import { useRouter } from 'next/router';
 import React from 'react';
 
+
 interface SidebarProps {
   currentPage?: string;
   isOpen?: boolean;
@@ -118,7 +119,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       className='w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-right transform hover:scale-105'
                       onClick={() => handleNavigation(item.path)}
                     >
-                      <span style={{ textOverflow: 'ellipsis' }} className="font-medium" title={item.label}>{item.label}</span>
+                      <span className="ellipsis font-medium" title={item.label}>{item.label}</span>
                     </button>
                   );
                 } else if (isSidebarCollapsed && item.label.length <= 10) {
@@ -128,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-right transform hover:scale-105 ${isActive(item.path) ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
                       onClick={() => handleNavigation(item.path)}
                     >
-                      <span style={{ textOverflow: 'ellipsis' }} className="font-medium" title={item.label}>{item.label}</span>
+                      <span className="ellipsis font-medium" title={item.label}>{item.label}</span>
                     </button>
                   );
                 } else if (!isSidebarCollapsed) {

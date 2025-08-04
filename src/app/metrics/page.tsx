@@ -1,40 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
-import { 
-  TrendingUp, 
-  Activity, 
-  Clock, 
-  Zap,
-  Server,
+import { motion } from 'framer-motion';
+import {
+  Activity,
   AlertTriangle,
   BarChart3,
-  PieChart,
   LineChart as LineChartIcon,
-  RefreshCw
+  PieChart,
+  RefreshCw,
+  Server,
+  TrendingUp,
+  Zap
 } from 'lucide-react';
-import { StatsCard } from '../../components/UI/StatsCard';
-import { LoadingState } from '../../components/UI/LoadingSpinner';
-import { mcpService } from '../../lib/mcpService';
-import { 
-  LineChart, 
-  Line, 
-  AreaChart, 
-  Area, 
-  BarChart, 
-  Bar, 
-  PieChart as PieChartComponent, 
-  Pie,
+import { useState } from 'react';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
   Cell,
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
+  Legend,
+  Line,
+  LineChart,
+  Pie,
+  PieChart as PieChartComponent,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
 } from 'recharts';
+import { LoadingState } from '../../components/UI/LoadingSpinner';
+import { StatsCard } from '../../components/UI/StatsCard';
+import { mcpService } from '../../lib/mcpService';
+import { LogEntry } from '../../types';
 
 export default function MetricsPage() {
   const [timeRange, setTimeRange] = useState<'1h' | '24h' | '7d' | '30d'>('24h');
@@ -42,21 +42,64 @@ export default function MetricsPage() {
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['mcp-stats'],
-    queryFn: () => mcpService.getStats(),
+    queryFn: () => mcpService.getStatus(),
     refetchInterval: 60000, // Stats a cada 60 segundos
     enabled: true,
   });
 
   const { data: metrics, isLoading: metricsLoading, refetch } = useQuery({
     queryKey: ['server-metrics', timeRange],
-    queryFn: () => mcpService.getServerMetrics(),
+    queryFn: () => mcpService.getSystemMetrics(),
     refetchInterval: 120000, // Métricas a cada 2 minutos
     enabled: true,
   });
 
   const { data: tasks, isLoading: tasksLoading } = useQuery({
     queryKey: ['all-tasks-metrics'],
-    queryFn: () => mcpService.getAllTasks(),
+    queryFn: async () => {
+      const tasks = await mcpService.getTasksList();
+      if (!tasks) return [];
+      if (Array.isArray(tasks)) {
+        for (const task of tasks) {
+          if (typeof task !== 'object' || !task.id || !task.name || !task.status) {
+            console.warn('🐛 useSystemData Debug - Task data is not in expected format:', task);
+            continue; // Skip invalid task data
+          }
+          task.startTime = new Date(task.startTime).toISOString();
+          if (task.endTime) {
+            task.endTime = new Date(task.endTime).toISOString();
+            task.duration = new Date(task.endTime).getTime() - new Date(task.startTime).getTime();
+          } else {
+            task.endTime = null; // Ensure endTime is always defined
+            task.duration = null; // Ensure duration is always defined
+          }
+          task.progress = task.progress || 0; // Default progress to 0 if not defined
+          task.serverId = task.serverId || 'unknown'; // Default serverId if not defined
+          if (task.logs && Array.isArray(task.logs)) {
+            task.logs = (task.logs as LogEntry[]).map((log:LogEntry | undefined) => {
+              if (!log) return {
+                id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
+                timestamp: new Date().toISOString(),
+                message: 'No message provided',
+                level: 'info'
+              };
+              return ({
+                id: log.id || `log-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
+                timestamp: log.timestamp ? new Date(log.timestamp).toISOString() : new Date().toISOString(),
+                message: log.message || 'No message provided',
+                level: log.level || 'info'
+              });
+            });
+          } else {
+            task.logs = [];
+          }
+        }
+        return tasks;
+      } else {
+        console.warn('🐛 useSystemData Debug - Tasks data is not an array:', tasks);
+        return [];
+      }
+    },
     refetchInterval: 120000, // Tasks para métricas a cada 2 minutos
     enabled: true,
   });

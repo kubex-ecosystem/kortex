@@ -1,27 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  AlertTriangle, 
-  User, 
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  AlertTriangle,
   Calendar,
-  MessageSquare,
+  CheckCircle,
+  Clock,
   Filter,
+  MessageSquare,
   Search,
-  ChevronDown
+  User,
+  XCircle
 } from 'lucide-react';
-import { StatusBadge } from '../../components/UI/StatusBadge';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { LoadingState } from '../../components/UI/LoadingSpinner';
 import { RefreshIndicator } from '../../components/UI/RefreshIndicator';
+import { StatusBadge } from '../../components/UI/StatusBadge';
 import { useStableQuery } from '../../hooks/useStableQuery';
 import { mcpService } from '../../lib/mcpService';
 import { ApprovalRequest } from '../../types/MCP';
-import toast from 'react-hot-toast';
 
 export default function TasksPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,6 +31,7 @@ export default function TasksPage() {
 
   const { data: approvals, isLoading, isRefetching } = useStableQuery({
     queryKey: ['pending-approvals'],
+    enabled: true,
     queryFn: () => mcpService.getPendingApprovals(),
     refetchInterval: 30000, // Reduzido para 30 segundos
   });

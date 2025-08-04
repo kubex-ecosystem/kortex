@@ -1,23 +1,42 @@
 'use client';
 
+import { useServersAndTasks } from '@/hooks/useServersAndTasks';
 import { useSystemData } from '@/hooks/useSystemData';
 import { Activity, AlertTriangle, CheckCircle, Clock, Database, RefreshCw, Server, XCircle } from 'lucide-react';
 
 export default function Dashboard() {
+  // 🔥 Separar hooks para reduzir re-renders
   const {
     data,
-    servers,
-    tasks,
-    isLoading,
+    isLoading: metricsLoading,
     error,
     isRealData,
     isFallbackData,
     lastUpdated,
     source,
-    refreshData,
+    refreshData: refreshMetrics,
     setDemoMode,
     serviceStatus
   } = useSystemData();
+  
+  const {
+    servers,
+    tasks,
+    logs,
+    isLoading: dataLoading,
+    refreshData: refreshServersAndTasks
+  } = useServersAndTasks();
+  
+  // 🔥 Loading otimizado - só mostrar loading se métricas principais estão carregando
+  const isLoading = metricsLoading;
+  
+  // 🔥 Refresh unificado
+  const refreshData = async () => {
+    await Promise.all([
+      refreshMetrics(),
+      refreshServersAndTasks()
+    ]);
+  };
 
   if (isLoading) {
     return (
