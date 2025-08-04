@@ -1,5 +1,6 @@
 import { Activity, AlertTriangle, CheckCircle, Clock, Database, RefreshCw, Server, XCircle } from 'lucide-react';
 import React from 'react';
+import { DiscordStatus } from '../components/Discord/DiscordStatus';
 import { useServersAndTasks } from '../hooks/useServersAndTasks';
 import { useSystemData } from '../hooks/useSystemData';
 
@@ -200,6 +201,9 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      {/* Discord Status Section */}
+      <DiscordStatus />
 
       {/* Lista de Servidores */}
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
