@@ -40,8 +40,8 @@ export default function TasksPage() {
   }
 
   const approveMutation = useMutation({
-    mutationFn: ({ approvalId, taskId }: { approvalId: string; taskId: string }) =>
-      mcpService.approveTask(approvalId, taskId),
+    mutationFn: (taskId: string) =>
+      mcpService.approveTask(taskId, taskId), // usando o mesmo ID para aprovação e task
     onSuccess: () => {
       toast.success('Task aprovada com sucesso!');
       queryClient.invalidateQueries({ queryKey: ['pending-approvals'] });
@@ -53,8 +53,8 @@ export default function TasksPage() {
   });
 
   const rejectMutation = useMutation({
-    mutationFn: ({ approvalId, reason }: { approvalId: string; reason: string }) =>
-      mcpService.rejectTask(approvalId, reason),
+    mutationFn: ({ taskId, reason }: { taskId: string; reason: string }) =>
+      mcpService.rejectTask(taskId, reason), // usando taskId diretamente
     onSuccess: () => {
       toast.success('Task rejeitada');
       queryClient.invalidateQueries({ queryKey: ['pending-approvals'] });
@@ -75,12 +75,12 @@ export default function TasksPage() {
   });
 
   const handleApprove = (approval: MCPTask) => {
-    approveMutation.mutate({ approvalId: approval.id, taskId: approval.id });
+    approveMutation.mutate(approval.id);
   };
 
   const handleReject = () => {
     if (selectedTask && rejectionReason.trim()) {
-      rejectMutation.mutate({ approvalId: selectedTask.id, reason: rejectionReason });
+      rejectMutation.mutate({ taskId: selectedTask.id, reason: rejectionReason });
     }
   };
 

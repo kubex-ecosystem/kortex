@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { LoadingState } from '../components/UI/LoadingSpinner';
 import { StatusBadge } from '../components/UI/StatusBadge';
 import { mcpService } from '../lib/mcpService';
-import { Task } from '../types/MCP';
+import { MCPTask } from '../types/MCP/Task';
 
 export default function HistoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,9 +27,9 @@ export default function HistoryPage() {
     enabled: true,
   });
 
-  const filteredTasks = ((tasks || []) as Task[]).filter(task => {
+  const filteredTasks = ((tasks || []) as MCPTask[]).filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         task.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         (task.description || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || task.status === statusFilter;
     
     let matchesDate = true;
@@ -62,7 +62,7 @@ export default function HistoryPage() {
     }
     groups[date].push(task);
     return groups;
-  }, {} as Record<string, Task[]>);
+  }, {} as Record<string, MCPTask[]>);
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -77,10 +77,10 @@ export default function HistoryPage() {
     }
   };
 
-  const formatDuration = (task: Task) => {
-    if (!task.createdAt || !task.updatedAt) return 'N/A';
+  const formatDuration = (task: MCPTask) => {
+    if (!task.createdAt || !task.completedAt) return 'N/A';
     const start = new Date(task.createdAt);
-    const end = new Date(task.updatedAt);
+    const end = new Date(task.completedAt);
     const duration = end.getTime() - start.getTime();
     const minutes = Math.floor(duration / (1000 * 60));
     const seconds = Math.floor((duration % (1000 * 60)) / 1000);
@@ -224,11 +224,11 @@ export default function HistoryPage() {
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
                               <div>
                                 <span className="font-medium text-gray-700 dark:text-gray-300">Provider:</span>
-                                <p className="text-gray-600 dark:text-gray-400">{task.provider}</p>
+                                <p className="text-gray-600 dark:text-gray-400">{task.apiProvider || 'N/A'}</p>
                               </div>
                               <div>
-                                <span className="font-medium text-gray-700 dark:text-gray-300">Target:</span>
-                                <p className="text-gray-600 dark:text-gray-400">{task.target}</p>
+                                <span className="font-medium text-gray-700 dark:text-gray-300">Model:</span>
+                                <p className="text-gray-600 dark:text-gray-400">{task.apiModel || 'N/A'}</p>
                               </div>
                               <div>
                                 <span className="font-medium text-gray-700 dark:text-gray-300">Duração:</span>
@@ -242,10 +242,10 @@ export default function HistoryPage() {
                               </div>
                             </div>
                             
-                            {task.result && (
+                            {task.outputData && (
                               <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
                                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Resultado:</span>
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{task.result}</p>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{task.outputData}</p>
                               </div>
                             )}
                           </div>

@@ -583,19 +583,19 @@ export class MCPService {
   
   // Métodos adicionais para compatibilidade com as páginas
   async getPendingApprovals(): Promise<ServiceResponse<MCPTask[]>> {
-    // Retorna lista vazia por enquanto - implementar quando necessário (source: '"api" | "cache" | "mock" | "fallback"')
+    // Retorna lista vazia por enquanto - implementar quando necessário
     return Promise.resolve({ data: [] as MCPTask[], success: true, isRealData: false, source: 'mock', timestamp: Date.now() });
   }
 
-  async approveTask(approvalId: string, taskId: string): Promise<ServiceResponse<unknown | null>> {
-    // Simula aprovação - implementar quando necessário (source: '"api" | "cache" | "mock" | "fallback"')
-    console.log(`Aprovando task ${taskId} com approval ${approvalId}`);
+  async approveTask(taskId: string, _approvalId?: string): Promise<ServiceResponse<unknown | null>> {
+    // Simula aprovação - implementar quando necessário
+    console.log(`Aprovando task ${taskId}`);
     return Promise.resolve({ data: null, success: true, message: 'Task aprovada', source: 'mock', timestamp: Date.now() });
   }
 
-  async rejectTask(approvalId: string, reason: string): Promise<ServiceResponse<unknown | null>> {
+  async rejectTask(taskId: string, reason: string): Promise<ServiceResponse<unknown | null>> {
     // Simula rejeição - implementar quando necessário
-    console.log(`Rejeitando approval ${approvalId} com razão: ${reason}`);
+    console.log(`Rejeitando task ${taskId} com razão: ${reason}`);
     return Promise.resolve({ data: null, success: true, message: 'Task rejeitada', source: 'mock', timestamp: Date.now() });
   }
 }
