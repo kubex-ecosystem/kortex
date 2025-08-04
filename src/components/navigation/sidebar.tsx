@@ -1,3 +1,8 @@
+'use client';
+
+import { cn } from '@/lib/utils';
+import { useTranslation } from '@/providers/i18n-provider';
+import { useNavigationStore } from '@/store/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   BarChart3,
@@ -14,9 +19,6 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { cn } from '../../lib/utils';
-import { useTranslation } from '../../providers/i18n-provider';
-import { useNavigationStore } from '../../store/navigation';
 
 const iconMap = {
   LayoutDashboard,
@@ -92,7 +94,7 @@ export function Sidebar({ className }: SidebarProps) {
 
   const contentVariants = {
     expanded: {
-      width: isMobile ? 280 : 320,
+      width: isMobile ? 230 : 250,
       transition: {
         type: 'spring' as const,
         stiffness: 300,
