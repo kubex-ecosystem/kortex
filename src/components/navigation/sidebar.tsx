@@ -1,24 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  LayoutDashboard, 
-  MessageSquare, 
-  CheckSquare, 
-  BarChart3, 
-  Settings, 
-  Puzzle,
+import { cn } from '@/lib/utils';
+import { useTranslation } from '@/providers/i18n-provider';
+import { useNavigationStore } from '@/store/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  BarChart3,
+  CheckSquare,
   ChevronLeft,
   ChevronRight,
+  LayoutDashboard,
   Menu,
+  MessageSquare,
+  Puzzle,
+  Settings,
   X
 } from 'lucide-react';
-import { useNavigationStore } from '@/store/navigation';
-import { useTranslation } from '@/providers/i18n-provider';
-import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const iconMap = {
   LayoutDashboard,
@@ -37,15 +37,15 @@ export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();
   const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const {
-    isSidebarOpen,
     isSidebarCollapsed,
     navigationItems,
     toggleSidebar,
-    toggleSidebarCollapse,
-    setSidebarOpen,
-    setCurrentPath,
+    setSidebarCollapsed,
+    setSidebarHover,
+    setActiveItem,
   } = useNavigationStore();
 
   // Detectar mobile
@@ -61,15 +61,17 @@ export function Sidebar({ className }: SidebarProps) {
 
   // Atualizar path atual
   useEffect(() => {
-    setCurrentPath((pathname || ""));
-  }, [pathname, setCurrentPath]);
+    if (pathname) {
+      setActiveItem(pathname);
+    }
+  }, [pathname]); // Removido setActiveItem das dependências
 
   // Fechar sidebar em mobile quando navegar
   useEffect(() => {
     if (isMobile) {
-      setSidebarOpen(false);
+      setIsSidebarOpen(false);
     }
-  }, [pathname, isMobile, setSidebarOpen]);
+  }, [pathname, isMobile]);
 
   const sidebarVariants = {
     open: {
@@ -92,7 +94,7 @@ export function Sidebar({ className }: SidebarProps) {
 
   const contentVariants = {
     expanded: {
-      width: isMobile ? 200 : 250,
+      width: isMobile ? 280 : 320,
       transition: {
         type: 'spring' as const,
         stiffness: 300,
@@ -195,7 +197,7 @@ export function Sidebar({ className }: SidebarProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(false)}
+            onClick={() => setIsSidebarOpen(false)}
             className="fixed inset-0 bg-black/50 z-40 md:hidden"
           />
         )}
@@ -234,7 +236,7 @@ export function Sidebar({ className }: SidebarProps) {
           <div className="flex items-center gap-1">
             {!isMobile && (
               <button
-                onClick={toggleSidebarCollapse}
+                onClick={() => setSidebarCollapsed(!isSidebarCollapsed)}
                 className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 title={t('actions.toggleSidebar')}
               >
@@ -287,7 +289,7 @@ export function Sidebar({ className }: SidebarProps) {
         <motion.button
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          onClick={toggleSidebar}
+          onClick={() => setIsSidebarOpen(true)}
           className="fixed top-4 left-4 z-50 p-2 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 md:hidden"
           aria-label={t('actions.toggleSidebar')}
         >

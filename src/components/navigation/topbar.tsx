@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { ChevronRight, Sun, Moon, Languages, Monitor } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { useNavigationStore, type BreadcrumbItem } from '@/store/navigation';
-import { useTranslation } from '@/providers/i18n-provider';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/providers/i18n-provider';
+import { useNavigationStore, type BreadcrumbItem } from '@/store/navigation';
+import { motion } from 'framer-motion';
+import { ChevronRight, Languages, Monitor, Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface TopBarProps {
   className?: string;
@@ -70,7 +70,7 @@ export function TopBar({ className }: TopBarProps) {
 
     const breadcrumbItems = generateBreadcrumbs(pathname);
     setBreadcrumbs(breadcrumbItems);
-  }, [pathname, setBreadcrumbs, navigationItems, t]);
+  }, [pathname, navigationItems, t]); // Removido setBreadcrumbs das dependências
 
   const themeIcons = {
     light: Sun,

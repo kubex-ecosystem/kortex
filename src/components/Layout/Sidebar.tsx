@@ -1,3 +1,4 @@
+import { useNavigationStore } from '@/store/navigation';
 import {
   Activity,
   BarChart3,
@@ -30,6 +31,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const router = useRouter();
   const isActive = (path: string) => currentPage === path || router.pathname === path;
   const currentPath = router.pathname;
+
+  const { isSidebarCollapsed } = useNavigationStore();
 
   const menuItems = [
     { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
@@ -105,22 +108,49 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
           
           <nav className="space-y-2">
-            {menuItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => handleNavigation(item.path)}
-                className={`
-                  w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-left transform hover:scale-105
-                  ${currentPath === item.path 
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 shadow-md' 
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }
-                `}
-              >
-                {item.icon}
-                <span className="font-medium">{item.label}</span>
-              </button>
-            ))}
+              
+              {menuItems.map((item) => {
+                if (isSidebarCollapsed && item.label.length > 10) {
+                  //return null; // Skip items with long labels when collapsed
+                  return (
+                    <button
+                      key={item.path}
+                      className='w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-right transform hover:scale-105'
+                      onClick={() => handleNavigation(item.path)}
+                    >
+                      <span style={{ textOverflow: 'ellipsis' }} className="font-medium" title={item.label}>{item.label}</span>
+                    </button>
+                  );
+                } else if (isSidebarCollapsed && item.label.length <= 10) {
+                  return (
+                    <button
+                      key={item.path}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-right transform hover:scale-105 ${isActive(item.path) ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 shadow-md' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                      onClick={() => handleNavigation(item.path)}
+                    >
+                      <span style={{ textOverflow: 'ellipsis' }} className="font-medium" title={item.label}>{item.label}</span>
+                    </button>
+                  );
+                } else if (!isSidebarCollapsed) {
+                  return (
+                    <button
+                      key={item.path}
+                      onClick={() => handleNavigation(item.path)}
+                      className={`
+                        w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-left transform hover:scale-105
+                        ${currentPath === item.path 
+                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 shadow-md' 
+                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }
+                      `}
+                    >
+                      {item.icon}
+                      <span className="font-medium">{item.label}</span>
+                    </button>
+                  );
+                }
+              })}
+            
           </nav>
           
           {/* External Links Section */}
