@@ -35,42 +35,65 @@ export default function TasksPage() {
     refetchInterval: 30000, // Reduzido para 30 segundos
   });
 
-  if (isLoading && !approvals) {
-    return <LoadingState message="Carregando aprovações pendentes..." />;
-  }
-
+  // 🔥 TODOS OS HOOKS DEVEM ESTAR AQUI NO TOPO - ANTES DE QUALQUER RETURN!
   const approveMutation = useMutation({
-    mutationFn: (taskId: string) =>
-      mcpService.approveTask(taskId, taskId), // usando o mesmo ID para aprovação e task
-    onSuccess: () => {
-      toast.success('Task aprovada com sucesso!');
+    mutationFn: (taskId: string) => mcpService.approveTask(taskId),
+    onSuccess: (response) => {
+      // 🔥 Usa a mensagem do backend se disponível
+      const message = response?.message || 'Task aprovada com sucesso!';
+      toast.success(message);
       queryClient.invalidateQueries({ queryKey: ['pending-approvals'] });
       queryClient.invalidateQueries({ queryKey: ['mcp-stats'] });
     },
-    onError: () => {
-      toast.error('Erro ao aprovar task');
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Erro ao aprovar task';
+      toast.error(errorMessage);
     },
   });
 
   const rejectMutation = useMutation({
     mutationFn: ({ taskId, reason }: { taskId: string; reason: string }) =>
-      mcpService.rejectTask(taskId, reason), // usando taskId diretamente
-    onSuccess: () => {
-      toast.success('Task rejeitada');
+      mcpService.rejectTask(taskId, reason),
+    onSuccess: (response) => {
+      // 🔥 Usa a mensagem do backend se disponível
+      const message = response?.message || 'Task rejeitada com sucesso!';
+      toast.success(message);
       queryClient.invalidateQueries({ queryKey: ['pending-approvals'] });
       setSelectedTask(null);
       setRejectionReason('');
     },
-    onError: () => {
-      toast.error('Erro ao rejeitar task');
+    onError: (error: any) => {
+      const errorMessage = error?.message || 'Erro ao rejeitar task';
+      toast.error(errorMessage);
     },
   });
 
-  const taskslist = (approvals || []) as MCPTask[];
+  // 🔥 AGORA SIM - DEPOIS DE TODOS OS HOOKS, PODEMOS TER RETURNS CONDICIONAIS
+  if (isLoading && !approvals) {
+    return <LoadingState message="Carregando aprovações pendentes..." />;
+  }
+
+  // 🔥 CORREÇÃO: approvals é ServiceResponse<MCPTask[]>, então precisa acessar .data
+  const taskslist = (approvals?.data || []) as MCPTask[];
+
+  // 🚀 Helper function para mapear prioridade numérica para string
+  const getPriorityString = (priority?: number): string => {
+    if (!priority) return 'low';
+    switch (priority) {
+      case 1: return 'urgent';
+      case 2: return 'high';
+      case 3: return 'medium';
+      case 4: return 'low';
+      case 5: return 'low';
+      default: return 'low';
+    }
+  };
+
   const filteredApprovals = taskslist.filter((approval) => {
     const matchesSearch = approval.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          (approval?.description || "").toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesPriority = priorityFilter === 'all' || (approval?.priority || 'low') === priorityFilter;
+    const approvalPriority = getPriorityString(approval?.priority);
+    const matchesPriority = priorityFilter === 'all' || approvalPriority === priorityFilter;
     return matchesSearch && matchesPriority;
   });
 
@@ -93,10 +116,6 @@ export default function TasksPage() {
       default: return 'text-gray-600 bg-gray-100 dark:bg-gray-900/20 dark:text-gray-400';
     }
   };
-
-  if (isLoading) {
-    return <LoadingState message="Carregando aprovações pendentes..." />;
-  }
 
   return (
     <motion.main
@@ -184,8 +203,8 @@ export default function TasksPage() {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                       {approval.title}
                     </h3>
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getPriorityColor((approval.priority || 'low') as string)}`}>
-                      {((approval.priority || 'low') as string).toUpperCase()}
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${getPriorityColor(getPriorityString(approval.priority))}`}>
+                      {getPriorityString(approval.priority).toUpperCase()}
                     </span>
                   </div>
                   <p className="text-gray-600 dark:text-gray-400 mb-3">

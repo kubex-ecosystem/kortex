@@ -18,13 +18,15 @@ import { StorageManager } from './storageManager';ce - Resilient & In  private c
  */
 
 import { MCPServerType } from '@/types/MCP/MCPTypes';
-import { MCPTask } from '../types/MCP/Task';
+import { MCPAPIProvider } from '../types/MCP/MCPTypes';
+import { MCPTask, MCPTaskState, MCPTaskStatus, MCPTaskType } from '../types/MCP/Task';
 import { mockManager } from './mockManager';
 
 interface ServiceResponse<T = any> {
   success: boolean;
   data?: T;
   error?: string;
+  message?: string; // 🔥 Adicionado para suporte a mensagens de sucesso
   isFromCache?: boolean;
   isFromFallback?: boolean;
   isRealData?: boolean;
@@ -583,20 +585,147 @@ export class MCPService {
   
   // Métodos adicionais para compatibilidade com as páginas
   async getPendingApprovals(): Promise<ServiceResponse<MCPTask[]>> {
-    // Retorna lista vazia por enquanto - implementar quando necessário
-    return Promise.resolve({ data: [] as MCPTask[], success: true, isRealData: false, source: 'mock', timestamp: Date.now() });
+    try {
+      console.log('📋 Buscando aprovações pendentes...');
+      
+      // 🔥 Simula latência da rede
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // 🚀 Mock com dados mais realistas para teste
+      const mockApprovals: MCPTask[] = [
+        {
+          id: 'approval-1', 
+          title: 'Webhook Discord Integration',
+          description: 'Solicitação para ativar integração com webhook do Discord para notificações automáticas',
+          status: 'pending' as MCPTaskStatus,
+          state: 'idle' as MCPTaskState,
+          type: 'analysis' as MCPTaskType,
+          serverId: 'discord-server-1',
+          priority: 1, // High priority (1-5 scale, 1 = urgent)
+          createdBy: 'discord-bot',
+          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2h atrás
+          updatedAt: new Date().toISOString(),
+          reasons: ['Solicitado via Discord', 'Aprovação manual necessária'],
+          apiProvider: 'OpenAI' as MCPAPIProvider,
+          apiModel: 'webhook-integration'
+        },
+        {
+          id: 'approval-2', 
+          title: 'Deploy automático sistema',
+          description: 'Solicitação para deploy da nova versão do sistema com features de monitoramento',
+          status: 'pending' as MCPTaskStatus,
+          state: 'idle' as MCPTaskState,
+          type: 'processing' as MCPTaskType,
+          serverId: 'github-server-1',
+          priority: 3, // Medium priority
+          createdBy: 'automation',
+          createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1h atrás
+          updatedAt: new Date().toISOString(),
+          reasons: ['Deploy automático', 'Requer aprovação'],
+          apiProvider: 'Anthropic' as MCPAPIProvider,
+          apiModel: 'actions-deploy'
+        },
+        {
+          id: 'approval-3', 
+          title: 'Backup Database Critical',
+          description: 'Backup urgente da base de dados antes da migração crítica',
+          status: 'pending' as MCPTaskStatus,
+          state: 'idle' as MCPTaskState,
+          type: 'maintenance' as MCPTaskType,
+          serverId: 'db-server-1',
+          priority: 1, // Urgent priority
+          createdBy: 'admin',
+          createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30min atrás
+          updatedAt: new Date().toISOString(),
+          reasons: ['Backup crítico', 'Antes da migração'],
+          apiProvider: 'OpenAI' as MCPAPIProvider,
+          apiModel: 'database-backup'
+        }
+      ];
+      
+      return { 
+        data: mockApprovals, 
+        success: true, 
+        isRealData: false, 
+        source: 'mock', 
+        timestamp: Date.now() 
+      };
+    } catch (error) {
+      console.error('Error in getPendingApprovals:', error);
+      return { 
+        data: [], 
+        success: false, 
+        error: 'Erro ao buscar aprovações', 
+        source: 'mock', 
+        timestamp: Date.now() 
+      };
+    }
   }
 
   async approveTask(taskId: string, _approvalId?: string): Promise<ServiceResponse<unknown | null>> {
-    // Simula aprovação - implementar quando necessário
-    console.log(`Aprovando task ${taskId}`);
-    return Promise.resolve({ data: null, success: true, message: 'Task aprovada', source: 'mock', timestamp: Date.now() });
+    try {
+      console.log(`✅ Aprovando task ${taskId}`);
+      
+      // 🔥 Simula operação assíncrona real
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // TODO: Integrar com Discord API real
+      // const response = await fetch(`${this.baseURL}/api/v1/discord/approve`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ taskId, approvalId: _approvalId })
+      // });
+      
+      return { 
+        data: { approved: true, taskId }, 
+        success: true, 
+        message: 'Task aprovada com sucesso!', 
+        source: 'mock', 
+        timestamp: Date.now() 
+      };
+    } catch (error) {
+      console.error('Error in approveTask:', error);
+      return { 
+        data: null, 
+        success: false, 
+        error: 'Erro ao aprovar task', 
+        source: 'mock', 
+        timestamp: Date.now() 
+      };
+    }
   }
 
   async rejectTask(taskId: string, reason: string): Promise<ServiceResponse<unknown | null>> {
-    // Simula rejeição - implementar quando necessário
-    console.log(`Rejeitando task ${taskId} com razão: ${reason}`);
-    return Promise.resolve({ data: null, success: true, message: 'Task rejeitada', source: 'mock', timestamp: Date.now() });
+    try {
+      console.log(`❌ Rejeitando task ${taskId} com razão: ${reason}`);
+      
+      // 🔥 Simula operação assíncrona real
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      // TODO: Integrar com Discord API real
+      // const response = await fetch(`${this.baseURL}/api/v1/discord/reject`, {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ taskId, reason })
+      // });
+      
+      return { 
+        data: { rejected: true, taskId, reason }, 
+        success: true, 
+        message: 'Task rejeitada com sucesso!', 
+        source: 'mock', 
+        timestamp: Date.now() 
+      };
+    } catch (error) {
+      console.error('Error in rejectTask:', error);
+      return { 
+        data: null, 
+        success: false, 
+        error: 'Erro ao rejeitar task', 
+        source: 'mock', 
+        timestamp: Date.now() 
+      };
+    }
   }
 }
 

@@ -75,7 +75,8 @@ export default function Dashboard() {
       active: data?.activeServers || 0,
       icon: <Server className="h-8 w-8 text-blue-600" />,
       color: 'blue',
-      subtitle: `${data?.activeServers || 0} ativos`
+      subtitle: `${data?.activeServers || 0} ativos`,
+      isPercentage: false
     },
     {
       label: 'Tasks',
@@ -83,7 +84,8 @@ export default function Dashboard() {
       active: data?.runningTasks || 0,
       icon: <Activity className="h-8 w-8 text-green-600" />,
       color: 'green',
-      subtitle: `${data?.runningTasks || 0} executando`
+      subtitle: `${data?.runningTasks || 0} executando`,
+      isPercentage: false
     },
     {
       label: 'Conexões',
@@ -91,7 +93,8 @@ export default function Dashboard() {
       active: data?.activeConnections || 0,
       icon: <Database className="h-8 w-8 text-purple-600" />,
       color: 'purple',
-      subtitle: `${data?.activeConnections || 0} ativas`
+      subtitle: `${data?.activeConnections || 0} ativas`,
+      isPercentage: false
     },
     {
       label: 'Performance',
@@ -184,10 +187,10 @@ export default function Dashboard() {
                   {card.label}
                 </p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
-                  {card.isPercentage ? `${card.value}%` : card.value.toLocaleString()}
+                  {card.isPercentage ? `${(card.value < 1 ? card.value * 100 : card.value).toFixed(2)}%` : card.value.toLocaleString()}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  {card.subtitle}
+                  {card.isPercentage ? `${(parseFloat(card.subtitle) < 1 ? parseFloat(card.subtitle) * 100 : parseFloat(card.subtitle)).toFixed(2)}%` : card.subtitle.toLocaleString()}
                 </p>
               </div>
               <div className="flex-shrink-0">

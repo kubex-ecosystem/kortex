@@ -1,15 +1,11 @@
 /**
  * 🔥 useSystemData Hook
  * Hook baseado no useRealAPIData do kortex
- * Ge    // 🔥 CORREÇÃO DEADLOCK: Permitir primeira execução, prevenir apenas chamadas simultâneas subsequentes
-    if (isLoading && lastUpdated !== null) {
-      console.log('🚫 fetchSystemData: Already loading, skipping...');
-      return;
-    }a dados do sistema com fallback resiliente
+ * Gerencia dados do sistema com fallback resiliente
  */
 
-import { mcpService } from '@/lib/mcpService';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { mcpService } from '../lib/mcpService';
 
 interface SystemData {
   // Métricas do Sistema
@@ -76,16 +72,20 @@ export function useSystemData(): UseSystemDataReturn {
   
   const [serviceStatus, setServiceStatus] = useState(mcpService.getStatus());
   
+  // 🔥 Ref para prevenir chamadas simultâneas sem dependencies problem
+  const isLoadingRef = useRef(false);
+  
   /**
    * Buscar dados do sistema
    */
   const fetchSystemData = useCallback(async () => {
     // 🔥 PREVENIR múltiplas chamadas simultâneas (causa piscadas)
-    if (isLoading) {
-      console.log('� fetchSystemData: Already loading, skipping...');
+    if (isLoadingRef.current) {
+      console.log('🚫 fetchSystemData: Already loading, skipping...');
       return;
     }
     
+    isLoadingRef.current = true;
     setIsLoading(true);
     setError(null);
     
@@ -124,9 +124,10 @@ export function useSystemData(): UseSystemDataReturn {
       console.error('Erro ao buscar dados do sistema:', err);
     } finally {
       setIsLoading(false);
+      isLoadingRef.current = false;
       console.log('✅ fetchSystemData finished, setting isLoading to false');
     }
-  }, [isLoading, lastUpdated]); // 🔥 Adicionar lastUpdated para permitir primeira execução
+  }, []); // 🔥 REMOVIDAS dependências que causavam loop infinito
   
   /**
    * Refresh manual dos dados

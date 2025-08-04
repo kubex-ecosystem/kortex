@@ -21,7 +21,9 @@ export function AppLayout({ children, className }: AppLayoutProps) {
         className={cn(
           'flex-1 flex flex-col transition-all duration-300',
           'md:ml-0', // Em mobile não há margem porque sidebar é overlay
-          !isSidebarCollapsed ? 'lg:ml-50' : 'lg:ml-20' // Desktop: margem baseada no collapsed
+          // Não precisou de margem, a tela sem ela ocupou todo espaço sem 
+          // sobrepor, sem desagrados.. rsrs 
+          // !isSidebarCollapsed ? 'lg:ml-5' : 'lg:ml-5' // Desktop: margem baseada no collapsed
         )}
       >
         {/* TopBar */}
