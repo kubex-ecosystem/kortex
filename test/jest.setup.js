@@ -14,24 +14,15 @@ import { jest } from '@jest/globals';
 // Mocking fetch API globally
 global.fetch = require('jest-fetch-mock');
 
+// Mocking console methods to prevent cluttering test output
 // Mocking global functions or variables
+// nana o o  commits: Math.floor(Math.random() * 500) + 100,
 const generateGitHubStats = () => ({
-  repositories: Math.floor(Math.random() * 20) + 10,
-  pullRequests: Math.floor(Math.random() * 100) + 20,
-  openPRs: Math.floor(Math.random() * 20) + 5,
-  draftPRs: Math.floor(Math.random() * 10) + 1,
-  mergedPRs: Math.floor(Math.random() * 50) + 10,
-  issues: Math.floor(Math.random() * 50) + 20,
-  commits: Math.floor(Math.random() * 500) + 100,
+  repositories: Math.floor(Math.random() * 100) + 10, 
   contributors: Math.floor(Math.random() * 15) + 5,
   lastUpdated: new Date().toISOString()
 });
-
-const generateAzureStats = () => ({
-  projects: Math.floor(Math.random() * 5) + 1,
-  pipelines: Math.floor(Math.random() * 50) + 10,
-  successfulPipelines: Math.floor(Math.random() * 40) + 10,
-  failedPipelines: Math.floor(Math.random() * 5) + 1,
+clea  failedPipelines: Math.floor(Math.random() * 5) + 1,
   runningPipelines: Math.floor(Math.random() * 5) + 1,
   workItems: Math.floor(Math.random() * 100) + 30,
   builds: Math.floor(Math.random() * 200) + 50,

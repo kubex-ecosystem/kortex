@@ -1,4 +1,4 @@
-#!/bin/bash
+Lista#!/bin/bash
 
 # Define o diretório base
 BASE_DIR="lib"
