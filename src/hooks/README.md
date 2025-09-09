@@ -2,10 +2,10 @@
 
 [![Pub_Docs](https://github.com/kubex-ecosystem/kortex/actions/workflows/pub-docs.yml/badge.svg)](https://github.com/kubex-ecosystem/kortex/actions/workflows/pub-docs.yml)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/rafa-mori/kortex/ci.yml?branch=main&style=flat-square)](https://github.com/kubex-ecosystem/kortex/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/kubex-ecosystem/kortex/ci.yml?branch=main&style=flat-square)](https://github.com/kubex-ecosystem/kortex/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue?style=flat-square)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-15+-black?style=flat-square)](https://nextjs.org/)
-[![Last Commit](https://img.shields.io/github/last-commit/rafa-mori/kortex?style=flat-square)](https://github.com/kubex-ecosystem/kortex/commits)
+[![Last Commit](https://img.shields.io/github/last-commit/kubex-ecosystem/kortex?style=flat-square)](https://github.com/kubex-ecosystem/kortex/commits)
 
 ---
 
@@ -99,16 +99,16 @@ graph TD
     B --> C[Resilient Service Layer]
     C --> D[Mock API Server]
     C --> E[Production APIs]
-    
+
     D --> F[GitHub API Mock]
     D --> G[Azure DevOps Mock]
     D --> H[MCP Server Mock]
     D --> I[Helm/K8s Mock]
-    
+
     E --> J[StatusRafa MCP]
     E --> K[Kosmos Backend]
     E --> L[External APIs]
-    
+
     A --> M[WebSocket System]
     M --> N[Real-time Events]
     M --> O[Auto-reconnect]

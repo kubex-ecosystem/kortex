@@ -39,7 +39,7 @@ npm run dev
 
 ```bash
 # Pull and run the container
-docker run -p 3000:3000 rafa-mori/kortex:latest
+docker run -p 3000:3000 kubex-ecosystem/kortex:latest
 
 # Or build from source
 git clone https://github.com/kubex-ecosystem/kortex.git

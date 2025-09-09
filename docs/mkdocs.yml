@@ -3,7 +3,7 @@ site_description: Real-time DevOps & AI Monitoring Dashboard
 site_author: Rafa Mori
 site_url: https://rafa-mori.github.io/kortex
 
-repo_name: rafa-mori/kortex
+repo_name: kubex-ecosystem/kortex
 repo_url: https://github.com/kubex-ecosystem/kortex
 edit_uri: edit/main/docs/
 
@@ -73,7 +73,7 @@ extra:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/faelOmori
     - icon: fontawesome/brands/linkedin
-      link: https://www.linkedin.com/in/rafa-mori/
+      link: https://www.linkedin.com/in/kubex-ecosystem/
     - icon: fontawesome/solid/link
       link: https://rafamori.pro
     - icon: fontawesome/solid/globe
@@ -148,28 +148,28 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started:
-    - Installation: getting-started/installation.md
-    - Quick Start: getting-started/quick-start.md
-    - Basic Concepts: getting-started/concepts.md
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
+      - Basic Concepts: getting-started/concepts.md
   - Features:
-    - File Extraction: features/extraction.md
-    - Marker Generation: features/generation.md
-    - Validation System: features/validation.md
-    - Visual Markers: features/visual-markers.md
-    - CLI Tools: features/cli-tools.md
+      - File Extraction: features/extraction.md
+      - Marker Generation: features/generation.md
+      - Validation System: features/validation.md
+      - Visual Markers: features/visual-markers.md
+      - CLI Tools: features/cli-tools.md
   - User Guide:
-    - Commands Reference: guide/commands.md
-    - Configuration: guide/configuration.md
-    - Workflows: guide/workflows.md
-    - Best Practices: guide/best-practices.md
+      - Commands Reference: guide/commands.md
+      - Configuration: guide/configuration.md
+      - Workflows: guide/workflows.md
+      - Best Practices: guide/best-practices.md
   - Advanced:
-    - TypeScript Scripts: advanced/typescript-scripts.md
-    - Extension API: advanced/api.md
-    - Architecture: advanced/architecture.md
-    - Development: advanced/development.md
+      - TypeScript Scripts: advanced/typescript-scripts.md
+      - Extension API: advanced/api.md
+      - Architecture: advanced/architecture.md
+      - Development: advanced/development.md
   - Examples:
-    - Integration: examples/integration.md
+      - Integration: examples/integration.md
   - About:
-    - Changelog: about/changelog.md
-    - Contributing: about/contributing.md
-    - License: about/license.md
+      - Changelog: about/changelog.md
+      - Contributing: about/contributing.md
+      - License: about/license.md

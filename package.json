@@ -8,7 +8,7 @@
   "homepage": "https://rafa-mori.dev/kortex",
   "main": "dist/index.js",
   "displayName": "Kortex",
-  "icon": "https://raw.githubusercontent.com/rafa-mori/kortex/main/public/favicon.ico",
+  "icon": "https://raw.githubusercontent.com/kubex-ecosystem/kortex/main/public/favicon.ico",
   "sideEffects": false,
   "enginesStrict": true,
   "type": "module",
