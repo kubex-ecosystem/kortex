@@ -25,7 +25,7 @@ Before installing Kortex, ensure you have the following prerequisites:
 
 ```bash
 # Clone the repository
-git clone https://github.com/rafa-mori/kortex.git
+git clone https://github.com/kubex-ecosystem/kortex.git
 cd kortex
 
 # Install dependencies
@@ -42,7 +42,7 @@ npm run dev
 docker run -p 3000:3000 rafa-mori/kortex:latest
 
 # Or build from source
-git clone https://github.com/rafa-mori/kortex.git
+git clone https://github.com/kubex-ecosystem/kortex.git
 cd kortex
 docker build -t kortex .
 docker run -p 3000:3000 kortex
@@ -173,7 +173,7 @@ After successful installation:
 
 If you encounter issues during installation:
 
-- **GitHub Issues**: [Report bugs or request help](https://github.com/rafa-mori/kortex/issues)
+- **GitHub Issues**: [Report bugs or request help](https://github.com/kubex-ecosystem/kortex/issues)
 - **Documentation**: Check our comprehensive guides
 - **Community**: Join our Discord or discussions
 

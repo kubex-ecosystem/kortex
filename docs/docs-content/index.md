@@ -67,7 +67,7 @@ Your comprehensive guide to the Kortex MCP Server Management Dashboard.
 ## 🚀 Demo Locally
 
 ```bash
-git clone https://github.com/rafa-mori/kortex.git && cd kortex
+git clone https://github.com/kubex-ecosystem/kortex.git && cd kortex
 npm install && npm run dev
 ```
 
@@ -77,7 +77,7 @@ Requires backend MCP Server running at port `3002`.
 
 ## 📬 Contact
 
-Made by Rafael Mori · [GitHub](https://github.com/rafa-mori) · [Email](mailto\:faelmori@gmail.com)
+Made by Rafael Mori · [GitHub](https://github.com/kubex-ecosystem) · [Email](mailto\:faelmori@gmail.com)
 
 ---
 

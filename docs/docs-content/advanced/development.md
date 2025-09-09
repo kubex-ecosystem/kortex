@@ -34,7 +34,7 @@ Complete development guide for contributing to Kortex, including setup, workflow
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/rafa-mori/kortex.git
+   git clone https://github.com/kubex-ecosystem/kortex.git
    cd kortex
    ```
 

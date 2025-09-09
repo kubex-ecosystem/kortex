@@ -157,7 +157,7 @@ graph TD
 
 ```bash
 # Clone the repository
-git clone https://github.com/rafa-mori/kortex.git
+git clone https://github.com/kubex-ecosystem/kortex.git
 cd kortex
 
 # Install dependencies
@@ -188,7 +188,7 @@ This will start both the Next.js application and the mock API server.
 
 ```bash
 # 1. Clone and navigate
-git clone https://github.com/rafa-mori/kortex.git
+git clone https://github.com/kubex-ecosystem/kortex.git
 cd kortex
 
 # 2. Install dependencies
@@ -508,8 +508,8 @@ copies or substantial portions of the Software.
 
 - **Author**: Rafael Mori
 - **Email**: <faelmori@gmail.com>
-- **GitHub**: [@rafa-mori](https://github.com/rafa-mori)
-- **Project Issues**: [GitHub Issues](https://github.com/rafa-mori/kortex/issues)
+- **GitHub**: [@rafa-mori](https://github.com/kubex-ecosystem)
+- **Project Issues**: [GitHub Issues](https://github.com/kubex-ecosystem/kortex/issues)
 
 ---
 
@@ -517,4 +517,4 @@ copies or substantial portions of the Software.
 
 Built with ❤️ by the KUBEX team
 
-[🌐 Website](https://rafa-mori.dev) · [📚 Docs](./docs) · [🚀 Roadmap](./docs/ROADMAP.md) · [🐛 Issues](https://github.com/rafa-mori/kortex/issues)
+[🌐 Website](https://rafa-mori.dev) · [📚 Docs](./docs) · [🚀 Roadmap](./docs/ROADMAP.md) · [🐛 Issues](https://github.com/kubex-ecosystem/kortex/issues)

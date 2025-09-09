@@ -6,7 +6,7 @@ Get up and running with Kortex in under 5 minutes. This guide will walk you thro
 
 ```bash
 # Clone and install
-git clone https://github.com/rafa-mori/kortex.git && cd kortex
+git clone https://github.com/kubex-ecosystem/kortex.git && cd kortex
 npm install
 
 # Start development environment
@@ -224,7 +224,7 @@ Customize your workspace:
 
 - **Documentation**: Continue with our [configuration guide](../guide/configuration.md)
 - **Examples**: Check [practical examples](../examples/react-sharing.md)
-- **Issues**: [Report bugs on GitHub](https://github.com/rafa-mori/kortex/issues)
+- **Issues**: [Report bugs on GitHub](https://github.com/kubex-ecosystem/kortex/issues)
 
 ## 🎯 Next Steps
 

@@ -17,7 +17,7 @@ Complete workflow guides for common Kortex usage patterns and best practices.
 1. **Clone and Setup**
 
    ```bash
-   git clone https://github.com/rafa-mori/kortex.git
+   git clone https://github.com/kubex-ecosystem/kortex.git
    cd kortex
    npm install
    ```

@@ -55,7 +55,7 @@ npm install -g kortex
 npm install kortex
 
 # Development setup
-git clone https://github.com/rafa-mori/kortex.git
+git clone https://github.com/kubex-ecosystem/kortex.git
 cd kortex
 npm install
 npm run dev
