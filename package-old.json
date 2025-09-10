@@ -1,0 +1,299 @@
+{
+  "name": "kortex",
+  "private": false,
+  "version": "2.0.0",
+  "description": "Mission Control Center for Kubex Ecosystem — unified dashboard for managing MCP servers, GoBE backend, and AI development workflows. Part of Kubex Ecosystem following principles of radical simplicity and no lock-in.",
+  "keywords": [
+    "kortex",
+    "mcp",
+    "management",
+    "dashboard",
+    "kubex",
+    "mission-control",
+    "open-source",
+    "no-lock-in",
+    "modular",
+    "react",
+    "typescript",
+    "gobe-integration"
+  ],
+  "markdown": "github",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kubex-ecosystem/kortex.git"
+  },
+  "author": "Rafael Mori <faelmori@live.com>",
+  "license": "MIT",
+  "homepage": "https://kubex.world",
+  "readme": "https://github.com/kubex-ecosystem/kortex/README.md",
+  "bugs": {
+    "url": "https://github.com/kubex-ecosystem/kortex/issues"
+  },
+  "type": "module",
+  "yarn": {
+    "install": {
+      "ignoreScripts": false
+    },
+    "publish": {
+      "ignoreScripts": false
+    },
+    "checkCache": {
+      "ignoreScripts": false
+    },
+    "postinstall": "husky install"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "sponsor": {
+    "url": "https://rafamori.pro"
+  },
+  "readme": "README.md",
+  "publisher": "mori",
+  "scripts": {
+    "prepare": "husky install",
+    "precommit": "lint-staged",
+    "prettier": "prettier --write .",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "setup": "yarn install && husky add .husky/pre-commit 'yarn lint-staged' && husky add .husky/pre-push 'yarn test'",
+    "dev": "PORT=3000 next dev",
+    "dev:mock": "node scripts/mock-api-server.cjs",
+    "build": "PORT=3000 next build",
+    "export": "PORT=3000 next export",
+    "start": "PORT=3000 next start",
+    "lint": "next lint --ignore-path .gitignore",
+    "type-check": "tsc --noEmit",
+    "test": "jest --passWithNoTests",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false",
+    "dep:map:json": "npx dependency-cruiser --output-type json --include-only -'^(src|tests)' --exclude '^node_modules' src > dependency-map.json",
+    "map:components": "node scripts/map-components.js",
+    "map:components:watch": "PORT=3000 nodemon --watch src/components --exec 'node scripts/map-components.js'",
+    "dep:graph": "depcruise --exclude '^node_modules' --output-type dot src | dot -T svg > dependencygraph.svg",
+    "dep:graph:json": "depcruise --exclude '^node_modules' --output-type json src > dependencygraph.json",
+    "dep:graph:html": "depcruise --exclude '^node_modules' --output-type html src > dependencygraph.html",
+    "dep:graph:md": "depcruise --exclude '^node_modules' --output-type markdown src > dependencygraph.md",
+    "analyze": "PORT=3000 next build && next export && next analyze",
+    "analyze:server": "PORT=3000 next build && next export && next analyze --server",
+    "clean": "PORT=3000 next clean",
+    "clean:environment": "PORT=3000 rm -rf ./node_modules ./yarn.lock ./package-lock.json ./.next ./out ./coverage || true",
+    "build:old": "PORT=3000 react-scripts build",
+    "start:old": "PORT=3000 react-scripts start",
+    "test:old": "PORT=3003 jest --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}' --watchAll=false --env=jsdom",
+    "test:old-coverage": "PORT=3003 jest --coverage --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-watch": "PORT=3003 jest --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}' --watch",
+    "test:old-coverage-watch": "PORT=3003 jest --coverage --watch --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-e2e": "PORT=3003 jest --env=jsdom --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-e2e-watch": "PORT=3003 jest --env=jsdom --watch --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-e2e": "PORT=3003 jest --env=jsdom --coverage --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-html": "PORT=3003 jest --coverage --coverageReporters=html --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-json": "PORT=3003 jest --coverage --coverageReporters=json --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-text": "PORT=3003 jest --coverage --coverageReporters=text --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-clover": "PORT=3003 jest --coverage --coverageReporters=clover --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-lcov": "PORT=3003 jest --coverage --coverageReporters=lcov --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-summary": "PORT=3003 jest --coverage --coverageReporters=summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-text-summary": "PORT=3003 jest --coverage --coverageReporters=text-summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-json-summary": "PORT=3003 jest --coverage --coverageReporters=json-summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-verbose": "PORT=3003 jest --coverage --coverageReporters=verbose --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-lcovonly": "PORT=3003 jest --coverage --coverageReporters=lcovonly --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
+    "test:old-coverage-cobertura": "PORT=3003 jest --coverage --coverageReporters=cobertura --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'"
+  },
+  "overrides": {
+    "node-fetch": "2.6.7"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "erro": "^2.1.0",
+    "error": "^10.4.0",
+    "framer-motion": "^12.23.6",
+    "i18next": "^25.3.2",
+    "i18next-browser-languagedetector": "^8.2.0",
+    "jszip": "^3.10.1",
+    "lookatni-file-markers": "^1.1.0",
+    "material-icons-react": "^1.0.4",
+    "next": "^15.0.0",
+    "next-i18next": "^15.4.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.43.1",
+    "react-i18next": "^14.0.0",
+    "react-icons": "^4.6.0",
+    "react-query": "^3.39.2",
+    "react-router-dom": "^5.3.0",
+    "react-toastify": "^9.1.2",
+    "react-use": "^17.4.0",
+    "react-window": "^1.8.6",
+    "ws": "^8.18.3",
+    "zustand": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-syntax-flow": "^7.27.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/history": "^4.7.11",
+    "@types/node": "^20",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19",
+    "@types/react-router-dom": "^5.3.3",
+    "autoprefixer": "^10.4.21",
+    "dependency-cruiser": "^16.10.4",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.0",
+    "lucide-react": "^0.525.0",
+    "postcss": "^8",
+    "react-aria-components": "^1.10.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5",
+    "@types/jest": "^30.0.0",
+    "globby": "^14.1.0",
+    "husky": "^9.1.7",
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint-staged",
+      "pre-push": "yarn test",
+      "commit-msg": "commitlint --edit $HUSKY_GIT_PARAMS",
+      "post-merge": "yarn install",
+      "post-checkout": "yarn install"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.json": [
+      "prettier --write"
+    ],
+    "*.md": [
+      "prettier --write"
+    ],
+    "*.css": [
+      "prettier --write"
+    ],
+    "*.scss": [
+      "prettier --write"
+    ],
+    "*.html": [
+      "prettier --write"
+    ],
+    "*.yml": [
+      "prettier --write"
+    ],
+    "*.yaml": [
+      "prettier --write"
+    ],
+    "*.svg": [
+      "prettier --write"
+    ]
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
+  "eslintConfig": {
+    "extends": [
+      "next/core-web-vitals",
+      "plugin:react/recommended",
+      "plugin:@typescript-eslint/recommended",
+      "prettier"
+    ],
+    "plugins": [
+      "react",
+      "@typescript-eslint"
+    ],
+    "ignorePatterns": [
+      "src/styles/**/*",
+      "*.css",
+      "*.scss",
+      "*.sass"
+    ],
+    "rules": {
+      "react/react-in-jsx-scope": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "argsIgnorePattern": "^_"
+        }
+      ],
+      "no-console": "warn",
+      "react/prop-types": "off"
+    },
+    "settings": {
+      "react": {
+        "version": "detect"
+      }
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "semi": true,
+    "tabWidth": 2,
+    "printWidth": 80,
+    "useTabs": false,
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "endOfLine": "lf",
+    "htmlWhitespaceSensitivity": "ignore",
+    "proseWrap": "preserve",
+    "quoteProps": "as-needed",
+    "jsxSingleQuote": false,
+    "jsxBracketSameLine": false,
+    "embeddedLanguageFormatting": "auto",
+    "requirePragma": false,
+    "insertPragma": false,
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
+  },
+  "files": [
+    "dist",
+    "src",
+    "public",
+    "package.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "SECURITY.md",
+    "docs"
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    },
+    "release-it": {
+      "git": {
+        "requireCleanWorkingDir": true,
+        "requireUpstream": true,
+        "tag": true,
+        "push": true
+      },
+      "github": {
+        "release": true
+      },
+      "npm": {
+        "publish": true
+      }
+    }
+  }
+}

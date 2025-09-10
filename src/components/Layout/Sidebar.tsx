@@ -1,158 +1,145 @@
-import {
-  Activity,
-  BarChart3,
-  BookOpen,
-  Cpu,
-  Database,
-  ExternalLink,
-  LayoutDashboard,
-  Package,
-  Plus,
+import { 
+  Home, 
+  Server, 
+  Activity, 
+  FileText, 
   Settings,
-  X
+  ChevronLeft,
+  ChevronRight,
+  Zap,
+  BarChart3
 } from 'lucide-react';
-import { useRouter } from 'next/router';
-import React from 'react';
+import { useKortex } from '@contexts/KortexContext';
+import { VIEWS } from '@constants/index';
 
-interface SidebarProps {
-  currentPage?: string;
-  isOpen?: boolean;
-  onPageChange: (page: string) => void;
-  onClose: () => void;
-}
+export default function Sidebar() {
+  const { sidebarOpen, currentView, setCurrentView, metrics } = useKortex();
 
-export const Sidebar: React.FC<SidebarProps> = ({ 
-  isOpen, 
-  onClose,
-  onPageChange = () => {},
-  currentPage = 'Dashboard'
-}) => {
-  const router = useRouter();
-  const isActive = (path: string) => currentPage === path || router.pathname === path;
-  const currentPath = router.pathname;
-
-  const menuItems = [
-    { icon: <LayoutDashboard size={20} />, label: 'Dashboard', path: '/' },
-    { icon: <Activity size={20} />, label: 'Live Monitor', path: '/monitor' },
-    { icon: <BarChart3 size={20} />, label: 'Analytics', path: '/analytics' },
-    { icon: <Package size={20} />, label: 'Helm Charts', path: '/helm' },
-    { icon: <Cpu size={20} />, label: 'Servers', path: '/servers' },
-    { icon: <Database size={20} />, label: 'API Config', path: '/api-config' },
-    { icon: <Settings size={20} />, label: 'Settings', path: '/settings' },
-  ];
-
-  const externalLinks = [
-    { 
-      icon: <BookOpen size={20} />, 
-      label: 'Documentation', 
-      url: 'https://kortex.rafa-mori.dev/',
-      description: 'Complete user guide and API reference'
+  const navigationItems = [
+    {
+      id: VIEWS.DASHBOARD,
+      label: 'Dashboard',
+      icon: Home,
+      count: null,
+    },
+    {
+      id: VIEWS.SERVERS,
+      label: 'MCP Servers',
+      icon: Server,
+      count: metrics.totalServers,
+    },
+    {
+      id: VIEWS.TASKS,
+      label: 'Tasks',
+      icon: Activity,
+      count: metrics.activeTasks,
+    },
+    {
+      id: 'metrics',
+      label: 'Metrics',
+      icon: BarChart3,
+      count: null,
+    },
+    {
+      id: VIEWS.LOGS,
+      label: 'Logs',
+      icon: FileText,
+      count: null,
+    },
+    {
+      id: VIEWS.SETTINGS,
+      label: 'Settings',
+      icon: Settings,
+      count: null,
     },
   ];
 
-  const handleNavigation = (path: string) => {
-    router.push(path);
-    onClose();
-  };
-
-  const handleExternalLink = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
-    onClose();
-  };
-
-  const handleMenuAction = (action: string) => {
-    onClose();
-    switch (action) {
-      case 'documentation':
-        handleExternalLink('https://kortex.rafa-mori.dev/');
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleMenuItemClick = (path: string) => {
-    onPageChange(path);
-  };
-
   return (
-    <>
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" 
-          onClick={onClose} 
-        />
-      )}
-      
-      <aside className={`
-        fixed left-0 top-0 h-full w-64 bg-white dark:bg-gray-800 
-        border-r border-gray-200 dark:border-gray-700 z-50
-        transform transition-transform duration-300 ease-in-out
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-        lg:translate-x-0 lg:static lg:z-auto
-      `}>
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-              Kube<span className="text-blue-600">X</span>            </h2>
-            <button 
-              title='Close Sidebar'
-              onClick={onClose} 
-              className="lg:hidden p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-            >
-              <X size={20} className="text-gray-600 dark:text-gray-400" />
-            </button>
+    <aside 
+      className={`fixed left-0 top-16 bottom-0 z-40 bg-slate-800 border-r border-slate-700 transition-all duration-200 ${
+        sidebarOpen ? 'w-70' : 'w-16'
+      }`}
+    >
+      {/* Logo Section */}
+      <div className="p-4 border-b border-slate-700">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <Zap size={18} className="text-white" />
           </div>
+          {sidebarOpen && (
+            <div className="animate-fadeIn">
+              <div className="font-semibold text-white">Kortex</div>
+              <div className="text-xs text-slate-400">v2.0.0</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="p-4 space-y-2">
+        {navigationItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = currentView === item.id;
           
-          <nav className="space-y-2">
-            {menuItems.map((item) => (
-              <button
-                key={item.path}
-                onClick={() => handleNavigation(item.path)}
-                className={`
-                  w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-left transform hover:scale-105
-                  ${currentPath === item.path 
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 shadow-md' 
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }
-                `}
-              >
-                {item.icon}
-                <span className="font-medium">{item.label}</span>
-              </button>
-            ))}
-          </nav>
-          
-          {/* External Links Section */}
-          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider px-3 mb-3">
-              Resources
-            </h3>
-            <div className="space-y-1">
-              {externalLinks.map((link) => (
-                <a
-                  key={link.url}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-left transform hover:scale-105 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                >
-                  {link.icon}
-                  <span className="font-medium flex-1">{link.label}</span>
-                  <ExternalLink size={14} className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
-                </a>
-              ))}
+          return (
+            <button
+              key={item.id}
+              onClick={() => setCurrentView(item.id)}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
+                isActive 
+                  ? 'bg-blue-600 text-white' 
+                  : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+              }`}
+              title={!sidebarOpen ? item.label : undefined}
+            >
+              <Icon size={18} />
+              {sidebarOpen && (
+                <div className="flex-1 flex items-center justify-between animate-fadeIn">
+                  <span className="text-sm font-medium">{item.label}</span>
+                  {item.count !== null && item.count > 0 && (
+                    <span className={`text-xs px-2 py-1 rounded-full ${
+                      isActive 
+                        ? 'bg-blue-500 text-white' 
+                        : 'bg-slate-600 text-slate-300'
+                    }`}>
+                      {item.count}
+                    </span>
+                  )}
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* Status Section */}
+      {sidebarOpen && (
+        <div className="absolute bottom-4 left-4 right-4 animate-fadeIn">
+          <div className="bg-slate-700/50 rounded-lg p-3 border border-slate-600">
+            <div className="text-xs text-slate-400 mb-2">System Status</div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-300">Health</span>
+                <span className={`text-xs px-2 py-1 rounded-full ${
+                  metrics.systemHealth === 'healthy' 
+                    ? 'bg-green-500/20 text-green-400'
+                    : metrics.systemHealth === 'warning'
+                    ? 'bg-yellow-500/20 text-yellow-400'
+                    : 'bg-red-500/20 text-red-400'
+                }`}>
+                  {metrics.systemHealth}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-slate-300">Online</span>
+                <span className="text-xs text-green-400">
+                  {metrics.onlineServers}/{metrics.totalServers}
+                </span>
+              </div>
             </div>
           </div>
-          
-          <div className="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button className="w-full flex items-center gap-3 px-3 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg transition-all duration-200 transform hover:scale-105">
-              <Plus size={16} />
-              <span className="font-medium">New Task</span>
-            </button>
-          </div>
         </div>
-      </aside>
-    </>
+      )}
+    </aside>
   );
-};
+}

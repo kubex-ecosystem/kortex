@@ -18,11 +18,17 @@ global.fetch = require('jest-fetch-mock');
 // Mocking global functions or variables
 // nana o o  commits: Math.floor(Math.random() * 500) + 100,
 const generateGitHubStats = () => ({
-  repositories: Math.floor(Math.random() * 100) + 10, 
+  repositories: Math.floor(Math.random() * 100) + 10,
   contributors: Math.floor(Math.random() * 15) + 5,
   lastUpdated: new Date().toISOString()
 });
-clea  failedPipelines: Math.floor(Math.random() * 5) + 1,
+
+clearImmediate(() => {
+  global.fetch.resetMocks();
+});
+
+const generateAzureStats = () => ({
+  failedPipelines: Math.floor(Math.random() * 5) + 1,
   runningPipelines: Math.floor(Math.random() * 5) + 1,
   workItems: Math.floor(Math.random() * 100) + 30,
   builds: Math.floor(Math.random() * 200) + 50,

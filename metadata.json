@@ -1,0 +1,5 @@
+{
+  "name": "Kortex Mission Control",
+  "description": "Mission Control Center for Kubex Ecosystem — unified dashboard for managing MCP servers, GoBE backend, and AI development workflows. Part of Kubex Ecosystem following principles of radical simplicity and no lock-in.",
+  "requestFramePermissions": []
+}

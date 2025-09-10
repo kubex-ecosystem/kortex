@@ -1,65 +1,36 @@
-import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import { useTheme } from '../../hooks/useTheme';
-import { DocumentationBanner } from '../UI/DocumentationBanner';
-import { Header } from './Header';
-import { Sidebar } from './Sidebar';
+import { ReactNode } from 'react';
+import { useKortex } from '@contexts/KortexContext';
+import Sidebar from './Sidebar';
+import Header from './Header';
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { isDark, toggleTheme } = useTheme();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const router = useRouter();
-
-  const getPageTitle = () => {
-    const titles: Record<string, string> = {
-      '/': 'Dashboard',
-      '/monitor': 'Live Monitor',
-      '/analytics': 'Analytics',
-      '/helm': 'Helm Charts',
-      '/servers': 'Servers',
-      '/api-config': 'API Config',
-      '/settings': 'Settings'
-    };
-    return titles[router.pathname] || 'Dashboard';
-  };
+export default function Layout({ children }: LayoutProps) {
+  const { sidebarOpen } = useKortex();
 
   return (
-    <div className={isDark ? 'dark' : ''}>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        <DocumentationBanner />
-        <div className="flex h-screen">
-          <Sidebar 
-            onPageChange={(page) => {
-              router.push(page);
-              setSidebarOpen(false);
-            }}
-            currentPage={getPageTitle()}
-            isOpen={sidebarOpen} 
-            onClose={() => setSidebarOpen(false)}
-          />
-          
-          <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
-            <Header 
-              isDark={isDark} 
-              onToggle={toggleTheme} 
-              onMenuClick={() => setSidebarOpen(true)}
-              currentPage={getPageTitle()}
-            />
-            
-            <main className="flex-1 overflow-y-auto p-6">
-              <div className="animate-in fade-in duration-500">
-                {children}
-              </div>
-            </main>
+    <div className="min-h-screen bg-slate-900 text-white">
+      {/* Header */}
+      <Header />
+      
+      <div className="flex">
+        {/* Sidebar */}
+        <Sidebar />
+        
+        {/* Main Content */}
+        <main 
+          className={`flex-1 transition-all duration-200 ${
+            sidebarOpen ? 'ml-280' : 'ml-16'
+          }`}
+          style={{ paddingTop: '64px' }}
+        >
+          <div className="p-6">
+            {children}
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );
-};
-
-export default Layout;
+}
