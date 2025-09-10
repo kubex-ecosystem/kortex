@@ -1,10 +1,10 @@
-/* Global Styles for Kortex Mission Control */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* @tailwindcss postcss/preset; */
+/* @tailwindcss postcss/typography; */
+/* @tailwindcss postcss/base; */
+/* @tailwindcss postcss/components; */
+/* @tailwindcss postcss/utilities; */
 
-/* Tailwind CSS imports */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@tailwindcss postcss;
 
 :root {
   /* Color Palette - Kubex Brand */

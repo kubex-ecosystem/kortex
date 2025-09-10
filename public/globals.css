@@ -18,7 +18,7 @@ body {
 
 /* Custom scrollbar */
 .scrollbar-thin {
-  scrollbar-width: thin;
+  scrollbar-width: t;
   scrollbar-color: rgb(156 163 175) transparent;
 }
 
