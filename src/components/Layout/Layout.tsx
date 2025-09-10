@@ -21,8 +21,7 @@ export default function Layout({ children }: LayoutProps) {
 
         {/* Main Content */}
         <main
-          className={`flex-1 transition-all duration-200 ${sidebarOpen ? 'ml-280' : 'ml-16'
-            }`}
+          className={`flex-1 transition-all duration-200 ${sidebarOpen ? 'pl-[280px]' : 'pl-16'}`}
           style={{ paddingTop: '64px' }}
         >
           <div className="p-6">

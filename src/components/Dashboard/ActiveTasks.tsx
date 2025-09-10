@@ -9,7 +9,7 @@ export default function ActiveTasks() {
     <div className="card">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">Active Tasks</h3>
-        <button className="btn btn-secondary text-sm">
+        <button className="btn btn-secondary text-sm" title="View all tasks">
           View All
         </button>
       </div>

@@ -18,8 +18,8 @@ export default defineConfig(({ mode }: { mode: string }) => {
       'process.env.SECURITY_ENABLED': JSON.stringify(env.SECURITY_ENABLED || 'true'),
 
       // GoBE Backend Integration
-      'process.env.GOBE_API_URL': JSON.stringify(env.GOBE_API_URL || 'http://localhost:8080'),
-      'process.env.GOBE_WS_URL': JSON.stringify(env.GOBE_WS_URL || 'ws://localhost:8080/ws'),
+      'process.env.GOBE_API_URL': JSON.stringify(env.GOBE_API_URL || 'http://localhost:8088'),
+      'process.env.GOBE_WS_URL': JSON.stringify(env.GOBE_WS_URL || 'ws://localhost:8088/ws'),
       'process.env.GOBE_API_KEY': JSON.stringify(env.GOBE_API_KEY || ''),
 
       // MCP Server Management
@@ -57,12 +57,12 @@ export default defineConfig(({ mode }: { mode: string }) => {
       proxy: {
         // Proxy para GoBE backend em desenvolvimento
         '/api': {
-          target: env.GOBE_API_URL || 'http://localhost:8080',
+          target: env.GOBE_API_URL || 'http://localhost:8088',
           changeOrigin: true,
           rewrite: (path: string) => path.replace(/^\/api/, '')
         },
         '/ws': {
-          target: env.GOBE_WS_URL || 'ws://localhost:8080',
+          target: env.GOBE_WS_URL || 'ws://localhost:8088',
           ws: true,
           changeOrigin: true
         }

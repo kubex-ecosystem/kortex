@@ -1,4 +1,5 @@
 import { createContext, ReactNode, useContext, useReducer } from 'react';
+import * as gobe from '../services/gobe/api';
 import { CONNECTION_STATUS, SERVER_STATUS, THEMES, VIEWS } from '../constants/index';
 import { GobeConnection, KortexContextType, KortexState, MCPServer, Notification, Task } from '../types/index';
 
@@ -241,13 +242,14 @@ export function KortexProvider({ children }: KortexProviderProps) {
 
         dispatch({ type: 'SET_GOBE_CONNECTION', payload: connection });
 
-        // Simulate connection process
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Try health endpoint (optional)
+        const health = await gobe.getHealth();
 
         dispatch({
           type: 'SET_GOBE_CONNECTION', payload: {
             ...connection,
             status: CONNECTION_STATUS.CONNECTED as any,
+            version: health?.version,
           }
         });
 
@@ -301,8 +303,14 @@ export function KortexProvider({ children }: KortexProviderProps) {
     refreshServers: async () => {
       dispatch({ type: 'SET_LOADING', payload: { key: 'servers', value: true } });
 
-      // Simulate refresh
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      try {
+        const servers = await gobe.listServers();
+        dispatch({ type: 'SET_MCP_SERVERS', payload: servers });
+        dispatch({ type: 'CLEAR_ERROR', payload: 'servers' });
+      } catch (e: any) {
+        // keep previous simulated state; just record error
+        dispatch({ type: 'SET_ERROR', payload: { key: 'servers', message: String(e?.message || e) } });
+      }
 
       dispatch({ type: 'SET_LOADING', payload: { key: 'servers', value: false } });
     },

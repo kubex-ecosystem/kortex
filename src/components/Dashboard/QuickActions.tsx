@@ -30,7 +30,7 @@ export default function QuickActions() {
     {
       label: 'Connect GoBE',
       icon: Zap,
-      action: () => connectToGobe('http://localhost:8080'),
+      action: () => connectToGobe((process.env.GOBE_API_URL as string) || 'http://localhost:8088'),
       disabled: gobeConnection?.status === 'connected'
     },
     {
@@ -53,6 +53,7 @@ export default function QuickActions() {
           const Icon = action.icon;
           return (
             <button
+              title={action.label}
               key={action.label}
               onClick={action.action}
               disabled={action.disabled}

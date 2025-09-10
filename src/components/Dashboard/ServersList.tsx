@@ -8,7 +8,7 @@ export default function ServersList() {
     <div className="card">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">MCP Servers</h3>
-        <button className="btn btn-secondary text-sm">
+        <button className="btn btn-secondary text-sm" title="Add server">
           Add Server
         </button>
       </div>
@@ -45,7 +45,7 @@ export default function ServersList() {
           ))}
 
           {mcpServers.length > 5 && (
-            <button className="w-full text-center text-sm text-slate-400 hover:text-white py-2">
+            <button className="w-full text-center text-sm text-slate-400 hover:text-white py-2" title="View all servers">
               View all {mcpServers.length} servers →
             </button>
           )}

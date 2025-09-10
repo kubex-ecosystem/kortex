@@ -73,6 +73,7 @@ export default function Dashboard() {
             Connect to your GoBE backend to start managing your MCP servers and monitoring your Kubex ecosystem.
           </p>
           <button
+            title="Connect to GoBE"
             onClick={() => {
               // TODO: Open connection modal
               console.log('Open connection modal');
