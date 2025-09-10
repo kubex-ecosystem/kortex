@@ -18,7 +18,9 @@ const Sparkline: React.FC<SparklineProps> = ({
   className = '',
 }) => {
   if (!data || data.length < 2) {
-    return <div style={{ width, height }} className="flex items-center justify-center text-xs text-slate-500">--</div>;
+    return <div
+      title="No data available"
+      style={{ width, height }} className="flex items-center justify-center text-xs text-slate-500">--</div>;
   }
 
   const min = Math.min(...data);
