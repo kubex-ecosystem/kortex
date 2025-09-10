@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { AnalysisType, ProjectAnalysis } from '@types/analyzer';
-import { analyzeProject } from '@services/gemini/api';
+import { AnalysisType, ProjectAnalysis } from '@/types/analyzer';
 import { useLanguage } from '@contexts/LanguageContext';
 import { useNotification } from '@contexts/NotificationContext';
-import { useTranslation } from '@hooks/useTranslation';
 import { usePersistentState } from '@hooks/usePersistentState';
+import { useTranslation } from '@hooks/useTranslation';
+
+import { analyzeProject } from '@services/gemini/api';
+import { useState } from 'react';
 
 interface Props {
   onResult: (result: ProjectAnalysis) => void;
@@ -64,6 +65,7 @@ export default function ProjectInput({ onResult }: Props) {
           />
           <label className="block text-sm text-slate-300 mb-1">{t('actions.selectType')}</label>
           <select
+            title={t('actions.selectType')}
             className="w-full p-2 rounded-lg bg-slate-900 border border-slate-700"
             value={type}
             onChange={(e) => setType(e.target.value as AnalysisType)}

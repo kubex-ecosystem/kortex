@@ -69,10 +69,5 @@
     ".next",
     "coverage",
     "build"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    }
   ]
 }
