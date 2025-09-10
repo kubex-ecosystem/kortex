@@ -77,6 +77,7 @@ export const VIEWS = {
   TASKS: 'tasks',
   LOGS: 'logs',
   SETTINGS: 'settings',
+  ANALYZER: 'analyzer',
 } as const;
 
 export const THEMES = {

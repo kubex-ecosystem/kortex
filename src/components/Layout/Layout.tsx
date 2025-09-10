@@ -1,6 +1,8 @@
 import { useKortex } from '@contexts/KortexContext';
 import { ReactNode } from 'react';
 import Header from './Header';
+import NotificationContainer from '@components/Common/NotificationContainer';
+import NetworkStatusIndicator from '@components/Common/NetworkStatusIndicator';
 import Sidebar from './Sidebar';
 
 interface LayoutProps {
@@ -29,7 +31,9 @@ export default function Layout({ children }: LayoutProps) {
             {children}
           </div>
         </main>
-      </div>
+    </div>
+    <NotificationContainer />
+    <NetworkStatusIndicator />
     </div>
   );
 }

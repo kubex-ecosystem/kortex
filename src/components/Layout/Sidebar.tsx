@@ -23,6 +23,12 @@ export default function Sidebar() {
       count: null,
     },
     {
+      id: VIEWS.ANALYZER,
+      label: 'Analyzer',
+      icon: BarChart3,
+      count: null,
+    },
+    {
       id: VIEWS.SERVERS,
       label: 'MCP Servers',
       icon: Server,

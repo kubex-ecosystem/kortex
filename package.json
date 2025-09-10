@@ -38,6 +38,7 @@
     "serve": "vite preview --port 3000 --host"
   },
   "dependencies": {
+    "@google/genai": "^1.18.0",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.542.0",

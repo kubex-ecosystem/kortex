@@ -1,0 +1,45 @@
+{
+  "input": {
+    "title": "Contexto do Projeto",
+    "subtitle": "Cole o contexto (README, anotações de arquitetura, trechos de código)",
+    "placeholder": "Descreva aqui o projeto, stack, restrições e objetivos..."
+  },
+  "actions": {
+    "analyze": "Analisar",
+    "runAnalysis": "Executar Análise",
+    "selectType": "Selecione o tipo de análise"
+  },
+  "analysisTypes": {
+    "GENERAL": { "label": "Geral" },
+    "SECURITY": { "label": "Segurança" },
+    "SCALABILITY": { "label": "Escalabilidade" },
+    "CODE_QUALITY": { "label": "Qualidade de Código" }
+  },
+  "results": {
+    "title": "Resultados para {projectName}",
+    "summary": "Resumo",
+    "strengths": "Pontos Fortes",
+    "improvements": {
+      "title": "Melhorias",
+      "priority": "Prioridade",
+      "difficulty": "Dificuldade",
+      "businessImpact": "Impacto no negócio"
+    },
+    "nextSteps": {
+      "title": "Próximos Passos",
+      "shortTerm": "Curto prazo",
+      "longTerm": "Longo prazo"
+    }
+  },
+  "common": {
+    "difficulty": "Dificuldade",
+    "loading": "Carregando...",
+    "apiKey": "Chave da API do Gemini"
+  },
+  "difficulty": {
+    "High": "Alta",
+    "Medium": "Média",
+    "Low": "Baixa"
+  }
+}
+

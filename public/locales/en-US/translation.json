@@ -1,0 +1,45 @@
+{
+  "input": {
+    "title": "Project Context",
+    "subtitle": "Paste project context (README, architecture notes, code excerpts)",
+    "placeholder": "Describe your project, stack, constraints and goals here..."
+  },
+  "actions": {
+    "analyze": "Analyze",
+    "runAnalysis": "Run Analysis",
+    "selectType": "Select analysis type"
+  },
+  "analysisTypes": {
+    "GENERAL": { "label": "General" },
+    "SECURITY": { "label": "Security" },
+    "SCALABILITY": { "label": "Scalability" },
+    "CODE_QUALITY": { "label": "Code Quality" }
+  },
+  "results": {
+    "title": "Results for {projectName}",
+    "summary": "Summary",
+    "strengths": "Strengths",
+    "improvements": {
+      "title": "Improvements",
+      "priority": "Priority",
+      "difficulty": "Difficulty",
+      "businessImpact": "Business impact"
+    },
+    "nextSteps": {
+      "title": "Next Steps",
+      "shortTerm": "Short term",
+      "longTerm": "Long term"
+    }
+  },
+  "common": {
+    "difficulty": "Difficulty",
+    "loading": "Loading...",
+    "apiKey": "Gemini API Key"
+  },
+  "difficulty": {
+    "High": "High",
+    "Medium": "Medium",
+    "Low": "Low"
+  }
+}
+
