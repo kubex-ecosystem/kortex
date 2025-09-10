@@ -1,5 +1,5 @@
-import { useKortex } from '@contexts/KortexContext';
-import { Activity, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Activity, Clock } from 'lucide-react';
+import { useKortex } from '../../contexts/KortexContext';
 
 export default function ActiveTasks() {
   const { tasks } = useKortex();
@@ -33,21 +33,20 @@ export default function ActiveTasks() {
                   )}
                   <span className="text-white font-medium text-sm">{task.title}</span>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  task.status === 'running' ? 'bg-blue-500/20 text-blue-400' :
+                <span className={`text-xs px-2 py-1 rounded-full ${task.status === 'running' ? 'bg-blue-500/20 text-blue-400' :
                   'bg-yellow-500/20 text-yellow-400'
-                }`}>
+                  }`}>
                   {task.status}
                 </span>
               </div>
-              
+
               {task.description && (
                 <p className="text-sm text-slate-400 mb-2">{task.description}</p>
               )}
-              
+
               {task.status === 'running' && (
                 <div className="w-full bg-slate-600 rounded-full h-1.5">
-                  <div 
+                  <div
                     className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
                     style={{ width: `${task.progress}%` }}
                   />

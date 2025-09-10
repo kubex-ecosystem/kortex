@@ -1,5 +1,5 @@
-import { useKortex } from '@contexts/KortexContext';
-import { Server, Activity, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Activity, AlertTriangle, CheckCircle, Server } from 'lucide-react';
+import { useKortex } from '../../contexts/KortexContext';
 
 export default function MetricsCards() {
   const { metrics } = useKortex();
@@ -44,12 +44,11 @@ export default function MetricsCards() {
                   {typeof card.value === 'string' ? card.value : card.value}
                 </p>
               </div>
-              <div className={`p-3 rounded-lg ${
-                card.color === 'blue' ? 'bg-blue-500/20 text-blue-400' :
+              <div className={`p-3 rounded-lg ${card.color === 'blue' ? 'bg-blue-500/20 text-blue-400' :
                 card.color === 'green' ? 'bg-green-500/20 text-green-400' :
-                card.color === 'purple' ? 'bg-purple-500/20 text-purple-400' :
-                'bg-yellow-500/20 text-yellow-400'
-              }`}>
+                  card.color === 'purple' ? 'bg-purple-500/20 text-purple-400' :
+                    'bg-yellow-500/20 text-yellow-400'
+                }`}>
                 <Icon size={20} />
               </div>
             </div>

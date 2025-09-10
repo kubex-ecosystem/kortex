@@ -1,5 +1,5 @@
-import { useKortex } from '@contexts/KortexContext';
 import { Server, Wifi, WifiOff } from 'lucide-react';
+import { useKortex } from '../../contexts/KortexContext';
 
 export default function ServersList() {
   const { mcpServers } = useKortex();
@@ -24,11 +24,10 @@ export default function ServersList() {
           {mcpServers.slice(0, 5).map((server) => (
             <div key={server.id} className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-lg ${
-                  server.status === 'online' ? 'bg-green-500/20 text-green-400' :
+                <div className={`p-2 rounded-lg ${server.status === 'online' ? 'bg-green-500/20 text-green-400' :
                   server.status === 'connecting' ? 'bg-yellow-500/20 text-yellow-400' :
-                  'bg-red-500/20 text-red-400'
-                }`}>
+                    'bg-red-500/20 text-red-400'
+                  }`}>
                   {server.status === 'online' ? <Wifi size={16} /> : <WifiOff size={16} />}
                 </div>
                 <div>
@@ -36,16 +35,15 @@ export default function ServersList() {
                   <p className="text-sm text-slate-400">{server.host}:{server.port}</p>
                 </div>
               </div>
-              <span className={`text-xs px-2 py-1 rounded-full ${
-                server.status === 'online' ? 'bg-green-500/20 text-green-400' :
+              <span className={`text-xs px-2 py-1 rounded-full ${server.status === 'online' ? 'bg-green-500/20 text-green-400' :
                 server.status === 'connecting' ? 'bg-yellow-500/20 text-yellow-400' :
-                'bg-red-500/20 text-red-400'
-              }`}>
+                  'bg-red-500/20 text-red-400'
+                }`}>
                 {server.status}
               </span>
             </div>
           ))}
-          
+
           {mcpServers.length > 5 && (
             <button className="w-full text-center text-sm text-slate-400 hover:text-white py-2">
               View all {mcpServers.length} servers →

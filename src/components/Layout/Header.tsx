@@ -1,5 +1,5 @@
-import { Menu, Search, Bell, Settings, User } from 'lucide-react';
-import { useKortex } from '@contexts/KortexContext';
+import { Bell, Menu, Search, Settings, User } from 'lucide-react';
+import { useKortex } from '../../contexts/KortexContext';
 
 export default function Header() {
   const { toggleSidebar, notifications, gobeConnection } = useKortex();
@@ -16,7 +16,7 @@ export default function Header() {
         >
           <Menu size={20} />
         </button>
-        
+
         <div className="flex items-center gap-3">
           <div className="text-xl font-bold text-gradient">Kortex</div>
           <div className="text-xs text-slate-400">Mission Control</div>
@@ -39,21 +39,20 @@ export default function Header() {
       <div className="flex items-center gap-3">
         {/* Connection Status */}
         <div className="flex items-center gap-2">
-          <div 
-            className={`w-2 h-2 rounded-full ${
-              gobeConnection?.status === 'connected' 
-                ? 'bg-green-500' 
-                : gobeConnection?.status === 'connecting'
+          <div
+            className={`w-2 h-2 rounded-full ${gobeConnection?.status === 'connected'
+              ? 'bg-green-500'
+              : gobeConnection?.status === 'connecting'
                 ? 'bg-yellow-500'
                 : 'bg-red-500'
-            }`}
+              }`}
           />
           <span className="text-sm text-slate-400">
-            {gobeConnection?.status === 'connected' 
-              ? 'Connected' 
+            {gobeConnection?.status === 'connected'
+              ? 'Connected'
               : gobeConnection?.status === 'connecting'
-              ? 'Connecting...'
-              : 'Disconnected'
+                ? 'Connecting...'
+                : 'Disconnected'
             }
           </span>
         </div>
@@ -69,12 +68,16 @@ export default function Header() {
         </button>
 
         {/* Settings */}
-        <button className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
+        <button
+          title="Settings"
+          className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
           <Settings size={18} />
         </button>
 
         {/* User Menu */}
-        <button className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
+        <button
+          title="User Menu"
+          className="p-2 hover:bg-slate-700 rounded-lg transition-colors">
           <User size={18} />
         </button>
       </div>

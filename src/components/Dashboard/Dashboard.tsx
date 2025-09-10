@@ -1,9 +1,9 @@
-import { useKortex } from '@contexts/KortexContext';
-import MetricsCards from './MetricsCards';
-import ServersList from './ServersList';
+import { useKortex } from '../../contexts/KortexContext';
 import ActiveTasks from './ActiveTasks';
-import SystemHealth from './SystemHealth';
+import MetricsCards from './MetricsCards';
 import QuickActions from './QuickActions';
+import ServersList from './ServersList';
+import SystemHealth from './SystemHealth';
 
 export default function Dashboard() {
   const { gobeConnection, metrics } = useKortex();
@@ -18,23 +18,21 @@ export default function Dashboard() {
             Mission Control Center for Kubex Ecosystem
           </p>
         </div>
-        
+
         {/* Connection Status Badge */}
-        <div className={`px-4 py-2 rounded-lg border ${
-          gobeConnection?.status === 'connected'
-            ? 'bg-green-500/10 border-green-500/30 text-green-400'
-            : gobeConnection?.status === 'connecting'
+        <div className={`px-4 py-2 rounded-lg border ${gobeConnection?.status === 'connected'
+          ? 'bg-green-500/10 border-green-500/30 text-green-400'
+          : gobeConnection?.status === 'connecting'
             ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
             : 'bg-red-500/10 border-red-500/30 text-red-400'
-        }`}>
+          }`}>
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full ${
-              gobeConnection?.status === 'connected' ? 'bg-green-500' :
+            <div className={`w-2 h-2 rounded-full ${gobeConnection?.status === 'connected' ? 'bg-green-500' :
               gobeConnection?.status === 'connecting' ? 'bg-yellow-500' : 'bg-red-500'
-            }`} />
+              }`} />
             <span className="text-sm font-medium">
               {gobeConnection?.status === 'connected' ? 'GoBE Connected' :
-               gobeConnection?.status === 'connecting' ? 'Connecting...' : 'GoBE Disconnected'}
+                gobeConnection?.status === 'connecting' ? 'Connecting...' : 'GoBE Disconnected'}
             </span>
           </div>
         </div>
@@ -74,7 +72,7 @@ export default function Dashboard() {
           <p className="text-slate-400 mb-6 max-w-md mx-auto">
             Connect to your GoBE backend to start managing your MCP servers and monitoring your Kubex ecosystem.
           </p>
-          <button 
+          <button
             onClick={() => {
               // TODO: Open connection modal
               console.log('Open connection modal');

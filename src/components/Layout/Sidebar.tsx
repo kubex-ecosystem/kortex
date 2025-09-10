@@ -1,16 +1,14 @@
-import { 
-  Home, 
-  Server, 
-  Activity, 
-  FileText, 
+import {
+  Activity,
+  BarChart3,
+  FileText,
+  Home,
+  Server,
   Settings,
-  ChevronLeft,
-  ChevronRight,
-  Zap,
-  BarChart3
+  Zap
 } from 'lucide-react';
-import { useKortex } from '@contexts/KortexContext';
-import { VIEWS } from '@constants/index';
+import { VIEWS } from '../../constants/index';
+import { useKortex } from '../../contexts/KortexContext';
 
 export default function Sidebar() {
   const { sidebarOpen, currentView, setCurrentView, metrics } = useKortex();
@@ -55,10 +53,9 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside 
-      className={`fixed left-0 top-16 bottom-0 z-40 bg-slate-800 border-r border-slate-700 transition-all duration-200 ${
-        sidebarOpen ? 'w-70' : 'w-16'
-      }`}
+    <aside
+      className={`fixed left-0 top-16 bottom-0 z-40 bg-slate-800 border-r border-slate-700 transition-all duration-200 ${sidebarOpen ? 'w-70' : 'w-16'
+        }`}
     >
       {/* Logo Section */}
       <div className="p-4 border-b border-slate-700">
@@ -80,16 +77,15 @@ export default function Sidebar() {
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentView === item.id;
-          
+
           return (
             <button
               key={item.id}
               onClick={() => setCurrentView(item.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${
-                isActive 
-                  ? 'bg-blue-600 text-white' 
-                  : 'text-slate-300 hover:bg-slate-700 hover:text-white'
-              }`}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 ${isActive
+                ? 'bg-blue-600 text-white'
+                : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                }`}
               title={!sidebarOpen ? item.label : undefined}
             >
               <Icon size={18} />
@@ -97,11 +93,10 @@ export default function Sidebar() {
                 <div className="flex-1 flex items-center justify-between animate-fadeIn">
                   <span className="text-sm font-medium">{item.label}</span>
                   {item.count !== null && item.count > 0 && (
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      isActive 
-                        ? 'bg-blue-500 text-white' 
-                        : 'bg-slate-600 text-slate-300'
-                    }`}>
+                    <span className={`text-xs px-2 py-1 rounded-full ${isActive
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-slate-600 text-slate-300'
+                      }`}>
                       {item.count}
                     </span>
                   )}
@@ -120,13 +115,12 @@ export default function Sidebar() {
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs text-slate-300">Health</span>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  metrics.systemHealth === 'healthy' 
-                    ? 'bg-green-500/20 text-green-400'
-                    : metrics.systemHealth === 'warning'
+                <span className={`text-xs px-2 py-1 rounded-full ${metrics.systemHealth === 'healthy'
+                  ? 'bg-green-500/20 text-green-400'
+                  : metrics.systemHealth === 'warning'
                     ? 'bg-yellow-500/20 text-yellow-400'
                     : 'bg-red-500/20 text-red-400'
-                }`}>
+                  }`}>
                   {metrics.systemHealth}
                 </span>
               </div>

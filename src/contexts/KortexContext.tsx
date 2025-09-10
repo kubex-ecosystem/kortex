@@ -1,6 +1,6 @@
-import { CONNECTION_STATUS, SERVER_STATUS, THEMES, VIEWS } from '@constants/index';
-import { GobeConnection, KortexContextType, KortexState, MCPServer, Notification, Task } from '@types/index';
 import { createContext, ReactNode, useContext, useReducer } from 'react';
+import { CONNECTION_STATUS, SERVER_STATUS, THEMES, VIEWS } from '../constants/index';
+import { GobeConnection, KortexContextType, KortexState, MCPServer, Notification, Task } from '../types/index';
 
 // Initial state
 const initialState: KortexState = {

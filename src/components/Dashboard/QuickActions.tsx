@@ -1,5 +1,5 @@
-import { useKortex } from '@contexts/KortexContext';
 import { Plus, RefreshCw, Settings, Zap } from 'lucide-react';
+import { useKortex } from '../../contexts/KortexContext';
 
 export default function QuickActions() {
   const { addMCPServer, refreshServers, connectToGobe, gobeConnection } = useKortex();
@@ -47,7 +47,7 @@ export default function QuickActions() {
   return (
     <div className="card">
       <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-      
+
       <div className="space-y-2">
         {actions.map((action) => {
           const Icon = action.icon;
@@ -56,11 +56,10 @@ export default function QuickActions() {
               key={action.label}
               onClick={action.action}
               disabled={action.disabled}
-              className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                action.disabled 
-                  ? 'bg-slate-700/30 text-slate-500 cursor-not-allowed' 
-                  : 'bg-slate-700/50 hover:bg-slate-600 text-white'
-              }`}
+              className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${action.disabled
+                ? 'bg-slate-700/30 text-slate-500 cursor-not-allowed'
+                : 'bg-slate-700/50 hover:bg-slate-600 text-white'
+                }`}
             >
               <Icon size={16} />
               <span className="text-sm font-medium">{action.label}</span>
