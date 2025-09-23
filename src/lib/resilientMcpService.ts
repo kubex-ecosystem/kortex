@@ -243,8 +243,13 @@ class ResilientMCPService {
 }
 
 // Singleton instance for the application
-// Using localhost:3002 for our mock API server during development
-export const resilientMCPService = new ResilientMCPService('http://localhost:3002');
+// Points to the Next.js MCP proxy by default, but can be overridden via env var.
+const DEFAULT_MCP_BASE_URL =
+  process.env.NEXT_PUBLIC_MCP_BASE_URL && process.env.NEXT_PUBLIC_MCP_BASE_URL.trim().length > 0
+    ? process.env.NEXT_PUBLIC_MCP_BASE_URL
+    : '/api/mcp';
+
+export const resilientMCPService = new ResilientMCPService(DEFAULT_MCP_BASE_URL);
 
 // Fallback data for different endpoints
 export const FALLBACK_DATA = {

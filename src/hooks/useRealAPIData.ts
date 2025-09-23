@@ -1,247 +1,287 @@
 /**
- * 🔥 useRealAPIData Hook
- * Hook para buscar dados REAIS das APIs GitHub + Azure DevOps
- * Substitui os dados mock por dados reais com fallback resiliente
+ * useRealAPIData Hook
+ * Conecta o dashboard do Kortex às rotas reais do GoBE Gateway.
+ * Fornece métricas consolidadas do scorecard, health e provedores ativos
+ * com fallback resiliente quando o backend está indisponível.
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { resilientMCPService } from '../lib/resilientMcpService';
+import { resilientGatewayService } from '../lib/resilientGatewayService';
 
-interface GitHubData {
-  repositories: number;
-  pullRequests: number;
-  openPRs: number;
-  draftPRs: number;
-  mergedPRs: number;
-  issues: number;
-  commits: number;
-  contributors: number;
+interface ServiceResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  isFromCache?: boolean;
+  isFromFallback?: boolean;
+  timestamp: number;
 }
 
-interface AzureDevOpsData {
-  projects: number;
-  pipelines: number;
-  successfulPipelines: number;
-  failedPipelines: number;
-  runningPipelines: number;
-  workItems: number;
-  builds: number;
-  releases: number;
+interface ScorecardEntry {
+  id: string;
+  title: string;
+  description: string;
+  score: number;
+  updated_at: string;
+  tags?: string[];
+}
+
+interface ScorecardResponse {
+  items?: ScorecardEntry[];
+  version?: string;
+}
+
+interface ScorecardMetricsResponse {
+  metrics?: Record<string, unknown>;
+  version?: string;
+}
+
+interface ProviderItem {
+  name: string;
+  type?: string;
+  org?: string;
+  default_model?: string;
+  available?: boolean;
+  last_error?: string;
+  metadata?: Record<string, unknown>;
+}
+
+interface ProvidersResponse {
+  providers?: ProviderItem[];
+  timestamp?: string;
 }
 
 interface RealAPIStats {
-  // GitHub Stats
-  totalRepositories: number;
-  totalPullRequests: number;
-  openPRs: number;
-  draftPRs: number;
-  totalIssues: number;
-  
-  // Azure DevOps Stats
-  totalPipelines: number;
-  successfulPipelines: number;
-  failedPipelines: number;
-  runningPipelines: number;
-  
-  // Combined Stats
-  connectedSources: number;
-  totalCommits: number;
-  totalContributors: number;
-  
-  // Metadata
-  lastUpdated: Date;
+  scorecardItems: number;
+  averageScore: number;
+  requestsLastHour: number;
+  avgLatencyMs: number;
+  successRate: number;
+  connectedProviders: number;
+  totalProviders: number;
+  version: string;
+  lastUpdated: Date | null;
   dataSource: 'real' | 'fallback' | 'cached';
   isLoading: boolean;
   error: string | null;
 }
 
+const toNumber = (value: unknown, fallback = 0): number => {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : fallback;
+  }
+  if (typeof value === 'string') {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+  return fallback;
+};
+
+const createFallbackScorecard = (): ScorecardResponse => ({
+  items: [
+    {
+      id: 'demo',
+      title: 'AI Governance',
+      description: 'Scorecard placeholder enquanto o Analyzer não responde',
+      score: 0.75,
+      updated_at: new Date().toISOString(),
+      tags: ['placeholder', 'todo'],
+    },
+  ],
+  version: 'gateway-placeholder-1',
+});
+
+const createFallbackMetrics = (): ScorecardMetricsResponse => ({
+  metrics: {
+    requests_last_hour: 0,
+    avg_latency_ms: 0,
+    success_rate: 1,
+  },
+  version: 'gateway-placeholder-1',
+});
+
+const createFallbackProviders = (): ProvidersResponse => ({
+  providers: [],
+  timestamp: new Date().toISOString(),
+});
+
+const FALLBACK_SCORECARD = createFallbackScorecard();
+const FALLBACK_METRICS = createFallbackMetrics();
+const FALLBACK_PROVIDERS = createFallbackProviders();
+
 const FALLBACK_STATS: RealAPIStats = {
-  totalRepositories: 12,
-  totalPullRequests: 45,
-  openPRs: 8,
-  draftPRs: 3,
-  totalIssues: 23,
-  totalPipelines: 18,
-  successfulPipelines: 15,
-  failedPipelines: 2,
-  runningPipelines: 1,
-  connectedSources: 2,
-  totalCommits: 234,
-  totalContributors: 7,
-  lastUpdated: new Date(),
+  scorecardItems: FALLBACK_SCORECARD.items?.length ?? 0,
+  averageScore:
+    FALLBACK_SCORECARD.items && FALLBACK_SCORECARD.items.length > 0
+      ? FALLBACK_SCORECARD.items.reduce((acc, item) => acc + (item.score ?? 0), 0) /
+        FALLBACK_SCORECARD.items.length
+      : 0,
+  requestsLastHour: toNumber(FALLBACK_METRICS.metrics?.requests_last_hour),
+  avgLatencyMs: toNumber(FALLBACK_METRICS.metrics?.avg_latency_ms),
+  successRate: toNumber(FALLBACK_METRICS.metrics?.success_rate, 1),
+  connectedProviders: FALLBACK_PROVIDERS.providers?.filter((p) => p.available !== false).length ?? 0,
+  totalProviders: FALLBACK_PROVIDERS.providers?.length ?? 0,
+  version: FALLBACK_SCORECARD.version ?? 'unknown',
+  lastUpdated: null,
   dataSource: 'fallback',
   isLoading: false,
-  error: null
+  error: null,
+};
+
+type GatewayFetchResult<T> = {
+  data: T;
+  raw: ServiceResponse<T>;
 };
 
 export function useRealAPIData() {
   const [stats, setStats] = useState<RealAPIStats>(FALLBACK_STATS);
   const [isClient, setIsClient] = useState(false);
 
-  // Initialize client-side only
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Fetch GitHub data
-    const fetchGitHubData = async (): Promise<GitHubData> => {
-    try {
-      // Using resilientMCPService to fetch GitHub data from our mock API
-      const response = await resilientMCPService.safeRequest('/github/stats');
-      
-      if (response.success && response.data) {
-        return {
-          repositories: response.data.repositories || 12,
-          issues: response.data.issues || 34,
-          pullRequests: response.data.pullRequests || 8,
-          openPRs: response.data.openPRs || 5,
-          draftPRs: response.data.draftPRs || 2,
-          mergedPRs: response.data.mergedPRs || 156,
-          commits: response.data.commits || 156,
-          contributors: response.data.contributors || 5
-        };
-      }
-      
-      throw new Error('Failed to fetch GitHub data');
-    } catch (error) {
-      console.warn('GitHub API failed, using fallback data:', error);
-      return {
-        repositories: 12,
-        issues: 34,
-        pullRequests: 8,
-        openPRs: 5,
-        draftPRs: 2,
-        mergedPRs: 156,
-        commits: 156,
-        contributors: 5
-      };
-    }
-  };
+  const fetchScorecard = useCallback(async (): Promise<GatewayFetchResult<ScorecardResponse>> => {
+    const response = (await resilientGatewayService.safeRequest<ScorecardResponse>(
+      '/api/v1/scorecard'
+    )) as ServiceResponse<ScorecardResponse>;
 
-  // Fetch Azure DevOps data
-  const fetchAzureData = useCallback(async (): Promise<AzureDevOpsData> => {
-    try {
-      console.log('🔍 Fetching Azure DevOps data...');
-      
-      const response = await resilientMCPService.safeRequest('/azure/stats', {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (response.success && response.data) {
-        console.log('✅ Got real Azure data:', response.data);
-        return {
-          projects: response.data.projects || 3,
-          pipelines: response.data.pipelines || 18,
-          successfulPipelines: response.data.successfulPipelines || 15,
-          failedPipelines: response.data.failedPipelines || 2,
-          runningPipelines: response.data.runningPipelines || 1,
-          workItems: response.data.workItems || 67,
-          builds: response.data.builds || 89,
-          releases: response.data.releases || 23
-        };
-      }
-      
-      console.log('🔴 Azure API unavailable, using fallback');
-      return {
-        projects: 3,
-        pipelines: 18,
-        successfulPipelines: 15,
-        failedPipelines: 2,
-        runningPipelines: 1,
-        workItems: 67,
-        builds: 89,
-        releases: 23
-      };
-    } catch (error) {
-      console.error('🔴 Error fetching Azure data:', error);
-      return {
-        projects: 3,
-        pipelines: 18,
-        successfulPipelines: 15,
-        failedPipelines: 2,
-        runningPipelines: 1,
-        workItems: 67,
-        builds: 89,
-        releases: 23
-      };
+    if (response.success && response.data) {
+      return { data: response.data, raw: response };
     }
+
+    const fallback = createFallbackScorecard();
+    return {
+      data: fallback,
+      raw: {
+        ...response,
+        success: false,
+        data: fallback,
+        isFromFallback: true,
+      },
+    };
   }, []);
 
-  // Fetch combined real data
+  const fetchMetrics = useCallback(async (): Promise<GatewayFetchResult<ScorecardMetricsResponse>> => {
+    const response = (await resilientGatewayService.safeRequest<ScorecardMetricsResponse>(
+      '/api/v1/metrics/ai'
+    )) as ServiceResponse<ScorecardMetricsResponse>;
+
+    if (response.success && response.data) {
+      return { data: response.data, raw: response };
+    }
+
+    const fallback = createFallbackMetrics();
+    return {
+      data: fallback,
+      raw: {
+        ...response,
+        success: false,
+        data: fallback,
+        isFromFallback: true,
+      },
+    };
+  }, []);
+
+  const fetchProviders = useCallback(async (): Promise<GatewayFetchResult<ProvidersResponse>> => {
+    const response = (await resilientGatewayService.safeRequest<ProvidersResponse>(
+      '/providers'
+    )) as ServiceResponse<ProvidersResponse>;
+
+    if (response.success && response.data) {
+      return { data: response.data, raw: response };
+    }
+
+    const fallback = createFallbackProviders();
+    return {
+      data: fallback,
+      raw: {
+        ...response,
+        success: false,
+        data: fallback,
+        isFromFallback: true,
+      },
+    };
+  }, []);
+
   const fetchRealData = useCallback(async () => {
     if (!isClient) return;
 
-    setStats(prev => ({ ...prev, isLoading: true, error: null }));
+    setStats((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      console.log('🚀 Fetching real API data...');
-      
-      const [githubData, azureData] = await Promise.all([
-        fetchGitHubData(),
-        fetchAzureData()
+      const [scorecardResult, metricsResult, providersResult] = await Promise.all([
+        fetchScorecard(),
+        fetchMetrics(),
+        fetchProviders(),
       ]);
 
-      // Determine data source
-      let dataSource: 'real' | 'fallback' | 'cached' = 'real';
-      
-      // Check if we got real data by comparing with fallback values
-      if (githubData.repositories === 12 && azureData.pipelines === 18) {
-        dataSource = 'fallback';
+      const responses = [scorecardResult.raw, metricsResult.raw, providersResult.raw];
+
+      const isFallback = responses.some((resp) => !resp?.success || resp?.isFromFallback);
+      const isCached = responses.some((resp) => resp?.isFromCache);
+
+      const dataSource: RealAPIStats['dataSource'] = isFallback ? 'fallback' : isCached ? 'cached' : 'real';
+
+      const items = scorecardResult.data.items ?? [];
+      const averageScore =
+        items.length > 0
+          ? items.reduce((acc, item) => acc + (item.score ?? 0), 0) / items.length
+          : 0;
+
+      const metrics = metricsResult.data.metrics ?? {};
+      const requestsLastHour = toNumber(metrics.requests_last_hour);
+      const avgLatencyMs = toNumber(metrics.avg_latency_ms);
+      let successRate = toNumber(metrics.success_rate, 1);
+
+      if (successRate > 1) {
+        successRate = successRate / 100;
       }
+      successRate = Math.min(Math.max(successRate, 0), 1);
+
+      const providers = providersResult.data.providers ?? [];
+      const connectedProviders = providers.filter((provider) => provider.available !== false).length;
+
+      const version =
+        metricsResult.data.version || scorecardResult.data.version || stats.version || 'unknown';
 
       const newStats: RealAPIStats = {
-        // GitHub Stats
-        totalRepositories: githubData.repositories,
-        totalPullRequests: githubData.pullRequests,
-        openPRs: githubData.openPRs,
-        draftPRs: githubData.draftPRs,
-        totalIssues: githubData.issues,
-        
-        // Azure DevOps Stats
-        totalPipelines: azureData.pipelines,
-        successfulPipelines: azureData.successfulPipelines,
-        failedPipelines: azureData.failedPipelines,
-        runningPipelines: azureData.runningPipelines,
-        
-        // Combined Stats
-        connectedSources: dataSource === 'real' ? 2 : 1,
-        totalCommits: githubData.commits,
-        totalContributors: githubData.contributors,
-        
-        // Metadata
+        scorecardItems: items.length,
+        averageScore,
+        requestsLastHour,
+        avgLatencyMs,
+        successRate,
+        connectedProviders,
+        totalProviders: providers.length,
+        version,
         lastUpdated: new Date(),
         dataSource,
         isLoading: false,
-        error: null
+        error: null,
       };
 
       setStats(newStats);
-      console.log(`✅ Real API data loaded (source: ${dataSource}):`, newStats);
-      
+      console.log(`✅ Gateway data loaded (source: ${dataSource})`, newStats);
     } catch (error) {
-      console.error('🔴 Error fetching real data:', error);
-      setStats(prev => ({
+      console.error('🔴 Error fetching gateway data:', error);
+      setStats((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch data',
-        dataSource: 'fallback'
+        error: error instanceof Error ? error.message : 'Failed to fetch gateway data',
+        dataSource: 'fallback',
       }));
     }
-  }, [isClient, fetchGitHubData, fetchAzureData]);
+  }, [fetchMetrics, fetchProviders, fetchScorecard, isClient, stats.version]);
 
-  // Auto-fetch on mount and refresh every 5 minutes
   useEffect(() => {
     if (!isClient) return;
 
     fetchRealData();
-    
-    const interval = setInterval(fetchRealData, 5 * 60 * 1000); // 5 minutes
-    
-    return () => clearInterval(interval);
-  }, [isClient, fetchRealData]);
+    const interval = setInterval(fetchRealData, 5 * 60 * 1000);
 
-  // Manual refresh function
+    return () => clearInterval(interval);
+  }, [fetchRealData, isClient]);
+
   const refreshData = useCallback(async () => {
     await fetchRealData();
   }, [fetchRealData]);
@@ -253,7 +293,7 @@ export function useRealAPIData() {
     isRealData: stats.dataSource === 'real',
     isFallbackData: stats.dataSource === 'fallback',
     lastUpdated: stats.lastUpdated,
-    refreshData
+    refreshData,
   };
 }
 

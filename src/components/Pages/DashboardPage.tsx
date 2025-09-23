@@ -1,4 +1,4 @@
-import { Activity, Database, GitBranch, RefreshCw, Server, XCircle } from 'lucide-react';
+import { Activity, Database, Gauge, RefreshCw, Server, XCircle } from 'lucide-react';
 import { JSX } from 'react';
 import { useResilientApp } from '../../context/ResilientAppContext';
 import { useRealAPIData } from '../../hooks/useRealAPIData';
@@ -17,40 +17,42 @@ export const DashboardPage = (): JSX.Element => {
     return acc;
   }, {} as Record<string, number>);
 
-  // Real API-based statistics cards
+  const averageScorePercent = `${(stats.averageScore * 100).toFixed(1)}%`;
+  const successPercent = `${(stats.successRate * 100).toFixed(1)}%`;
+
   const statsCards = [
-    { 
-      label: 'Repositórios', 
-      value: stats.totalRepositories, 
-      icon: <Database className="h-8 w-8 text-blue-600" />, 
+    {
+      label: 'Itens do Scorecard',
+      value: stats.scorecardItems,
+      icon: <Database className="h-8 w-8 text-blue-600" />,
       color: 'blue',
-      subtitle: isRealData ? 'GitHub (dados reais)' : 'GitHub (demo)',
-      trend: isRealData ? '+2 este mês' : 'Demo data'
+      subtitle: `Score médio ${averageScorePercent}`,
+      trend: stats.version ? `Versão ${stats.version}` : undefined,
     },
-    { 
-      label: 'Pull Requests', 
-      value: stats.totalPullRequests, 
-      icon: <GitBranch className="h-8 w-8 text-green-600" />, 
+    {
+      label: 'Requisições (1h)',
+      value: stats.requestsLastHour,
+      icon: <Activity className="h-8 w-8 text-green-600" />,
       color: 'green',
-      subtitle: `${stats.openPRs} abertos, ${stats.draftPRs} drafts`,
-      trend: isRealData ? `${stats.openPRs} pendentes` : 'Demo data'
+      subtitle: `Latência média ${stats.avgLatencyMs.toFixed(1)} ms`,
+      trend: isRealData ? 'Dados do GoBE' : 'Modo resiliência',
     },
-    { 
-      label: 'Pipelines', 
-      value: stats.totalPipelines, 
-      icon: <Activity className="h-8 w-8 text-purple-600" />, 
+    {
+      label: 'Taxa de Sucesso',
+      value: successPercent,
+      icon: <Gauge className="h-8 w-8 text-purple-600" />,
       color: 'purple',
-      subtitle: `${stats.successfulPipelines} ok, ${stats.failedPipelines} falhou`,
-      trend: `${stats.runningPipelines} executando`
+      subtitle: 'Execuções bem-sucedidas',
+      trend: undefined,
     },
-    { 
-      label: 'Fontes Conectadas', 
-      value: stats.connectedSources, 
-      icon: <Server className="h-8 w-8 text-orange-600" />, 
+    {
+      label: 'Provedores Ativos',
+      value: stats.connectedProviders,
+      icon: <Server className="h-8 w-8 text-orange-600" />,
       color: 'orange',
-      subtitle: isRealData ? 'GitHub + Azure DevOps' : 'APIs em modo demo',
-      trend: isRealData ? 'Dados em tempo real' : 'Simulação ativa'
-    }
+      subtitle: `Total cadastrados ${stats.totalProviders}`,
+      trend: stats.connectedProviders > 0 ? 'Integrações prontas' : 'Nenhum provider online',
+    },
   ];
 
   const handleTaskAction = (taskId: string, action: string) => {
