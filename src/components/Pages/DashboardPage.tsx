@@ -1,5 +1,14 @@
-import { Activity, Database, Gauge, RefreshCw, Server, XCircle } from 'lucide-react';
-import { JSX } from 'react';
+import {
+  Activity,
+  Award,
+  Clock,
+  Gauge,
+  RefreshCw,
+  Server,
+  Users,
+  XCircle,
+} from 'lucide-react';
+import { JSX, useMemo } from 'react';
 import { useResilientApp } from '../../context/ResilientAppContext';
 import { useRealAPIData } from '../../hooks/useRealAPIData';
 import { Task } from '../../types';
@@ -7,9 +16,66 @@ import { TaskCard } from '../Dashboard/TaskCard';
 import { LiveActivityFeed } from '../RealTime/LiveActivityFeed';
 import { RealTimeStatus } from '../Status/RealTimeStatus';
 
+interface MetricRowProps {
+  label: string;
+  value: string;
+}
+
+const MetricRow = ({ label, value }: MetricRowProps): JSX.Element => (
+  <div className="flex items-center justify-between text-sm">
+    <span className="text-gray-600 dark:text-gray-400">{label}</span>
+    <span className="font-medium text-gray-900 dark:text-gray-200">{value}</span>
+  </div>
+);
+
 export const DashboardPage = (): JSX.Element => {
   const { tasks } = useResilientApp();
-  const { stats, isLoading, error, isRealData, isFallbackData, lastUpdated, refreshData } = useRealAPIData();
+  const {
+    stats,
+    isLoading,
+    error,
+    isRealData,
+    isFallbackData,
+    lastUpdated,
+    refreshData,
+    scorecard,
+    aiMetrics,
+    providers,
+    analyzerConfig,
+  } = useRealAPIData();
+
+  const formatPercentage = (value: number | null | undefined, fractionDigits = 1) => {
+    if (value === null || value === undefined || Number.isNaN(value)) {
+      return 'N/A';
+    }
+    const percent = value > 1 ? value : value * 100;
+    return `${percent.toFixed(fractionDigits)}%`;
+  };
+
+  const formatHours = (value: number | null | undefined) => {
+    if (value === null || value === undefined || Number.isNaN(value)) {
+      return 'N/A';
+    }
+    if (value >= 24) {
+      const days = value / 24;
+      return `${days.toFixed(1)}d`;
+    }
+    return `${value.toFixed(1)}h`;
+  };
+
+  const formatNumber = (value: number | null | undefined, fractionDigits = 1) => {
+    if (value === null || value === undefined || Number.isNaN(value)) {
+      return 'N/A';
+    }
+    return value.toFixed(fractionDigits);
+  };
+
+  const chiScoreDisplay = useMemo(() => {
+    if (stats.chiScore === null || stats.chiScore === undefined || Number.isNaN(stats.chiScore)) {
+      return 'N/A';
+    }
+    return `${stats.chiScore.toFixed(0)}`;
+  }, [stats.chiScore]);
   
   const statusCounts = (tasks || []).reduce((acc, task) => {
     const status = (task as any)?.status || (task as any)?.definition?.status || 'Unknown';
@@ -17,38 +83,37 @@ export const DashboardPage = (): JSX.Element => {
     return acc;
   }, {} as Record<string, number>);
 
-  const averageScorePercent = `${(stats.averageScore * 100).toFixed(1)}%`;
-  const successPercent = `${(stats.successRate * 100).toFixed(1)}%`;
-
   const statsCards = [
     {
-      label: 'Itens do Scorecard',
-      value: stats.scorecardItems,
-      icon: <Database className="h-8 w-8 text-blue-600" />,
+      label: 'CHI Score',
+      value: chiScoreDisplay,
+      icon: <Award className="h-8 w-8 text-blue-600" />,
       color: 'blue',
-      subtitle: `Score médio ${averageScorePercent}`,
-      trend: stats.version ? `Versão ${stats.version}` : undefined,
+      subtitle: scorecard.repoLabel ? `Repo ${scorecard.repoLabel}` : 'Aguardando dados',
+      trend: scorecard.generatedAt
+        ? `Atualizado ${scorecard.generatedAt.toLocaleDateString()}`
+        : undefined,
     },
     {
-      label: 'Requisições (1h)',
-      value: stats.requestsLastHour,
-      icon: <Activity className="h-8 w-8 text-green-600" />,
+      label: 'Lead Time P95',
+      value: formatHours(stats.leadTimeP95Hours),
+      icon: <Clock className="h-8 w-8 text-green-600" />,
       color: 'green',
-      subtitle: `Latência média ${stats.avgLatencyMs.toFixed(1)} ms`,
+      subtitle: `Deploys/semana ${formatNumber(stats.deploymentFrequencyWeek, 1)}`,
       trend: isRealData ? 'Dados do GoBE' : 'Modo resiliência',
     },
     {
-      label: 'Taxa de Sucesso',
-      value: successPercent,
+      label: 'Human Input Ratio',
+      value: formatPercentage(stats.hir),
       icon: <Gauge className="h-8 w-8 text-purple-600" />,
       color: 'purple',
-      subtitle: 'Execuções bem-sucedidas',
-      trend: undefined,
+      subtitle: `AAC ${formatPercentage(stats.aac)}`,
+      trend: aiMetrics.periodDays ? `${aiMetrics.periodDays} dias` : undefined,
     },
     {
       label: 'Provedores Ativos',
       value: stats.connectedProviders,
-      icon: <Server className="h-8 w-8 text-orange-600" />,
+      icon: <Users className="h-8 w-8 text-orange-600" />,
       color: 'orange',
       subtitle: `Total cadastrados ${stats.totalProviders}`,
       trend: stats.connectedProviders > 0 ? 'Integrações prontas' : 'Nenhum provider online',
@@ -162,7 +227,7 @@ export const DashboardPage = (): JSX.Element => {
         {/* Connection Status */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            � Connection Status
+            Connection Status
           </h2>
           <RealTimeStatus showDetails />
         </div>
@@ -171,6 +236,169 @@ export const DashboardPage = (): JSX.Element => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
           <LiveActivityFeed maxEvents={8} />
         </div>
+      </div>
+
+      {/* Scorecard & AI Metrics Snapshot */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                Scorecard Snapshot
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {scorecard.repoLabel || 'Configuração padrão'}
+              </p>
+            </div>
+            {scorecard.generatedAt && (
+              <span className="text-xs text-gray-400 dark:text-gray-500">
+                {scorecard.generatedAt.toLocaleString()}
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            <MetricRow label="CHI Score" value={chiScoreDisplay} />
+            <MetricRow
+              label="Duplicação"
+              value={formatPercentage(scorecard.duplicationPct)}
+            />
+            <MetricRow
+              label="Cobertura de Testes"
+              value={formatPercentage(scorecard.testCoveragePct)}
+            />
+            <MetricRow
+              label="Lead Time (P95)"
+              value={formatHours(scorecard.leadTimeP95Hours)}
+            />
+            <MetricRow
+              label="Deploys/semana"
+              value={formatNumber(scorecard.deploymentFrequencyWeek, 2)}
+            />
+            <MetricRow
+              label="Change Fail Rate"
+              value={formatPercentage(scorecard.changeFailRatePercent ?? null)}
+            />
+            <MetricRow label="Bus Factor" value={formatNumber(scorecard.busFactor, 0)} />
+          </div>
+
+          {scorecard.fallback && scorecard.placeholderItems && (
+            <div className="mt-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 p-3 text-xs text-yellow-800 dark:text-yellow-200">
+              Exibindo dados de placeholder enquanto o Analyzer não responde.
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                AI Metrics Overview
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Período: {aiMetrics.periodDays ? `${aiMetrics.periodDays} dias` : 'indefinido'}
+              </p>
+            </div>
+            <div className={`px-2 py-1 rounded-full text-xs ${
+              aiMetrics.fallback
+                ? 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-200'
+                : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-200'
+            }`}>
+              {aiMetrics.fallback ? 'Fallback' : 'Analyzer'}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3">
+            <MetricRow label="HIR" value={formatPercentage(aiMetrics.hir)} />
+            <MetricRow label="AAC" value={formatPercentage(aiMetrics.aac)} />
+            <MetricRow label="TPH" value={formatNumber(aiMetrics.tph, 2)} />
+            <MetricRow label="Horas Humanas" value={formatNumber(aiMetrics.humanHours, 1)} />
+            <MetricRow label="Horas de IA" value={formatNumber(aiMetrics.aiHours, 1)} />
+          </div>
+
+          {aiMetrics.contributors && aiMetrics.contributors.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Principais Contribuidores
+              </h3>
+              <div className="space-y-2">
+                {aiMetrics.contributors.slice(0, 3).map((contributor, index) => (
+                  <div
+                    key={`${contributor.user || 'contributor'}-${index}`}
+                    className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400"
+                  >
+                    <span className="font-medium text-gray-800 dark:text-gray-200">
+                      {contributor.user || 'Desconhecido'}
+                    </span>
+                    <div className="flex items-center gap-4 text-xs">
+                      <span>HIR {formatPercentage(contributor.hir)}</span>
+                      <span>AAC {formatPercentage(contributor.aac)}</span>
+                      <span>TPH {formatNumber(contributor.tph, 2)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Providers overview */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Providers do Gateway
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Fonte: {isRealData ? 'GoBE Analyzer' : 'Fallback'} — repo alvo {analyzerConfig.repo}
+            </p>
+          </div>
+          <div className={`px-2 py-1 text-xs rounded-full ${
+            stats.connectedProviders > 0
+              ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-200'
+              : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+          }`}>
+            {stats.connectedProviders} ativos de {stats.totalProviders}
+          </div>
+        </div>
+
+        {providers.length === 0 ? (
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Nenhum provider disponível ainda. Configure as integrações no GoBE para habilitar este painel.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {providers.slice(0, 6).map((provider) => (
+              <div
+                key={provider.name}
+                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900/40"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-medium text-gray-900 dark:text-gray-100 capitalize">
+                    {provider.name}
+                  </span>
+                  <span className={`w-2 h-2 rounded-full ${
+                    provider.available
+                      ? 'bg-green-500 animate-pulse'
+                      : 'bg-red-500'
+                  }`} />
+                </div>
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
+                  {provider.type || 'desconhecido'}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Modelo: {provider.default_model || 'default'}
+                </p>
+                {provider.last_error && (
+                  <p className="text-xs text-red-500 dark:text-red-400 mt-2">
+                    {provider.last_error}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Recent Tasks */}
