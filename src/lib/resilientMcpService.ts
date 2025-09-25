@@ -27,7 +27,7 @@ class ResilientMCPService {
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
   private retryCount: Map<string, number> = new Map();
   private isOnline: boolean = true;
-  
+
   constructor(baseURL: string = '/api/mcp') {
     this.baseURL = baseURL;
     this.checkOnlineStatus();
@@ -42,7 +42,7 @@ class ResilientMCPService {
         method: 'GET',
         timeout: 5000
       } as RequestInit);
-      
+
       this.isOnline = response.ok;
       this.fallbackMode = !this.isOnline;
     } catch (error) {
@@ -56,8 +56,8 @@ class ResilientMCPService {
    * Request resiliente com fallbacks automáticos
    */
   async safeRequest<T = any>(
-    endpoint: string, 
-    options: RequestInit = {}, 
+    endpoint: string,
+    options: RequestInit = {},
     config: Partial<FallbackConfig> = {}
   ): Promise<ServiceResponse<T>> {
     const finalConfig: FallbackConfig = {
@@ -70,7 +70,7 @@ class ResilientMCPService {
     };
 
     const cacheKey = `${endpoint}_${JSON.stringify(options)}`;
-    
+
     // 1. Verificar cache primeiro (se offline)
     if (this.fallbackMode && finalConfig.useCache) {
       const cached = this.getCachedData(cacheKey, finalConfig.cacheTimeout);
@@ -87,7 +87,7 @@ class ResilientMCPService {
     // 2. Tentar request real
     try {
       const response = await this.attemptRequest(endpoint, options, finalConfig);
-      
+
       // Cache successful response
       if (response.success && finalConfig.useCache) {
         this.cache.set(cacheKey, {
@@ -106,7 +106,7 @@ class ResilientMCPService {
       return response as ServiceResponse<T>;
     } catch (error) {
       console.warn(`🔴 Request failed for ${endpoint}:`, error);
-      
+
       // 3. Fallback strategy
       return this.handleFailure(cacheKey, finalConfig, error as Error);
     }
@@ -134,10 +134,10 @@ class ResilientMCPService {
       }
 
       const data = await response.json();
-      
+
       // Reset retry count on success
       this.retryCount.delete(retryKey);
-      
+
       return {
         success: true,
         data: data as T,
@@ -147,14 +147,14 @@ class ResilientMCPService {
       if (currentRetries < config.maxRetries) {
         // Increment retry count
         this.retryCount.set(retryKey, currentRetries + 1);
-        
+
         // Wait before retry
         await new Promise(resolve => setTimeout(resolve, config.retryDelay * (currentRetries + 1)));
-        
+
         // Recursive retry
         return this.attemptRequest(endpoint, options, config);
       }
-      
+
       throw error;
     }
   }
@@ -244,19 +244,31 @@ class ResilientMCPService {
 
 // Singleton instance for the application
 // Points to the Next.js MCP proxy by default, but can be overridden via env var.
-const DEFAULT_MCP_BASE_URL =
-  process.env.NEXT_PUBLIC_MCP_BASE_URL && process.env.NEXT_PUBLIC_MCP_BASE_URL.trim().length > 0
-    ? process.env.NEXT_PUBLIC_MCP_BASE_URL
-    : '/api/mcp';
+const getDefaultMcpBaseUrl = (): string => {
+  // Verificar se estamos no browser ou Node.js
+  if (typeof window !== 'undefined') {
+    // Browser environment - usar window.location ou fallback
+    return '/api/mcp';
+  }
 
-export const resilientMCPService = new ResilientMCPService(DEFAULT_MCP_BASE_URL);
+  // Node.js environment - pode usar process.env
+  if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_MCP_BASE_URL) {
+    const envUrl = process.env.NEXT_PUBLIC_MCP_BASE_URL.trim();
+    return envUrl.length > 0 ? envUrl : '/api/mcp';
+  }
+
+  // Fallback padrão
+  return '/api/mcp';
+};
+
+export const resilientMCPService = new ResilientMCPService(getDefaultMcpBaseUrl());
 
 // Fallback data for different endpoints
 export const FALLBACK_DATA = {
   servers: [
-    { 
-      id: 'demo-1', 
-      name: 'Demo Server', 
+    {
+      id: 'demo-1',
+      name: 'Demo Server',
       status: 'Online',
       hostname: 'demo.local',
       config: {
@@ -276,7 +288,7 @@ export const FALLBACK_DATA = {
       logs: []
     }
   ],
-  
+
   stats: {
     totalServers: 1,
     activeServers: 1,
@@ -293,9 +305,9 @@ export const FALLBACK_DATA = {
   ],
 
   pullRequests: [
-    { 
-      id: 'demo-pr', 
-      title: 'Demo Pull Request', 
+    {
+      id: 'demo-pr',
+      title: 'Demo Pull Request',
       status: 'open',
       author: 'Demo User',
       createdAt: new Date().toISOString()
