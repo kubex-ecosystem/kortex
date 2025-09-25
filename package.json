@@ -12,7 +12,7 @@
   "sideEffects": false,
   "enginesStrict": true,
   "type": "module",
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
+  "packageManager": "npm@11.6.0",
   "markdown": "github",
   "categories": [
     "AI",
@@ -23,7 +23,7 @@
   ],
   "engines": {
     "node": ">=22.17.0",
-    "yarn": ">=1.22.0"
+    "npm": ">=11.0.0"
   },
   "repository": {
     "type": "git",
@@ -45,18 +45,6 @@
     "monitoring",
     "react"
   ],
-  "yarn": {
-    "install": {
-      "ignoreScripts": false
-    },
-    "publish": {
-      "ignoreScripts": false
-    },
-    "checkCache": {
-      "ignoreScripts": false
-    },
-    "postinstall": "husky install"
-  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -74,13 +62,13 @@
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "setup": "yarn install && husky add .husky/pre-commit 'yarn lint-staged' && husky add .husky/pre-push 'yarn test'",
-    "dev": "PORT=3000 next dev",
+    "setup": "npm install --no-fund --no-audit --legacy-peer-deps --loglevel=error && npx husky add .husky/pre-commit 'npm run lint-staged' && npx husky add .husky/pre-push 'npm test'",
+    "dev": "vite",
     "dev:mock": "node scripts/mock-api-server.cjs",
-    "build": "PORT=3000 next build",
-    "export": "PORT=3000 next export",
-    "start": "PORT=3000 next start", 
-    "lint": "next lint --ignore-path .gitignore",
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "node server/index.mjs",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" --max-warnings=0",
     "type-check": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",
@@ -93,53 +81,31 @@
     "dep:graph:json": "depcruise --exclude '^node_modules' --output-type json src > dependencygraph.json",
     "dep:graph:html": "depcruise --exclude '^node_modules' --output-type html src > dependencygraph.html",
     "dep:graph:md": "depcruise --exclude '^node_modules' --output-type markdown src > dependencygraph.md",
-    "analyze": "PORT=3000 next build && next export && next analyze",
-    "analyze:server": "PORT=3000 next build && next export && next analyze --server",
-    "clean": "PORT=3000 next clean",
-    "clean:environment": "PORT=3000 rm -rf ./node_modules ./yarn.lock ./package-lock.json ./.next ./out ./coverage || true",
-    "build:old": "PORT=3000 react-scripts build",
-    "start:old": "PORT=3000 react-scripts start",
-    "test:old": "PORT=3003 jest --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}' --watchAll=false --env=jsdom",
-    "test:old-coverage": "PORT=3003 jest --coverage --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-watch": "PORT=3003 jest --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}' --watch",
-    "test:old-coverage-watch": "PORT=3003 jest --coverage --watch --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-e2e": "PORT=3003 jest --env=jsdom --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-e2e-watch": "PORT=3003 jest --env=jsdom --watch --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-e2e": "PORT=3003 jest --env=jsdom --coverage --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-html": "PORT=3003 jest --coverage --coverageReporters=html --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-json": "PORT=3003 jest --coverage --coverageReporters=json --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-text": "PORT=3003 jest --coverage --coverageReporters=text --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-clover": "PORT=3003 jest --coverage --coverageReporters=clover --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-lcov": "PORT=3003 jest --coverage --coverageReporters=lcov --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-summary": "PORT=3003 jest --coverage --coverageReporters=summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-text-summary": "PORT=3003 jest --coverage --coverageReporters=text-summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-json-summary": "PORT=3003 jest --coverage --coverageReporters=json-summary --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-verbose": "PORT=3003 jest --coverage --coverageReporters=verbose --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-lcovonly": "PORT=3003 jest --coverage --coverageReporters=lcovonly --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'",
-    "test:old-coverage-cobertura": "PORT=3003 jest --coverage --coverageReporters=cobertura --collectCoverageFrom='src/**/*.{js,jsx,ts,tsx}'"
+    "clean": "rm -rf ./node_modules ./package-lock.json ./dist ./coverage || true"
   },
   "overrides": {
     "node-fetch": "2.6.7"
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "erro": "^2.1.0",
-    "error": "^10.4.0",
-    "framer-motion": "^12.23.6",
+    "compression": "^1.7.4",
+    "express": "^4.21.1",
+    "framer-motion": "^10.18.0",
+    "http-proxy-middleware": "^3.0.3",
     "i18next": "^25.3.2",
     "i18next-browser-languagedetector": "^8.2.0",
+    "idb": "^8.0.3",
     "jszip": "^3.10.1",
     "lookatni-file-markers": "^1.1.0",
+    "lucide-react": "^0.542.0",
     "material-icons-react": "^1.0.4",
-    "next": "^15.0.0",
-    "next-i18next": "^15.4.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "react-hook-form": "^7.43.1",
     "react-i18next": "^14.0.0",
     "react-icons": "^4.6.0",
     "react-query": "^3.39.2",
-    "react-router-dom": "^5.3.0",
+    "react-router-dom": "^6.28.0",
     "react-toastify": "^9.1.2",
     "react-use": "^17.4.0",
     "react-window": "^1.8.6",
@@ -148,37 +114,44 @@
   },
   "devDependencies": {
     "@babel/plugin-syntax-flow": "^7.27.1",
+    "@swc/jest": "^0.2.36",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/history": "^4.7.11",
     "@types/jest": "^30.0.0",
-    "@types/node": "^20",
-    "@types/react": "^19.1.8",
-    "@types/react-dom": "^19",
-    "@types/react-router-dom": "^5.3.3",
-    "autoprefixer": "^10.4.21",
+    "@types/node": "^22.9.0",
+    "@types/react": "^19.1.13",
+    "@types/react-dom": "^19.1.9",
+    "@types/uuid": "^10.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.14.0",
+    "@typescript-eslint/parser": "^8.14.0",
+    "@vitejs/plugin-react-swc": "^4.1.0",
+    "autoprefixer": "^10.4.19",
     "dependency-cruiser": "^16.10.4",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "globby": "^14.1.0",
     "husky": "^9.1.7",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
-    "lucide-react": "^0.525.0",
-    "postcss": "^8",
+    "lint-staged": "^15.4.2",
+    "postcss": "^8.4.38",
     "react-aria-components": "^1.10.1",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "tailwindcss": "^3.4.4",
+    "typescript": "~5.8.2",
+    "vite": "^7.1.6",
+    "vite-tsconfig-paths": "^5.1.2"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn lint-staged",
-      "pre-push": "yarn test",
+      "pre-commit": "npm run lint-staged",
+      "pre-push": "npm test",
       "commit-msg": "commitlint --edit $HUSKY_GIT_PARAMS",
-      "post-merge": "yarn install",
-      "post-checkout": "yarn install"
+      "post-merge": "npm install --no-fund --no-audit --legacy-peer-deps --loglevel=error",
+      "post-checkout": "npm install --no-fund --no-audit --legacy-peer-deps --loglevel=error"
     }
   },
   "lint-staged": {
@@ -221,14 +194,25 @@
     "not op_mini all"
   ],
   "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+      "ecmaVersion": 2024,
+      "sourceType": "module",
+      "project": [
+        "./tsconfig.json"
+      ],
+      "tsconfigRootDir": "."
+    },
     "extends": [
-      "next/core-web-vitals",
+      "eslint:recommended",
       "plugin:react/recommended",
+      "plugin:react-hooks/recommended",
       "plugin:@typescript-eslint/recommended",
       "prettier"
     ],
     "plugins": [
       "react",
+      "react-hooks",
       "@typescript-eslint"
     ],
     "ignorePatterns": [

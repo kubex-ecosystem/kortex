@@ -8,16 +8,21 @@
 import { useCallback, useEffect, useState } from 'react';
 import { resilientGatewayService } from '../lib/resilientGatewayService';
 
-const DEFAULT_ANALYZER_REPO =
-  (process.env.NEXT_PUBLIC_ANALYZER_REPOSITORY || 'kubex-ecosystem/gobe').trim() ||
-  'kubex-ecosystem/gobe';
+const envRecord = import.meta.env as Record<string, string | boolean | undefined>;
 
-const DEFAULT_ANALYZER_USER =
-  (process.env.NEXT_PUBLIC_ANALYZER_USER || 'kortex-dashboard').trim() || 'kortex-dashboard';
+const DEFAULT_ANALYZER_REPO = (() => {
+  const raw = (envRecord.VITE_ANALYZER_REPOSITORY ?? envRecord.NEXT_PUBLIC_ANALYZER_REPOSITORY ?? 'kubex-ecosystem/gobe') as string;
+  return raw?.trim() || 'kubex-ecosystem/gobe';
+})();
+
+const DEFAULT_ANALYZER_USER = (() => {
+  const raw = (envRecord.VITE_ANALYZER_USER ?? envRecord.NEXT_PUBLIC_ANALYZER_USER ?? 'kortex-dashboard') as string;
+  return raw?.trim() || 'kortex-dashboard';
+})();
 
 const DEFAULT_ANALYZER_PERIOD = (() => {
-  const raw = process.env.NEXT_PUBLIC_ANALYZER_PERIOD || '60';
-  const parsed = Number.parseInt(raw, 10);
+  const rawValue = (envRecord.VITE_ANALYZER_PERIOD ?? envRecord.NEXT_PUBLIC_ANALYZER_PERIOD ?? '60') as string;
+  const parsed = Number.parseInt(rawValue, 10);
   return Number.isNaN(parsed) || parsed <= 0 ? 60 : parsed;
 })();
 

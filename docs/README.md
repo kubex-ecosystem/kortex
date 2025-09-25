@@ -181,7 +181,7 @@ This will start both the Next.js application and the mock API server.
 ### Prerequisites (Development)
 
 - **Node.js** 18.0.0 or higher
-- **npm** or **yarn** package manager
+- **npm** package manager (v11+ recommended)
 - **Git** for version control
 
 ### Development Setup

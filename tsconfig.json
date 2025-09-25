@@ -3,44 +3,40 @@
     "target": "ES2022",
     "useDefineForClassFields": true,
     "useUnknownInCatchVariables": false,
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2023"],
+    "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
-    "noEmit": true,
-    "incremental": true,
-    "module": "esnext",
-    "esModuleInterop": true,
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "noEmit": true,
     "ignoreDeprecations": "6.0",
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-    "jsx": "preserve",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
+    "jsx": "react-jsx",
+    "types": ["vite/client", "jest", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "next/router": ["src/compat/next-router"]
+    }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "next-env.d.ts",
-    "src/**/*.js",
-    "src/**/*.json",
-    "src/**/*.jsx",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "out/types/**/*.ts"
+    "src",
+    "server",
+    "scripts",
+    "docs",
+    "test",
+    "sitemap.ts",
+    "vite.config.ts",
+    "postcss.config.js",
+    "tailwind.config.js",
+    "jest.config.cjs"
   ],
   "exclude": [
+    "dist",
     "node_modules"
   ]
 }

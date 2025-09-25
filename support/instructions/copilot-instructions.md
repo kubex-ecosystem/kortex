@@ -90,7 +90,7 @@ The app is designed to interface with Model Context Protocol servers:
 
 # TypeScript Craftsmanship Standards
 
-Use `yarn` with lockfiles committed. Prefer `workspace:` protocol in monorepos. Avoid unnecessary dependencies.
+Use `npm` with lockfiles committed. Prefer native workspaces if the repo evolves into a monorepo. Avoid unnecessary dependencies.
 
 Organize code in: `src/`, `src/components/`, `src/hooks/`, `src/pages/`, `src/context/`, `src/lib/`, `src/types/`, `src/interfaces/`, `tests/`, `scripts/`, `bin/`.  
 Main entry: `src/index.ts`. CLI entry: `bin/cli.ts`. Avoid deep folder nesting.

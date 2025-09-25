@@ -1,15 +1,29 @@
-import type { MetadataRoute } from 'next';
+export type SitemapEntry = {
+  url: string;
+  lastModified: string;
+};
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://kortex.rafa-mori.dev';
+const resolveBaseUrl = () => {
+  const envRecord = (globalThis as typeof globalThis & {
+    process?: { env?: Record<string, string | undefined> };
+  }).process?.env;
+
+  return envRecord?.VITE_BASE_URL || envRecord?.BASE_URL || 'https://kortex.rafa-mori.dev';
+};
+
+export default function sitemap(): SitemapEntry[] {
+  const baseUrl = resolveBaseUrl();
+  const now = new Date().toISOString();
+
   return [
-    { url: `${baseUrl}`, lastModified: new Date() },
-    { url: `${baseUrl}/dashboard`, lastModified: new Date() },
-    { url: `${baseUrl}/monitor`, lastModified: new Date() },
-    { url: `${baseUrl}/analytics`, lastModified: new Date() },
-    { url: `${baseUrl}/servers`, lastModified: new Date() },
-    { url: `${baseUrl}/api-config`, lastModified: new Date() },
-    { url: `${baseUrl}/settings`, lastModified: new Date() },
-    { url: `${baseUrl}/login`, lastModified: new Date() },
+    { url: `${baseUrl}`, lastModified: now },
+    { url: `${baseUrl}/dashboard`, lastModified: now },
+    { url: `${baseUrl}/monitor`, lastModified: now },
+    { url: `${baseUrl}/analytics`, lastModified: now },
+    { url: `${baseUrl}/servers`, lastModified: now },
+    { url: `${baseUrl}/api-config`, lastModified: now },
+    { url: `${baseUrl}/settings`, lastModified: now },
+    { url: `${baseUrl}/login`, lastModified: now },
+    { url: `${baseUrl}/prompt-engineering`, lastModified: now }
   ];
 }

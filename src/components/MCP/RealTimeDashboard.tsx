@@ -241,7 +241,7 @@ export const RealTimeDashboard: React.FC<RealTimeDashboardProps> = ({ className 
       )}
       
       {/* Debug Info */}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env.DEV && (
         <div className="bg-gray-900 rounded-lg p-4 border border-gray-600">
           <h4 className="text-sm font-semibold text-gray-400 mb-2">Debug Info</h4>
           <pre className="text-xs text-gray-500 overflow-auto">

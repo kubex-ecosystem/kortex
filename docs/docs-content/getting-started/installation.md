@@ -9,7 +9,7 @@ Before installing Kortex, ensure you have the following prerequisites:
 ### System Requirements
 
 - **Node.js** 18.0.0 or higher
-- **npm** 8.0.0 or higher (or **yarn** 1.22.0+)
+- **npm** 11.0.0 or higher
 - **Git** for version control
 - **Modern Browser** with WebSocket support
 
