@@ -5,3 +5,4 @@ export * from './Server';
 export * from './Model';
 export * from './Notification';
 export * from './Task';
+export * from './SystemMetrics';

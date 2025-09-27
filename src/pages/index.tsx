@@ -1,10 +1,10 @@
 import { Layout } from '../components/Layout/Layout';
-import { DashboardPageComplete } from '../components/Pages/DashboardPageComplete';
+import { DashboardPage } from '../components/Pages/DashboardPage';
 
 export default function Home() {
   return (
     <Layout>
-      <DashboardPageComplete />
+      <DashboardPage />
     </Layout>
   );
 }

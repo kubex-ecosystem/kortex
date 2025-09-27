@@ -2,7 +2,9 @@ import {
   Activity,
   Award,
   Clock,
+  Cpu,
   Gauge,
+  HardDrive,
   RefreshCw,
   Server,
   Users,
@@ -11,6 +13,7 @@ import {
 import { JSX, useMemo } from 'react';
 import { useResilientApp } from '../../context/ResilientAppContext';
 import { useRealAPIData } from '../../hooks/useRealAPIData';
+import { useSystemMetrics } from '../../hooks/useSystemMetrics';
 import { Task } from '../../types';
 import { TaskCard } from '../Dashboard/TaskCard';
 import { LiveActivityFeed } from '../RealTime/LiveActivityFeed';
@@ -43,6 +46,18 @@ export const DashboardPage = (): JSX.Element => {
     providers,
     analyzerConfig,
   } = useRealAPIData();
+  const {
+    metrics: systemMetrics,
+    dataSource: systemDataSource,
+    isLoading: isLoadingSystemMetrics,
+    error: systemMetricsError,
+    lastUpdated: systemMetricsUpdatedAt,
+    refresh: refreshSystemMetrics,
+    uptimeHuman,
+    cpuUtilization,
+    memoryUtilization,
+    diskUtilization,
+  } = useSystemMetrics({ refreshIntervalMs: 120_000 });
 
   const formatPercentage = (value: number | null | undefined, fractionDigits = 1) => {
     if (value === null || value === undefined || Number.isNaN(value)) {
@@ -119,6 +134,79 @@ export const DashboardPage = (): JSX.Element => {
       trend: stats.connectedProviders > 0 ? 'Integrações prontas' : 'Nenhum provider online',
     },
   ];
+
+  const systemCards = [
+    {
+      label: 'CPU Uso',
+      value: Number.isFinite(cpuUtilization) ? `${cpuUtilization.toFixed(1)}%` : 'N/A',
+      subtitle: `${systemMetrics.cpu.cores} cores`,
+      icon: <Cpu className="w-6 h-6 text-purple-500" />,
+    },
+    {
+      label: 'Memória',
+      value: Number.isFinite(memoryUtilization) ? `${memoryUtilization.toFixed(1)}%` : 'N/A',
+      subtitle: `${systemMetrics.memory.used.toFixed(1)} GB / ${systemMetrics.memory.total.toFixed(1)} GB`,
+      icon: <Gauge className="w-6 h-6 text-blue-500" />,
+    },
+    {
+      label: 'Disco',
+      value: Number.isFinite(diskUtilization) ? `${diskUtilization.toFixed(1)}%` : 'N/A',
+      subtitle: `${systemMetrics.disk.used.toFixed(1)} GB / ${systemMetrics.disk.total.toFixed(1)} GB`,
+      icon: <HardDrive className="w-6 h-6 text-emerald-500" />,
+    },
+  ];
+
+  const formattedLoadAverage = systemMetrics.loadAverage?.length
+    ? systemMetrics.loadAverage.map((value) => value.toFixed(2)).join(' • ')
+    : 'N/A';
+
+  const formatBytes = (value: number) => {
+    if (!value || value < 0) {
+      return '0 B';
+    }
+
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    let unitIndex = 0;
+    let output = value;
+
+    while (output >= 1024 && unitIndex < units.length - 1) {
+      output /= 1024;
+      unitIndex += 1;
+    }
+
+    const decimals = unitIndex === 0 ? 0 : output < 10 ? 1 : 0;
+    return `${output.toFixed(decimals)} ${units[unitIndex]}`;
+  };
+
+  const networkInbound = formatBytes(systemMetrics.network.bytesIn);
+  const networkOutbound = formatBytes(systemMetrics.network.bytesOut);
+
+  const systemSourceBadge = (
+    <span
+      className={`inline-flex items-center px-2 py-1 text-xs rounded-full font-medium ${
+        systemDataSource === 'real'
+          ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-200'
+          : systemDataSource === 'cached'
+            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200'
+            : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-200'
+      }`}
+    >
+      <span
+        className={`w-2 h-2 rounded-full mr-1 ${
+          systemDataSource === 'real'
+            ? 'bg-green-500'
+            : systemDataSource === 'cached'
+              ? 'bg-blue-500'
+              : 'bg-yellow-500'
+        }`}
+      />
+      {systemDataSource === 'real'
+        ? 'GoBE'
+        : systemDataSource === 'cached'
+          ? 'Cache'
+          : 'Fallback'}
+    </span>
+  );
 
   const handleTaskAction = (taskId: string, action: string) => {
     console.log(`Action '${action}' executed on task ${taskId}`);
@@ -218,8 +306,111 @@ export const DashboardPage = (): JSX.Element => {
                 {stat.icon}
               </div>
             </div>
-          </div>
+      </div>
         ))}
+      </div>
+
+      {/* System Metrics */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Métricas do Servidor</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Uptime {uptimeHuman} • Processos {systemMetrics.processes}
+            </p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">
+              Load average: {formattedLoadAverage}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            {systemSourceBadge}
+            {systemMetricsUpdatedAt && (
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                Atualizado: {systemMetricsUpdatedAt.toLocaleTimeString()}
+              </span>
+            )}
+            <button
+              onClick={refreshSystemMetrics}
+              disabled={isLoadingSystemMetrics}
+              className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 mr-1 ${isLoadingSystemMetrics ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        {systemMetricsError && (
+          <div className="mb-4 rounded-lg border border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20 px-4 py-3 text-sm text-yellow-800 dark:text-yellow-200">
+            {systemMetricsError}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {systemCards.map((card) => (
+            <div
+              key={card.label}
+              className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900/30"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    {card.label}
+                  </p>
+                  <p className={`text-2xl font-semibold text-gray-900 dark:text-white ${
+                    isLoadingSystemMetrics ? 'animate-pulse' : ''
+                  }`}>
+                    {isLoadingSystemMetrics ? '...' : card.value}
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {card.subtitle}
+                  </p>
+                </div>
+                <div className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                  {card.icon}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900/30">
+            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              Load Average (1m / 5m / 15m)
+            </p>
+            <p className={`text-lg font-medium text-gray-900 dark:text-white ${
+              isLoadingSystemMetrics ? 'animate-pulse' : ''
+            }`}>
+              {formattedLoadAverage}
+            </p>
+          </div>
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900/30">
+            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              Tráfego de Rede
+            </p>
+            <p className={`text-lg font-medium text-gray-900 dark:text-white ${
+              isLoadingSystemMetrics ? 'animate-pulse' : ''
+            }`}>
+              In {networkInbound}
+            </p>
+            <p className={`text-sm text-gray-500 dark:text-gray-400 ${
+              isLoadingSystemMetrics ? 'animate-pulse' : ''
+            }`}>
+              Out {networkOutbound}
+            </p>
+          </div>
+          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-gray-50 dark:bg-gray-900/30">
+            <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              Processos Ativos
+            </p>
+            <p className={`text-2xl font-semibold text-gray-900 dark:text-white ${
+              isLoadingSystemMetrics ? 'animate-pulse' : ''
+            }`}>
+              {isLoadingSystemMetrics ? '...' : systemMetrics.processes}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Real-Time Activity Section */}
