@@ -165,7 +165,7 @@ export const useRealTimeMetrics = ({
         const newData: MetricData = JSON.parse(event.data);
         setData(prev => {
           const updated = [...prev, newData];
-          return updated.length > maxDataPoints 
+          return updated.length > maxDataPoints
             ? updated.slice(-maxDataPoints)
             : updated;
         });
@@ -194,14 +194,14 @@ export const useRealTimeMetrics = ({
 
   const getAverageValue = (timeWindow?: number) => {
     let relevantData = data;
-    
+
     if (timeWindow) {
       const cutoff = Date.now() - timeWindow;
       relevantData = data.filter(d => d.timestamp >= cutoff);
     }
 
     if (relevantData.length === 0) return null;
-    
+
     const sum = relevantData.reduce((acc, d) => acc + d.value, 0);
     return sum / relevantData.length;
   };
@@ -290,7 +290,7 @@ class ConfigValidator {
       } else {
         return {
           isValid: false,
-          errors: result.error.errors.map(err => 
+          errors: result.error.errors.map(err =>
             `${err.path.join('.')}: ${err.message}`
           ),
         };
@@ -409,38 +409,38 @@ class ConfigValidator {
 // CLI script usage
 if (require.main === module) {
   const configPath = process.argv[2] || './kortex.config.json';
-  
+
   console.log('🔍 Validating Kortex configuration...\n');
-  
+
   // Validate configuration file
-  const fileValidation = ConfigValidator.validateFile(configPath);
-  
-  if (fileValidation.isValid) {
+  const file = ConfigValidator.validateFile(configPath);
+
+  if (file.isValid) {
     console.log('✅ Configuration file is valid');
   } else {
     console.log('❌ Configuration file validation failed:');
-    fileValidation.errors.forEach(error => console.log(`  - ${error}`));
+    file.errors.forEach(error => console.log(`  - ${error}`));
   }
-  
+
   console.log('');
-  
+
   // Validate environment
-  const envValidation = ConfigValidator.validateEnvironment();
-  
-  if (envValidation.isValid) {
+  const env = ConfigValidator.validateEnvironment();
+
+  if (env.isValid) {
     console.log('✅ Environment variables are valid');
   } else {
     console.log('❌ Environment validation failed:');
-    envValidation.errors.forEach(error => console.log(`  - ${error}`));
+    env.errors.forEach(error => console.log(`  - ${error}`));
   }
-  
-  if (envValidation.warnings.length > 0) {
+
+  if (env.warnings.length > 0) {
     console.log('⚠️  Environment warnings:');
-    envValidation.warnings.forEach(warning => console.log(`  - ${warning}`));
+    env.warnings.forEach(warning => console.log(`  - ${warning}`));
   }
-  
+
   // Exit with appropriate code
-  process.exit(fileValidation.isValid && envValidation.isValid ? 0 : 1);
+  process.exit(file.isValid && env.isValid ? 0 : 1);
 }
 
 export default ConfigValidator;
@@ -516,8 +516,8 @@ class PerformanceMonitor {
   }
 
   async measureAsync<T>(
-    name: string, 
-    fn: () => Promise<T>, 
+    name: string,
+    fn: () => Promise<T>,
     metadata?: Record<string, any>
   ): Promise<T> {
     this.startTimer(name);
@@ -533,14 +533,14 @@ class PerformanceMonitor {
 
   getReport(timeWindow?: number): PerformanceReport {
     let relevantMetrics = this.metrics;
-    
+
     if (timeWindow) {
       const cutoff = Date.now() - timeWindow;
       relevantMetrics = this.metrics.filter(m => m.timestamp >= cutoff);
     }
 
     const totalTime = relevantMetrics.reduce((sum, m) => sum + m.duration, 0);
-    
+
     // Calculate averages by metric name
     const averages: Record<string, number> = {};
     const groupedMetrics = relevantMetrics.reduce((acc, metric) => {
@@ -595,7 +595,7 @@ class PerformanceMonitor {
   // React Hook integration
   static usePerformanceMonitor() {
     const monitor = PerformanceMonitor.getInstance();
-    
+
     return {
       startTimer: monitor.startTimer.bind(monitor),
       endTimer: monitor.endTimer.bind(monitor),
@@ -611,7 +611,7 @@ export const measureComponentRender = (componentName: string) => {
   return function<P extends {}>(Component: React.ComponentType<P>) {
     const MeasuredComponent: React.FC<P> = (props) => {
       const monitor = PerformanceMonitor.getInstance();
-      
+
       React.useEffect(() => {
         monitor.startTimer(`${componentName}-mount`);
         return () => {
@@ -669,7 +669,7 @@ const customRender = (
   options: CustomRenderOptions = {}
 ) => {
   const { contextValue, ...renderOptions } = options;
-  
+
   const mockContextValue = createMockContextValue(contextValue);
 
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (

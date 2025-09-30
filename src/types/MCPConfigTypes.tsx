@@ -5,7 +5,7 @@ export interface MCPServerConfig {
   url: string;
   type: 'http' | 'fastmcp';
   status: 'online' | 'offline' | 'configuring';
-  
+
   // Provider configurations
   providers: {
     github?: {
@@ -22,7 +22,7 @@ export interface MCPServerConfig {
       rateLimitSettings: RateLimitConfig;
     };
   };
-  
+
   // Server settings
   settings: {
     port: number;
@@ -30,7 +30,7 @@ export interface MCPServerConfig {
     maxConnections?: number;
     timeout?: number;
   };
-  
+
   lastConfigUpdate: string;
   configVersion: string;
 }
@@ -38,26 +38,26 @@ export interface MCPServerConfig {
 // Rate Limit Configuration
 export interface RateLimitConfig {
   enabled: boolean;
-  
+
   // Polling intervals (in seconds)
   intervals: {
     repositories: number;      // Default: 300s (5min)
-    pullRequests: number;     // Default: 180s (3min)  
+    pullRequests: number;     // Default: 180s (3min)
     pipelines: number;        // Default: 120s (2min)
     general: number;          // Default: 60s (1min)
   };
-  
+
   // API Limits
   limits: {
     requestsPerHour: number;  // GitHub: 5000/hour, Azure: varies
     requestsPerMinute: number; // Burst protection
     concurrent: number;       // Max concurrent requests
   };
-  
+
   // Control flags
   autoPause: boolean;         // Auto pause when approaching limits
   pauseThreshold: number;     // % of limit to trigger pause (e.g., 80%)
-  
+
   // Current status
   status: 'active' | 'paused' | 'limited';
   remainingRequests?: number;
@@ -68,7 +68,7 @@ export interface RateLimitConfig {
 export interface PollingControl {
   isActive: boolean;
   activeProviders: string[];  // ['github', 'azureDevOps']
-  
+
   // Scheduling
   schedule: {
     [provider: string]: {
@@ -78,7 +78,7 @@ export interface PollingControl {
       isRunning: boolean;
     };
   };
-  
+
   // Statistics
   stats: {
     totalRequests: number;
@@ -94,20 +94,20 @@ export interface ConfigurationManager {
   // Server config
   getServerConfig(serverId: string): Promise<MCPServerConfig>;
   updateServerConfig(serverId: string, config: Partial<MCPServerConfig>): Promise<boolean>;
-  validateConfig(config: Partial<MCPServerConfig>): Promise<ConfigValidationResult>;
-  
+  validateConfig(config: Partial<MCPServerConfig>): Promise<ConfigResult>;
+
   // Rate limiting
   getRateLimitStatus(serverId: string, provider: string): Promise<RateLimitStatus>;
   updateRateLimitConfig(serverId: string, provider: string, config: RateLimitConfig): Promise<boolean>;
-  
+
   // Polling control
   startPolling(serverId: string, providers?: string[]): Promise<boolean>;
   pausePolling(serverId: string, providers?: string[]): Promise<boolean>;
   getPollingStatus(serverId: string): Promise<PollingControl>;
 }
 
-// Validation and Status
-export interface ConfigValidationResult {
+//  and Status
+export interface ConfigResult {
   valid: boolean;
   errors: string[];
   warnings: string[];

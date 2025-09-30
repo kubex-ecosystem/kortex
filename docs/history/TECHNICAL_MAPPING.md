@@ -17,7 +17,7 @@
 
 ```typescript
 // Hook para Servers Page - Gerenciamento MCP
-// Refresh: 3 minutos automático  
+// Refresh: 3 minutos automático
 // CRUD: Create, Read, Update, Delete servers
 // Endpoints: /api/mcp/servers, /api/mcp/server/:id/health
 ```
@@ -37,7 +37,7 @@
 
 ```typescript
 // Implementação: useRealAPIData()
-// Indicadores: "Real Data" vs "Demo Mode"  
+// Indicadores: "Real Data" vs "Demo Mode"
 // Features: Auto-refresh, error handling, loading states
 ```
 
@@ -165,7 +165,7 @@ DELETE /api/helm/uninstall # Uninstall de releases
 
 ```typescript
 // Real Data Badge: Verde com "Real Data"
-// Demo Mode Badge: Amarelo com "Demo Mode"  
+// Demo Mode Badge: Amarelo com "Demo Mode"
 // Loading Spinner: Durante fetch
 // Error States: Vermelho com retry button
 ```
@@ -237,7 +237,7 @@ DELETE /api/helm/uninstall # Uninstall de releases
 // images: { unoptimized: true }
 ```
 
-### Build Validation
+### Build
 
 ```bash
 # 14/14 páginas compilando

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  MCPServerConfig, 
-  RateLimitConfig, 
+import {
+  MCPServerConfig,
+  RateLimitConfig,
   PollingControl,
   RateLimitStatus,
   ConfigurationEvent
@@ -13,16 +13,16 @@ interface UseMCPConfigReturn {
   config: MCPServerConfig | null;
   updateConfig: (updates: Partial<MCPServerConfig>) => Promise<boolean>;
   validateConfig: (config: Partial<MCPServerConfig>) => Promise<any>;
-  
+
   // Rate limiting
   rateLimitStatus: Record<string, RateLimitStatus>;
   updateRateLimit: (provider: string, config: RateLimitConfig) => Promise<boolean>;
-  
+
   // Polling control
   pollingStatus: PollingControl | null;
   startPolling: (providers?: string[]) => Promise<boolean>;
   pausePolling: (providers?: string[]) => Promise<boolean>;
-  
+
   // Status and events
   isLoading: boolean;
   error: string | null;
@@ -32,7 +32,7 @@ interface UseMCPConfigReturn {
     issues: string[];
     recommendations: string[];
   } | null;
-  
+
   // Actions
   refreshStatus: () => Promise<void>;
   clearEvents: () => void;
@@ -51,7 +51,7 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
   // Load initial data
   const loadData = useCallback(async () => {
     if (!serverId) return;
-    
+
     setIsLoading(true);
     setError(null);
 
@@ -62,7 +62,7 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
 
       // Load rate limit status for enabled providers
       const rateLimits: Record<string, RateLimitStatus> = {};
-      
+
       if (serverConfig.providers.github?.enabled) {
         try {
           rateLimits.github = await mcpConfigService.getRateLimitStatus(serverId, 'github');
@@ -70,7 +70,7 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
           console.warn('Could not load GitHub rate limit status:', error);
         }
       }
-      
+
       if (serverConfig.providers.azureDevOps?.enabled) {
         try {
           rateLimits.azureDevOps = await mcpConfigService.getRateLimitStatus(serverId, 'azureDevOps');
@@ -78,7 +78,7 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
           console.warn('Could not load Azure DevOps rate limit status:', error);
         }
       }
-      
+
       setRateLimitStatus(rateLimits);
 
       // Load polling status
@@ -110,7 +110,7 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
     const handleEvent = (event: ConfigurationEvent) => {
       if (event.serverId === serverId) {
         setEvents(prev => [event, ...prev].slice(0, 100)); // Keep last 100 events
-        
+
         // Refresh data on relevant events
         if (['config_updated', 'polling_paused', 'rate_limit_warning'].includes(event.type)) {
           loadData();
@@ -119,7 +119,7 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
     };
 
     mcpConfigService.addEventListener(handleEvent);
-    
+
     return () => {
       mcpConfigService.removeEventListener(handleEvent);
     };
@@ -158,16 +158,16 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
   // Update server configuration
   const updateConfig = useCallback(async (updates: Partial<MCPServerConfig>): Promise<boolean> => {
     if (!serverId) return false;
-    
+
     try {
       setIsLoading(true);
       const success = await mcpConfigService.updateServerConfig(serverId, updates);
-      
+
       if (success) {
         // Reload configuration after update
         await loadData();
       }
-      
+
       return success;
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to update configuration');
@@ -185,7 +185,7 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
       console.error('Error validating configuration:', error);
       return {
         valid: false,
-        errors: ['Validation failed'],
+        errors: [' failed'],
         warnings: [],
         suggestions: []
       };
@@ -195,10 +195,10 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
   // Update rate limit configuration
   const updateRateLimit = useCallback(async (provider: string, rateLimitConfig: RateLimitConfig): Promise<boolean> => {
     if (!serverId) return false;
-    
+
     try {
       const success = await mcpConfigService.updateRateLimitConfig(serverId, provider, rateLimitConfig);
-      
+
       if (success) {
         // Refresh rate limit status
         const status = await mcpConfigService.getRateLimitStatus(serverId, provider);
@@ -207,7 +207,7 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
           [provider]: status
         }));
       }
-      
+
       return success;
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to update rate limit configuration');
@@ -218,16 +218,16 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
   // Start polling
   const startPolling = useCallback(async (providers?: string[]): Promise<boolean> => {
     if (!serverId) return false;
-    
+
     try {
       const success = await mcpConfigService.startPolling(serverId, providers);
-      
+
       if (success) {
         // Refresh polling status
         const status = await mcpConfigService.getPollingStatus(serverId);
         setPollingStatus(status);
       }
-      
+
       return success;
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to start polling');
@@ -238,16 +238,16 @@ export function useMCPConfig(serverId: string): UseMCPConfigReturn {
   // Pause polling
   const pausePolling = useCallback(async (providers?: string[]): Promise<boolean> => {
     if (!serverId) return false;
-    
+
     try {
       const success = await mcpConfigService.pausePolling(serverId, providers);
-      
+
       if (success) {
         // Refresh polling status
         const status = await mcpConfigService.getPollingStatus(serverId);
         setPollingStatus(status);
       }
-      
+
       return success;
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Failed to pause polling');

@@ -23,7 +23,7 @@ NEXT_PUBLIC_ENABLE_AUTO_REFRESH=true
 NEXT_PUBLIC_DEBUG_MODE=false
 ```
 
-### Configuration Validation
+### Configuration
 
 Kortex automatically validates your configuration on startup:
 
@@ -161,7 +161,7 @@ servers:
       path: "/health"
       interval: 30000
       timeout: 5000
-    
+
   - id: "production-mcp"
     name: "Production MCP"
     endpoint: "https://mcp.example.com"
@@ -212,7 +212,7 @@ const updateConfig = {
     apiLimits: 60000,      // 1 minute
     criticalAlerts: 30000   // 30 seconds
   },
-  
+
   // Adaptive intervals based on activity
   adaptive: {
     enabled: true,
@@ -256,15 +256,15 @@ thresholds:
     azure:
       warning: 75
       critical: 90
-  
+
   response_time:
     warning: 1000    # 1 second
     critical: 5000   # 5 seconds
-  
+
   error_rate:
     warning: 5       # 5% error rate
     critical: 15     # 15% error rate
-  
+
   server_health:
     unhealthy_threshold: 3  # Failed health checks
     timeout: 10000          # 10 seconds
@@ -365,14 +365,14 @@ interface SecurityConfig {
     credentials: boolean;
     optionsSuccessStatus: number;
   };
-  
+
   rateLimit: {
     windowMs: number;
     max: number;
     standardHeaders: boolean;
     legacyHeaders: boolean;
   };
-  
+
   helmet: {
     contentSecurityPolicy: {
       directives: Record<string, string[]>;
@@ -392,12 +392,12 @@ class TokenManager {
     // Implement encryption
     return btoa(token); // Simplified example
   }
-  
+
   static storeToken(service: string, token: string): void {
     const encrypted = this.encryptToken(token);
     localStorage.setItem(`kortex_${service}_token`, encrypted);
   }
-  
+
   static getToken(service: string): string | null {
     const encrypted = localStorage.getItem(`kortex_${service}_token`);
     return encrypted ? atob(encrypted) : null;
@@ -449,19 +449,19 @@ interface LayoutConfig {
     collapsible: boolean;
     defaultCollapsed: boolean;
   };
-  
+
   header: {
     height: number;
     sticky: boolean;
     showBreadcrumbs: boolean;
   };
-  
+
   content: {
     maxWidth: number;
     padding: number;
     spacing: number;
   };
-  
+
   responsive: {
     breakpoints: {
       mobile: number;
@@ -472,9 +472,9 @@ interface LayoutConfig {
 }
 ```
 
-## 🔧 Configuration Validation
+## 🔧 Configuration
 
-### Runtime Validation
+### Runtime
 
 ```typescript
 import { z } from 'zod';

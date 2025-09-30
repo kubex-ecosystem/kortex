@@ -113,7 +113,7 @@ parse_vars(){
     ["is_fork"]="${5:-"${IS_FORK:-"$(git config --get remote.origin.url | grep -q 'fork' && echo "true" || echo "false")"}"}"
     ["ref"]="${6:-"${REF:-${GITHUB_REF:-"refs/tags/v0.0.0"}}"}"
   )
-  
+
   # Get MARKER's directory and absolute path for current repo based on the version hash and version
   MARKER_NAME=".kubex_publish_marker_${_ARGS_LIST["version"]}_${_ARGS_LIST["version_hash"]}"
   MARKER_PATH="${MARKER_DIR}/${MARKER_NAME}"
@@ -156,7 +156,7 @@ parse_vars(){
       printf '%s\n' "❌ Version is not set. Cannot proceed."
       return 1
     fi
-    
+
     return 0
   }
 
@@ -197,7 +197,7 @@ parse_vars(){
       else
         WILL_PROCEED=true
       fi
-    else 
+    else
       WILL_PROCEED=true
     fi
 
@@ -232,7 +232,7 @@ parse_vars(){
           # Increment the count
           COUNT=$((COUNT + 1))
         fi
-      else 
+      else
         printf '%s\n' "❌ Error ensuring marker file: ${MARKER_PATH}"
         return 1
       fi
@@ -288,15 +288,15 @@ main () {
     printf '%s\n' "❌ No arguments provided."
     printf '%s\n' "Usage: $0 <version> <will_proceed> <marker> <count>"
     return 1
-  else 
+  else
     args=("$@")
   fi
 
   # Shift all arguments to the left, leaving an empty array
-  shift $(( $# )) 
+  shift $(( $# ))
 
   declare -a _cmd=(
-    validate_marker 
+    validate_marker
     "${args[@]}"
   )
 
@@ -310,7 +310,7 @@ main () {
     fi
 
     "${_cmd[@]}" || {
-      printf '%s\n' "❌ Error: Validation failed."
+      printf '%s\n' "❌ Error:  failed."
       return 1
     }
   else

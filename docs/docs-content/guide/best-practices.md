@@ -125,7 +125,7 @@ const tokens = {
 };
 ```
 
-***Input Validation***
+***Input***
 
 ```typescript
 // ✅ Good - Proper validation
@@ -137,21 +137,21 @@ interface CreateServerRequest {
 
 const validateServerRequest = (data: unknown): CreateServerRequest => {
   if (!data || typeof data !== 'object') {
-    throw new ValidationError('Invalid request body');
+    throw new Error('Invalid request body');
   }
 
   const { name, host, port } = data as any;
 
   if (!name || typeof name !== 'string' || name.length > 100) {
-    throw new ValidationError('Invalid server name');
+    throw new Error('Invalid server name');
   }
 
   if (!host || typeof host !== 'string' || !isValidHost(host)) {
-    throw new ValidationError('Invalid host');
+    throw new Error('Invalid host');
   }
 
   if (!port || typeof port !== 'number' || port < 1 || port > 65535) {
-    throw new ValidationError('Invalid port');
+    throw new Error('Invalid port');
   }
 
   return { name, host, port };
@@ -175,7 +175,7 @@ const config = {
   enableHttps: process.env.NODE_ENV === 'production',
   sessionTimeout: parseInt(process.env.SESSION_TIMEOUT || '3600'),
   maxRetries: parseInt(process.env.MAX_RETRIES || '3'),
-  
+
   // Required environment variables
   apiUrl: requireEnvVar('API_URL'),
   secretKey: requireEnvVar('SECRET_KEY'),
@@ -226,10 +226,10 @@ const ServerCard = React.memo<ServerCardProps>(({ server, onConnect }) => {
 const BadServerCard = ({ server, onConnect }) => {
   // Creates new function on every render
   const handleConnect = () => onConnect(server.id);
-  
+
   // Recalculates on every render
   const statusColor = getStatusColor(server.status);
-  
+
   return <Card>...</Card>;
 };
 ```
@@ -280,7 +280,7 @@ class BatchedApiClient {
   async get(url: string): Promise<any> {
     return new Promise((resolve, reject) => {
       this.batchQueue.push({ url, resolve, reject });
-      
+
       if (!this.batchTimeout) {
         this.batchTimeout = setTimeout(() => {
           this.processBatch();
@@ -297,7 +297,7 @@ class BatchedApiClient {
       const responses = await Promise.all(
         batch.map(item => fetch(item.url))
       );
-      
+
       batch.forEach((item, index) => {
         item.resolve(responses[index]);
       });
@@ -325,13 +325,13 @@ class CachedApiClient {
 
   async get(url: string, ttl = 300000): Promise<any> { // 5 minutes default TTL
     const cached = this.cache.get(url);
-    
+
     if (cached && Date.now() - cached.timestamp < cached.ttl) {
       return cached.data;
     }
 
     const data = await fetch(url).then(res => res.json());
-    
+
     this.cache.set(url, {
       data,
       timestamp: Date.now(),
@@ -368,14 +368,14 @@ describe('ServerCard', () => {
     it('should display green status indicator', () => {
       const server = createMockServer({ status: 'online' });
       render(<ServerCard server={server} />);
-      
+
       expect(screen.getByTestId('status-indicator')).toHaveClass('text-green-500');
     });
 
     it('should enable connect button', () => {
       const server = createMockServer({ status: 'online' });
       render(<ServerCard server={server} />);
-      
+
       expect(screen.getByRole('button', { name: /connect/i })).toBeEnabled();
     });
   });
@@ -384,14 +384,14 @@ describe('ServerCard', () => {
     it('should display red status indicator', () => {
       const server = createMockServer({ status: 'offline' });
       render(<ServerCard server={server} />);
-      
+
       expect(screen.getByTestId('status-indicator')).toHaveClass('text-red-500');
     });
 
     it('should disable connect button', () => {
       const server = createMockServer({ status: 'offline' });
       render(<ServerCard server={server} />);
-      
+
       expect(screen.getByRole('button', { name: /connect/i })).toBeDisabled();
     });
   });
@@ -563,9 +563,9 @@ class Logger {
 }
 
 // Usage
-Logger.info('Server connection established', { 
+Logger.info('Server connection established', {
   serverId: 'server-123',
-  component: 'ServerManager' 
+  component: 'ServerManager'
 });
 
 // ❌ Avoid - Unstructured logging
@@ -590,18 +590,18 @@ interface HealthCheckResult {
 class HealthChecker {
   async checkHealth(): Promise<HealthCheckResult> {
     const checks: Record<string, any> = {};
-    
+
     // Database connectivity
     checks.database = await this.checkDatabase();
-    
+
     // External API availability
     checks.externalApis = await this.checkExternalApis();
-    
+
     // Memory usage
     checks.memory = await this.checkMemoryUsage();
-    
+
     const overallStatus = this.determineOverallStatus(checks);
-    
+
     return {
       status: overallStatus,
       timestamp: new Date().toISOString(),
@@ -612,7 +612,7 @@ class HealthChecker {
   private determineOverallStatus(checks: Record<string, any>): 'healthy' | 'degraded' | 'unhealthy' {
     const results = Object.values(checks);
     const failures = results.filter(check => check.status === 'fail');
-    
+
     if (failures.length === 0) return 'healthy';
     if (failures.length <= results.length / 2) return 'degraded';
     return 'unhealthy';

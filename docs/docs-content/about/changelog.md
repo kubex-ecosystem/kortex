@@ -69,7 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Parallel Processing**: Multi-threaded file processing for large projects
 - **Streaming Support**: Memory-efficient handling of large files
-- **Improved Validation**: Faster and more accurate marker validation
+- **Improved**: Faster and more accurate marker validation
 - **Error Recovery**: Better error handling and recovery mechanisms
 
 ### 🎨 User Experience
@@ -111,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🔧 Stability & Reliability
 
 - **Robust File Handling**: Improved handling of edge cases and corrupted files
-- **Better Validation**: Enhanced marker file validation and error reporting
+- **Better**: Enhanced marker file validation and error reporting
 - **Cross-Platform Support**: Improved compatibility across operating systems
 - **Resource Management**: Better memory and CPU usage optimization
 
@@ -153,7 +153,7 @@ The first stable release of LookAtni File Markers with complete core functionali
 - **File Marker Generation**: Transform projects into portable text files
 - **Project Extraction**: Restore complete projects from marker files
 - **VS Code Integration**: Full extension with commands and visual features
-- **File Validation**: Comprehensive validation and integrity checking
+- **File**: Comprehensive validation and integrity checking
 - **Cross-Platform Support**: Windows, macOS, and Linux compatibility
 
 #### 🎯 Key Capabilities

@@ -154,7 +154,7 @@ nav:
   - Features:
     - File Extraction: features/extraction.md
     - Marker Generation: features/generation.md
-    - Validation System: features/validation.md
+    -  System: features/validation.md
     - Visual Markers: features/visual-markers.md
     - CLI Tools: features/cli-tools.md
   - User Guide:
