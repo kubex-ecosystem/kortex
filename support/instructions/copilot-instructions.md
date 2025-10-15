@@ -121,7 +121,7 @@ Be declarative. Be typed. Be testable. Be clean. Be TypeScript.
 
 # Markdown Craftsmanship Standards
 
-Use `#` for titles. Maintain hierarchy order (no skipping levels). Only one `#` per file (main title).
+Use `# ` for titles. Maintain hierarchy order (no skipping levels). Only one `# `  per file (main title).
 
 Separate paragraphs with blank lines. Avoid long lines (>120 chars). Keep spacing consistent.
 
@@ -135,9 +135,9 @@ const foo = "bar";
 
 Use **bold** for key terms, *italics* for filenames or soft emphasis. Don’t overformat.
 
-Links should be descriptive: `[Installation Guide](#installation)` — not `[click here]`. Use reference links for footnotes.
+Links should be descriptive, with title: `[Installation Guide]` and link `(# installation-guide)` — not `[click here]`. Use reference links for footnotes.
 
-Images must include alt text: `![Architecture diagram](./diagram.png)`. Avoid decorative images without context.
+Images must include alt text with title: `![Architecture diagram]` and link `(./diagram.png)`. Avoid decorative images without context.
 
 Use `>` only for callouts, quotes, or tips. Don’t use them as layout decoration.
 

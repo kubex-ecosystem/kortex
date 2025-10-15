@@ -9,7 +9,7 @@
     "totalCruised": 0,
     "totalDependenciesCruised": 0,
     "optionsUsed": {
-      "baseDir": "/srv/apps/LIFE/KUBEX/kortex",
+      "baseDir": "/srv/apps/LIFE/KUBEX/pulse",
       "combinedDependencies": false,
       "detectJSDocImports": true,
       "doNotFollow": {
