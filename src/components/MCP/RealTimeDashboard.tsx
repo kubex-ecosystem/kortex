@@ -16,14 +16,14 @@ export const RealTimeDashboard: React.FC<RealTimeDashboardProps> = ({ className 
   const getStatusColor = (percentage: number) => {
     if (percentage >= 90) return 'text-red-500';
     if (percentage >= 80) return 'text-yellow-500';
-    if (percentage >= 60) return 'text-blue-500';
+    if (percentage >= 60) return 'text-primary';
     return 'text-green-500';
   };
 
   const getProgressColor = (percentage: number) => {
     if (percentage >= 90) return 'bg-red-500';
     if (percentage >= 80) return 'bg-yellow-500';
-    if (percentage >= 60) return 'bg-blue-500';
+    if (percentage >= 60) return 'bg-primary';
     return 'bg-green-500';
   };
 
@@ -34,7 +34,7 @@ export const RealTimeDashboard: React.FC<RealTimeDashboardProps> = ({ className 
   return (
     <div className={`space-y-6 ${className}`}>
       <div className="flex items-center gap-2 mb-6">
-        <Settings className="w-6 h-6 text-blue-500" />
+        <Settings className="w-6 h-6 text-primary" />
         <h2 className="text-2xl font-bold text-white">Real-Time Dashboard</h2>
       </div>
       
@@ -136,7 +136,7 @@ export const RealTimeDashboard: React.FC<RealTimeDashboardProps> = ({ className 
           </div>
         ) : (
           Object.entries(rateLimitStatus).map(([provider, status]) => (
-            <div key={provider} className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-blue-500/50 transition-colors">
+            <div key={provider} className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-primary/50 transition-colors">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <h3 className="text-lg font-semibold text-white capitalize">{provider}</h3>
@@ -211,13 +211,13 @@ export const RealTimeDashboard: React.FC<RealTimeDashboardProps> = ({ className 
       {serverConfig && (
         <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-6">
           <div className="flex items-center gap-2 mb-4">
-            <Settings className="w-5 h-5 text-blue-500" />
+            <Settings className="w-5 h-5 text-primary" />
             <h3 className="text-lg font-semibold text-white">Server Performance</h3>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-gray-900/50 rounded p-4 text-center">
-              <div className="text-2xl font-mono font-bold text-blue-400 mb-1">
+              <div className="text-2xl font-mono font-bold text-primary mb-1">
                 {Math.round(Math.random() * 150 + 50)}ms
               </div>
               <div className="text-sm text-gray-400">Avg Response</div>

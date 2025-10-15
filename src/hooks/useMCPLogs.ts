@@ -31,10 +31,10 @@ interface UseMCPLogsReturn {
 export function useMCPLogs(): UseMCPLogsReturn {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [isMonitoring, setIsMonitoring] = useState(true);
-  
+
   // Get data from other hooks - RESILIENT VERSION!
   const { stats: mcpStats, isLoading: mcpLoading, error: mcpError } = useDefensiveMCPData();
-  const { servers, stats: serverStats } = useMCPServers();  
+  const { servers, stats: serverStats } = useMCPServers();
   const { providers, stats: providerStats } = useAPIManager();
 
   // Create log entry from real system activity
@@ -43,20 +43,20 @@ export function useMCPLogs(): UseMCPLogsReturn {
     details: any
   ): LogEntry => {
     const timestamp = new Date();
-    
+
     switch (type) {
       case 'mcp_request':
         // Mensagens mais variadas por operação
         const operationMessages = {
           repos: [
-            'Repository scan completed', 
+            'Repository scan completed',
             'Metadata synchronization finished',
             'Repository analysis updated',
             'Source code indexing completed'
           ],
           prs: [
             'Pull request sync finished',
-            'PR status monitoring updated', 
+            'PR status monitoring updated',
             'Merge conflict analysis completed',
             'Code review data synchronized'
           ],
@@ -67,10 +67,10 @@ export function useMCPLogs(): UseMCPLogsReturn {
             'CI/CD metrics updated'
           ]
         };
-        
+
         const opMsgs = operationMessages[details.operation as keyof typeof operationMessages] || ['Data operation completed'];
         const randomMsg = opMsgs[Math.floor(Math.random() * opMsgs.length)];
-        
+
         return {
           id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           level: details.success ? 'info' : 'error',
@@ -82,12 +82,12 @@ export function useMCPLogs(): UseMCPLogsReturn {
           serverId: 'statusrafa-mcp',
           duration: details.duration || Math.floor(Math.random() * 1200) + 400
         };
-        
+
       case 'server_status':
         const statusMessages = {
           online: [
             'Health check passed',
-            'Connection established', 
+            'Connection established',
             'Server responding normally',
             'Service operational'
           ],
@@ -97,10 +97,10 @@ export function useMCPLogs(): UseMCPLogsReturn {
             'Service unavailable'
           ]
         };
-        
+
         const statusMsgs = statusMessages[details.status as keyof typeof statusMessages] || ['Status updated'];
         const randomStatusMsg = statusMsgs[Math.floor(Math.random() * statusMsgs.length)];
-        
+
         return {
           id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           level: details.status === 'online' ? 'info' : 'warning',
@@ -112,7 +112,7 @@ export function useMCPLogs(): UseMCPLogsReturn {
           serverId: details.id,
           duration: details.responseTime || 0
         };
-        
+
       case 'provider_activity':
         const providerMessages = [
           'API authentication verified',
@@ -121,9 +121,9 @@ export function useMCPLogs(): UseMCPLogsReturn {
           'Provider sync finished',
           'Token validation successful'
         ];
-        
+
         const randomProvMsg = providerMessages[Math.floor(Math.random() * providerMessages.length)];
-        
+
         return {
           id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           level: 'info',
@@ -135,7 +135,7 @@ export function useMCPLogs(): UseMCPLogsReturn {
           serverId: `api-${details.provider.toLowerCase()}`,
           duration: Math.floor(Math.random() * 800) + 150
         };
-        
+
       default:
         return {
           id: `log-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -166,7 +166,7 @@ export function useMCPLogs(): UseMCPLogsReturn {
       // MCP Data activity logs - apenas quando há dados e com intervalo maior
       if (mcpStats && logCounter % 4 === 0) { // A cada 12 segundos (3s * 4)
         const operations = [];
-        
+
         if (mcpStats.totalRepositories > 0) {
           operations.push({
             type: 'repos' as const,
@@ -174,19 +174,19 @@ export function useMCPLogs(): UseMCPLogsReturn {
             avgDuration: 800
           });
         }
-        
+
         if (mcpStats.totalPullRequests > 0) {
           operations.push({
-            type: 'prs' as const, 
+            type: 'prs' as const,
             count: mcpStats.totalPullRequests,
             avgDuration: 1500
           });
         }
-        
+
         if (mcpStats.totalPipelines > 0) {
           operations.push({
             type: 'pipelines' as const,
-            count: mcpStats.totalPipelines, 
+            count: mcpStats.totalPipelines,
             avgDuration: 600
           });
         }
@@ -196,7 +196,7 @@ export function useMCPLogs(): UseMCPLogsReturn {
           const randomOp = operations[Math.floor(Math.random() * operations.length)];
           newLogs.push(createLogEntry('mcp_request', {
             operation: randomOp.type,
-            endpoint: `/api/${randomOp.type}`,
+            endpoint: `/api/v1/${randomOp.type}`,
             success: Math.random() > 0.05, // 95% de sucesso
             count: randomOp.count,
             duration: Math.floor(Math.random() * 400) + randomOp.avgDuration
@@ -207,8 +207,8 @@ export function useMCPLogs(): UseMCPLogsReturn {
       // Server status logs - apenas quando status muda ou a cada 8 ciclos
       if (servers.length > 0 && (logCounter % 8 === 0)) { // A cada 24 segundos
         const randomServer = servers[Math.floor(Math.random() * servers.length)];
-        
-        // Só gera log se servidor está online ou mudou status recentemente  
+
+        // Só gera log se servidor está online ou mudou status recentemente
         if (randomServer.status === 'Online' || Math.random() > 0.7) {
           newLogs.push(createLogEntry('server_status', {
             id: randomServer.id,
@@ -223,7 +223,7 @@ export function useMCPLogs(): UseMCPLogsReturn {
       // Provider activity logs - apenas para providers ativos e espaçadamente
       if (providers.length > 0 && logCounter % 6 === 0) { // A cada 18 segundos
         const activeProviders = providers.filter(p => p.requestsToday > 0 && p.status === 'Connected');
-        
+
         if (activeProviders.length > 0) {
           const randomProvider = activeProviders[Math.floor(Math.random() * activeProviders.length)];
           newLogs.push(createLogEntry('provider_activity', {
@@ -268,10 +268,10 @@ export function useMCPLogs(): UseMCPLogsReturn {
       clearInterval(interval);
     };
   }, [
-    isMonitoring, 
-    mcpStats, 
-    servers, 
-    providers, 
+    isMonitoring,
+    mcpStats,
+    servers,
+    providers,
     mcpError,
     serverStats,
     providerStats,
@@ -299,11 +299,11 @@ export function useMCPLogs(): UseMCPLogsReturn {
   const exportLogs = useCallback(() => {
     const csv = [
       'Timestamp,Task ID,Model,Status,Server,Duration',
-      ...logs.map(log => 
+      ...logs.map(log =>
         `${log.timestamp},${log.taskId},${log.model},${log.status},${log.serverId || ''},${log.duration || ''}`
       )
     ].join('\n');
-    
+
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

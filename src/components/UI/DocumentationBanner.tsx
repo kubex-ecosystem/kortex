@@ -6,7 +6,7 @@ export const DocumentationBanner: React.FC = () => {
 
   useEffect(() => {
     // Check if user has dismissed the banner before
-    const dismissed = localStorage.getItem('kortex-docs-banner-dismissed');
+    const dismissed = localStorage.getItem('pulse-docs-banner-dismissed');
     if (!dismissed) {
       setIsVisible(true);
     }
@@ -17,27 +17,27 @@ export const DocumentationBanner: React.FC = () => {
     // Remember user's choice for 7 days
     const expiry = new Date();
     expiry.setDate(expiry.getDate() + 7);
-    localStorage.setItem('kortex-docs-banner-dismissed', expiry.toISOString());
+    localStorage.setItem('pulsedocs-banner-dismissed', expiry.toISOString());
   };
 
   if (!isVisible) return null;
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 relative">
+    <div className="bg-gradient-to-r from-primary to-accent text-white px-4 py-3 relative">
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
           <BookOpen size={20} className="flex-shrink-0" />
           <div className="text-sm">
             <span className="font-medium">📚 Documentation Available!</span>
             <span className="ml-2 opacity-90">
-              Get the most out of Kortex with our comprehensive guides, API reference, and examples.
+              Get the most out of Pulse with our comprehensive guides, API reference, and examples.
             </span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <a
-            href="https://kortex.rafa-mori.dev/"
+            href="https://docs.kubex.world/pulse/"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg text-sm font-medium transition-colors whitespace-nowrap"

@@ -24,11 +24,11 @@ interface FallbackConfig {
 class ResilientMCPService {
   private baseURL: string;
   private fallbackMode: boolean = false;
-  private cache: Map<string, { data: any; timestamp: number }> = new Map();
+  private cache: Map<string, { data: any; timestamp: number; }> = new Map();
   private retryCount: Map<string, number> = new Map();
   private isOnline: boolean = true;
 
-  constructor(baseURL: string = '/api/mcp') {
+  constructor(baseURL: string = '/api/v1/mcp') {
     this.baseURL = baseURL;
     this.checkOnlineStatus();
   }
@@ -248,17 +248,17 @@ const getDefaultMcpBaseUrl = (): string => {
   // Verificar se estamos no browser ou Node.js
   if (typeof window !== 'undefined') {
     // Browser environment - usar window.location ou fallback
-    return '/api/mcp';
+    return '/api/v1/mcp';
   }
 
   // Node.js environment - pode usar process.env
-  if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_MCP_BASE_URL) {
-    const envUrl = process.env.NEXT_PUBLIC_MCP_BASE_URL.trim();
-    return envUrl.length > 0 ? envUrl : '/api/mcp';
+  if (typeof process !== 'undefined' && process.env?.VITE_MCP_SERVER_URL) {
+    const envUrl = process.env.VITE_MCP_SERVER_URL.trim();
+    return envUrl.length > 0 ? envUrl : '/api/v1/mcp';
   }
 
   // Fallback padrão
-  return '/api/mcp';
+  return '/api/v1/mcp';
 };
 
 export const resilientMCPService = new ResilientMCPService(getDefaultMcpBaseUrl());

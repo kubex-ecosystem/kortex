@@ -51,7 +51,7 @@ export const MCPServerSettings: React.FC<MCPServerSettingsProps> = ({
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Server Settings</h3>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors"
         >
           {showAddForm ? 'Cancel' : 'Add Server'}
         </button>
@@ -96,7 +96,7 @@ export const MCPServerSettings: React.FC<MCPServerSettingsProps> = ({
             </button>
             <button
               onClick={handleAddServer}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-hover transition-colors"
             >
               Add Server
             </button>

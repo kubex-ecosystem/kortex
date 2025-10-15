@@ -379,7 +379,7 @@ export const ConnectionStatusIndicator: React.FC = () => {
       {connectionStatus === 'error' || connectionStatus === 'offline' ? (
         <button
           onClick={reconnect}
-          className="text-xs text-blue-500 hover:text-blue-600 underline"
+          className="text-xs text-primary hover:text-primary underline"
         >
           Retry
         </button>

@@ -25,7 +25,7 @@ export const EnhancedConnectionStatus: React.FC = () => {
 
   const getStatusColor = () => {
     if (websocket.isConnected) return 'text-green-500 bg-green-500';
-    if (connectionStatus === 'online') return 'text-blue-500 bg-blue-500';
+    if (connectionStatus === 'online') return 'text-primary bg-primary';
     if (connectionStatus === 'checking') return 'text-yellow-500 bg-yellow-500';
     if (connectionStatus === 'fallback') return 'text-orange-500 bg-orange-500';
     return 'text-red-500 bg-red-500';
@@ -122,7 +122,7 @@ export const EnhancedConnectionStatus: React.FC = () => {
       {(canRetry || !websocket.isConnected) && (
         <button
           onClick={handleReconnect}
-          className="flex items-center gap-1 px-2 py-1 text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 border border-blue-200 dark:border-blue-700 rounded hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+          className="flex items-center gap-1 px-2 py-1 text-xs text-primary hover:text-primary dark:text-primary dark:hover:text-primary border border-primary dark:border-primary rounded hover:bg-primary-subtle dark:hover:bg-primary/20 transition-colors"
         >
           <RefreshCw className="w-3 h-3" />
           <span>Reconnect</span>
@@ -146,7 +146,7 @@ export const SimpleConnectionStatus: React.FC = () => {
 
   const getStatusColor = () => {
     if (websocket.isConnected) return 'bg-green-500';
-    if (connectionStatus === 'online') return 'bg-blue-500';
+    if (connectionStatus === 'online') return 'bg-primary';
     if (connectionStatus === 'checking') return 'bg-yellow-500 animate-pulse';
     if (connectionStatus === 'fallback') return 'bg-orange-500';
     return 'bg-red-500';
@@ -209,7 +209,7 @@ export const WebSocketNotifications: React.FC = () => {
               ? 'bg-green-50 border-green-200 text-green-800' 
               : notification.type === 'error'
               ? 'bg-red-50 border-red-200 text-red-800'
-              : 'bg-blue-50 border-blue-200 text-blue-800'
+              : 'bg-primary-subtle border-primary text-primary-foreground'
           }`}
         >
           <div className="flex items-center gap-2">

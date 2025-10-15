@@ -2,13 +2,13 @@
 
 ## 🎯 Sumário da Estratégia de Desmocking
 
-Esta sessão implementou com sucesso a estratégia completa de "desmocking" no sistema KUBEX/Kortex, substituindo todos os dados mock por integrações reais de API com fallbacks resilientes.
+Esta sessão implementou com sucesso a estratégia completa de "desmocking" no sistema KUBEX/Pulse, substituindo todos os dados mock por integrações reais de API com fallbacks resilientes.
 
 ## 📋 Documentos Disponíveis
 
 ### 1. 📊 [SESSION_SUMMARY_DESMOCKING.md](./SESSION_SUMMARY_DESMOCKING.md)
 
-**Conteúdo:** Resumo executivo completo da sessão  
+**Conteúdo:** Resumo executivo completo da sessão
 **Inclui:**
 
 - Objetivos alcançados (5 páginas desmockadas)
@@ -20,7 +20,7 @@ Esta sessão implementou com sucesso a estratégia completa de "desmocking" no s
 
 ### 2. 🚀 [QUICK_START_CONTINUATION.md](./QUICK_START_CONTINUATION.md)
 
-**Conteúdo:** Guia prático para retomar o trabalho  
+**Conteúdo:** Guia prático para retomar o trabalho
 **Inclui:**
 
 - Comandos essenciais para setup
@@ -32,7 +32,7 @@ Esta sessão implementou com sucesso a estratégia completa de "desmocking" no s
 
 ### 3. 🛠️ [TECHNICAL_MAPPING.md](./TECHNICAL_MAPPING.md)
 
-**Conteúdo:** Mapeamento técnico detalhado da arquitetura  
+**Conteúdo:** Mapeamento técnico detalhado da arquitetura
 **Inclui:**
 
 - Estrutura de arquivos modificados
@@ -47,7 +47,7 @@ Esta sessão implementou com sucesso a estratégia completa de "desmocking" no s
 ### Páginas Desmockadas (5/5)
 
 1. **Dashboard** - Integração GitHub + Azure DevOps ✅
-2. **Servers** - Gerenciamento de servidores MCP ✅  
+2. **Servers** - Gerenciamento de servidores MCP ✅
 3. **Analytics** - Dashboard analítico completo ✅
 4. **Helm** - Gerenciamento Kubernetes ✅
 5. **API Config** - Configurações de API ✅
@@ -66,14 +66,14 @@ Esta sessão implementou com sucesso a estratégia completa de "desmocking" no s
 
 ```bash
 # 1. Iniciar mock server
-cd /srv/apps/LIFE/KUBEX/kortex
+cd /srv/apps/LIFE/KUBEX/pulse
 node scripts/mock-api-server.cjs
 
 # 2. Iniciar aplicação
 npm run dev
 
 # 3. Validar funcionamento
-curl localhost:3002/api/github/repos
+curl localhost:3002/api/v1/github/repos
 ```
 
 ### 2. Verificar Estado
@@ -93,7 +93,7 @@ curl localhost:3002/api/github/repos
 **Opção B - Melhorias:**
 
 - Rate limiting e caching
-- Monitoramento de performance  
+- Monitoramento de performance
 - Novas funcionalidades
 
 ## 🎉 Resultados Alcançados
@@ -110,7 +110,7 @@ ANTES:
 DEPOIS:
 + APIs reais funcionais
 + Variação temporal realística
-+ Indicadores visuais claros  
++ Indicadores visuais claros
 + Auto-refresh e WebSocket
 + Fallbacks resilientes
 ```
@@ -131,9 +131,9 @@ DEPOIS:
 # Verificar se mock server está rodando
 lsof -i :3002
 
-# Testar endpoints principais  
-curl localhost:3002/api/mcp/servers
-curl localhost:3002/api/helm/context
+# Testar endpoints principais
+curl localhost:3002/api/v1/mcp/servers
+curl localhost:3002/api/v1/helm/context
 
 # Build validation
 npm run build
@@ -149,7 +149,7 @@ npm run build
 
 - Frontend: <http://localhost:3000>
 - Mock API: <http://localhost:3002>
-- Health check: <http://localhost:3002/api/mcp/servers>
+- Health check: <http://localhost:3002/api/v1/mcp/servers>
 
 ---
 

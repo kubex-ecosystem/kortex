@@ -1,6 +1,6 @@
 # Commands Reference
 
-Complete reference for all available commands in Kortex dashboard and CLI tools.
+Complete reference for all available commands in Pulse dashboard and CLI tools.
 
 ## 🖥️ Dashboard Commands
 
@@ -24,23 +24,23 @@ Complete reference for all available commands in Kortex dashboard and CLI tools.
 
 ```bash
 # Connect to MCP server
-kortex connect --host localhost --port 3001
+pulse connect --host localhost --port 3001
 
 # List active connections
-kortex list --connections
+pulselist --connections
 
 # Disconnect from server
-kortex disconnect --server <server-id>
+pulsedisconnect --server <server-id>
 ```
 
 #### Health Checks
 
 ```bash
 # Check server health
-kortex health --server <server-id>
+pulsehealth --server <server-id>
 
 # Test connection
-kortex ping --host <hostname> --port <port>
+pulseping --host <hostname> --port <port>
 ```
 
 ## 🔧 CLI Commands
@@ -48,15 +48,15 @@ kortex ping --host <hostname> --port <port>
 ### Installation Commands
 
 ```bash
-# Install Kortex globally
-npm install -g kortex
+# Install Pulse globally
+npm install -g pulse
 
 # Install in project
-npm install kortex
+npm install pulse
 
 # Development setup
-git clone https://github.com/rafa-mori/kortex.git
-cd kortex
+git clone https://github.com/rafa-mori/pulsegit
+cd pulse
 npm install
 npm run dev
 ```
@@ -64,80 +64,80 @@ npm run dev
 ### Server Management Commands
 
 ```bash
-# Start Kortex server
-kortex start
+# Start Pulse server
+pulsestart
 
 # Start with custom port
-kortex start --port 3000
+pulsestart --port 3000
 
 # Start in production mode
-kortex start --env production
+pulsestart --env production
 
 # Start with debug logging
-kortex start --debug
+pulsestart --debug
 
 # Stop server
-kortex stop
+pulsestop
 
 # Restart server
-kortex restart
+pulserestart
 ```
 
 ### Configuration Commands
 
 ```bash
 # Initialize configuration
-kortex init
+pulseinit
 
 # Validate configuration
-kortex config validate
+pulseconfig validate
 
 # Show current configuration
-kortex config show
+pulseconfig show
 
 # Set configuration value
-kortex config set <key> <value>
+pulseconfig set <key> <value>
 
 # Reset configuration
-kortex config reset
+pulseconfig reset
 ```
 
 ### Monitoring Commands
 
 ```bash
 # Show system status
-kortex status
+pulsestatus
 
 # Display server logs
-kortex logs
+pulselogs
 
 # Follow logs in real-time
-kortex logs --follow
+pulselogs --follow
 
 # Filter logs by level
-kortex logs --level error
+pulselogs --level error
 
 # Export logs
-kortex logs --export logs.json
+pulselogs --export logs.json
 ```
 
 ### Development Commands
 
 ```bash
 # Build for production
-kortex build
+pulsebuild
 
 # Run tests
-kortex test
+pulsetest
 
 # Run linting
-kortex lint
+pulselint
 
 # Generate documentation
-kortex docs
+pulsedocs
 
 # Clean build artifacts
-kortex clean
+pulseclean
 ```
 
 ## 🔍 Query Commands
@@ -146,35 +146,35 @@ kortex clean
 
 ```bash
 # List all servers
-kortex servers list
+pulseservers list
 
 # Find servers by status
-kortex servers find --status running
+pulseservers find --status running
 
 # Get server details
-kortex servers info <server-id>
+pulseservers info <server-id>
 
 # Show server metrics
-kortex servers metrics <server-id>
+pulseservers metrics <server-id>
 ```
 
 ### Task Management
 
 ```bash
 # List active tasks
-kortex tasks list
+pulsetasks list
 
 # Create new task
-kortex tasks create --name "Task Name" --command "echo hello"
+pulsetasks create --name "Task Name" --command "echo hello"
 
 # Run task
-kortex tasks run <task-id>
+pulsetasks run <task-id>
 
 # Cancel task
-kortex tasks cancel <task-id>
+pulsetasks cancel <task-id>
 
 # Show task history
-kortex tasks history
+pulsetasks history
 ```
 
 ## 🛠️ Utility Commands
@@ -183,32 +183,32 @@ kortex tasks history
 
 ```bash
 # Export configuration
-kortex export --config config.json
+pulseexport --config config.json
 
 # Import configuration
-kortex import --config config.json
+pulseimport --config config.json
 
 # Export server definitions
-kortex export --servers servers.json
+pulseexport --servers servers.json
 
 # Import server definitions
-kortex import --servers servers.json
+pulseimport --servers servers.json
 ```
 
 ### Backup/Restore
 
 ```bash
 # Create backup
-kortex backup create --name "backup-$(date +%Y%m%d)"
+pulsebackup create --name "backup-$(date +%Y%m%d)"
 
 # List backups
-kortex backup list
+pulsebackup list
 
 # Restore from backup
-kortex backup restore --name <backup-name>
+pulsebackup restore --name <backup-name>
 
 # Delete backup
-kortex backup delete --name <backup-name>
+pulsebackup delete --name <backup-name>
 ```
 
 ## 🔐 Security Commands
@@ -217,29 +217,29 @@ kortex backup delete --name <backup-name>
 
 ```bash
 # Login to service
-kortex auth login --provider github
+pulseauth login --provider github
 
 # Logout
-kortex auth logout
+pulseauth logout
 
 # Check authentication status
-kortex auth status
+pulseauth status
 
 # Refresh tokens
-kortex auth refresh
+pulseauth refresh
 ```
 
 ### API Keys
 
 ```bash
 # Generate API key
-kortex apikey generate --name "My App"
+pulseapikey generate --name "My App"
 
 # List API keys
-kortex apikey list
+pulseapikey list
 
 # Revoke API key
-kortex apikey revoke <key-id>
+pulseapikey revoke <key-id>
 ```
 
 ## 📊 Analytics Commands
@@ -248,29 +248,29 @@ kortex apikey revoke <key-id>
 
 ```bash
 # Show performance metrics
-kortex metrics show
+pulsemetrics show
 
 # Export metrics data
-kortex metrics export --format json
+pulsemetrics export --format json
 
 # Generate report
-kortex report generate --period "last-7-days"
+pulsereport generate --period "last-7-days"
 ```
 
 ### Diagnostics
 
 ```bash
 # Run system diagnostics
-kortex diagnose
+pulsediagnose
 
 # Check dependencies
-kortex check deps
+pulsecheck deps
 
 # Validate environment
-kortex check env
+pulsecheck env
 
 # Test connectivity
-kortex check network
+pulsecheck network
 ```
 
 ## 🔄 Keyboard Shortcuts
@@ -305,19 +305,19 @@ kortex check network
 
 ```bash
 # Show general help
-kortex help
+pulsehelp
 
 # Show command-specific help
-kortex help <command>
+pulsehelp <command>
 
 # Show version information
-kortex version
+pulseversion
 
 # Show system information
-kortex info
+pulseinfo
 
 # Open documentation
-kortex docs open
+pulsedocs open
 ```
 
 ## 📝 Command Examples
@@ -326,20 +326,20 @@ kortex docs open
 
 ```bash
 # 1. Initialize new project
-kortex init --name "My Project"
+pulseinit --name "My Project"
 
 # 2. Add MCP servers
-kortex servers add --name "Dev Server" --host localhost --port 3001
-kortex servers add --name "Prod Server" --host prod.example.com --port 3001
+pulseservers add --name "Dev Server" --host localhost --port 3001
+pulseservers add --name "Prod Server" --host prod.example.com --port 3001
 
 # 3. Start monitoring
-kortex start --watch
+pulsestart --watch
 
 # 4. Run health checks
-kortex health --all
+pulsehealth --all
 
 # 5. Generate status report
-kortex report generate --format pdf --output status-report.pdf
+pulsereport generate --format pdf --output status-report.pdf
 ```
 
 ### Development Workflow
@@ -361,7 +361,7 @@ npm run build && npm run preview
 ---
 
 !!! tip "Pro Tips"
-    - Use `kortex help <command>` for detailed help on any command
+    - Use `pulsehelp <command>` for detailed help on any command
     - Most commands support `--json` flag for machine-readable output
     - Use `--dry-run` flag to preview changes before applying them
     - Set `KORTEX_DEBUG=true` environment variable for verbose logging

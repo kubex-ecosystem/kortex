@@ -31,9 +31,9 @@ in the Software without restriction...
 
 /// README.md ///
 
-# 🧠 Kortex: AI-Driven Cloud Orchestration Interface
+# 🧠 Pulse: AI-Driven Cloud Orchestration Interface
 
-O Kortex é a camada de interface inteligente do ecossistema Kubex. Ele se comunica com MCPs locais/remotos, provê dashboards, interações com clusters Kubernetes e integrações com ferramentas DevOps modernas. 100% modular e com suporte a extensões.
+O Pulse é a camada de interface inteligente do ecossistema Kubex. Ele se comunica com MCPs locais/remotos, provê dashboards, interações com clusters Kubernetes e integrações com ferramentas DevOps modernas. 100% modular e com suporte a extensões.
 
 ## Principais recursos
 - Painel de controle unificado
@@ -52,7 +52,7 @@ Tornar a gestão de infra, devops e AI orquestration simples e acessível para q
 Se você encontrar qualquer vulnerabilidade de segurança, por favor reporte imediatamente por e-mail (contato@rafa.dev) ou abra uma issue marcada como "security". Atualizações críticas terão prioridade máxima e serão auditadas cuidadosamente.
 
 
-/// helm/api/helm_routes.py ///
+/// helm/api/v1/helm_routes.py ///
 
 from fastapi import APIRouter
 from typing import Dict
@@ -106,7 +106,7 @@ class HelmService:
             return {"error": str(e)}
 
 
-/// kortex/pages/helm.tsx ///
+/// pulse/pages/helm.tsx ///
 
 import { useEffect, useState } from 'react';
 
@@ -114,7 +114,7 @@ export default function HelmPage() {
   const [releases, setReleases] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('/api/helm/releases')
+    fetch('/api/v1/helm/releases')
       .then(res => res.json())
       .then(setReleases)
       .catch(console.error);

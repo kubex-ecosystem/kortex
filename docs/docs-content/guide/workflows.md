@@ -1,6 +1,6 @@
 # Workflows
 
-Complete workflow guides for common Kortex usage patterns and best practices.
+Complete workflow guides for common Pulse usage patterns and best practices.
 
 ## 🔄 Development Workflows
 
@@ -17,8 +17,8 @@ Complete workflow guides for common Kortex usage patterns and best practices.
 1. **Clone and Setup**
 
    ```bash
-   git clone https://github.com/rafa-mori/kortex.git
-   cd kortex
+   git clone https://github.com/rafa-mori/pulse.git
+   cd pulse
    npm install
    ```
 
@@ -53,13 +53,13 @@ Complete workflow guides for common Kortex usage patterns and best practices.
    ```bash
    # Create feature branch
    git checkout -b feature/new-feature
-  
+
    # Start development server with hot reload
    npm run dev
-  
+
    # Run tests in watch mode (separate terminal)
    npm run test:watch
-  
+
    # Run type checking
    npm run type-check
    ```
@@ -69,10 +69,10 @@ Complete workflow guides for common Kortex usage patterns and best practices.
    ```bash
    # Run full test suite
    npm run test
-  
+
    # Run specific test files
    npm run test -- --grep "component-name"
-  
+
    # Generate test coverage
    npm run test:coverage
    ```
@@ -82,13 +82,13 @@ Complete workflow guides for common Kortex usage patterns and best practices.
    ```bash
    # Lint code
    npm run lint
-   
+
    # Format code
    npm run format
-   
+
    # Type checking
    npm run type-check
-   
+
    # Build for production
    npm run build
    ```
@@ -99,7 +99,7 @@ Complete workflow guides for common Kortex usage patterns and best practices.
    # Update component documentation
    # Add usage examples
    # Update API documentation
-   
+
    # Build documentation
    cd docs
    mkdocs build
@@ -122,16 +122,16 @@ Complete workflow guides for common Kortex usage patterns and best practices.
    ```bash
    # Install dependencies
    npm ci
-   
+
    # Run security audit
    npm audit
-   
+
    # Run full test suite
    npm run test:ci
-   
+
    # Build for production
    npm run build
-   
+
    # Verify build
    npm run preview
    ```
@@ -141,10 +141,10 @@ Complete workflow guides for common Kortex usage patterns and best practices.
    ```bash
    # Deploy to staging environment
    npm run deploy:staging
-   
+
    # Run end-to-end tests
    npm run test:e2e:staging
-   
+
    # Performance testing
    npm run test:performance
    ```
@@ -155,10 +155,10 @@ Complete workflow guides for common Kortex usage patterns and best practices.
    # Tag release
    git tag v1.0.0
    git push origin v1.0.0
-   
+
    # Deploy to production
    npm run deploy:production
-   
+
    # Monitor deployment
    npm run monitor:production
    ```
@@ -185,7 +185,7 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - run: npm ci
       - run: npm run lint
       - run: npm run type-check
@@ -343,13 +343,13 @@ jobs:
 
    ```bash
    # Check server status
-   kortex status --server <server-id>
-   
+   pulsestatus --server <server-id>
+
    # Review recent logs
-   kortex logs --server <server-id> --since 1h
-   
+   pulselogs --server <server-id> --since 1h
+
    # Check metrics
-   kortex metrics --server <server-id> --period 1h
+   pulsemetrics --server <server-id> --period 1h
    ```
 
 3. **Resolution**
@@ -372,13 +372,13 @@ jobs:
 
    ```bash
    # Export all configurations
-   kortex export --config --output backup/config-$(date +%Y%m%d).json
-   
+   pulseexport --config --output backup/config-$(date +%Y%m%d).json
+
    # Export server definitions
-   kortex export --servers --output backup/servers-$(date +%Y%m%d).json
-   
+   pulseexport --servers --output backup/servers-$(date +%Y%m%d).json
+
    # Export custom dashboards
-   kortex export --dashboards --output backup/dashboards-$(date +%Y%m%d).json
+   pulseexport --dashboards --output backup/dashboards-$(date +%Y%m%d).json
    ```
 
 2. **Automated Backup Schedule**
@@ -386,16 +386,16 @@ jobs:
    ```bash
    #!/bin/bash
    # backup.sh - Daily backup script
-   
-   BACKUP_DIR="/backups/kortex"
+
+   BACKUP_DIR="/backups/pulse
    DATE=$(date +%Y%m%d)
-   
+
    # Create backup directory
    mkdir -p "$BACKUP_DIR/$DATE"
-   
+
    # Export configurations
-   kortex export --all --output "$BACKUP_DIR/$DATE/kortex-backup-$DATE.tar.gz"
-   
+   pulseexport --all --output "$BACKUP_DIR/$DATE/ppulseackup-$DATE.tar.gz"
+
    # Cleanup old backups (keep 30 days)
    find "$BACKUP_DIR" -type d -mtime +30 -exec rm -rf {} \;
    ```
@@ -404,12 +404,12 @@ jobs:
 
    ```bash
    # Restore from backup
-   kortex import --config backup/config-20241201.json
-   kortex import --servers backup/servers-20241201.json
-   
+   pulseimport --config backup/config-20241201.json
+   pulseimport --servers backup/servers-20241201.json
+
    # Verify restoration
-   kortex validate --config
-   kortex test --connections
+   pulsevalidate --config
+   pulsetest --connections
    ```
 
 ## 📈 Performance Optimization Workflows

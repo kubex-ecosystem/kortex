@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://kortex.rafa-mori.dev/</loc>
+    <loc>https://dev.kubex.world/</loc>
     <lastmod>2025-07-21</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://kortex.rafa-mori.dev/monitor/</loc>
+    <loc>https://dev.kubex.world/monitor/</loc>
     <lastmod>2025-07-21</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kortex.rafa-mori.dev/analytics/</loc>
+    <loc>https://dev.kubex.world/analytics/</loc>
     <lastmod>2025-07-21</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kortex.rafa-mori.dev/servers/</loc>
+    <loc>https://dev.kubex.world/servers/</loc>
     <lastmod>2025-07-21</lastmod>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://kortex.rafa-mori.dev/api-config/</loc>
+    <loc>https://dev.kubex.world/api-config/</loc>
     <lastmod>2025-07-21</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://kortex.rafa-mori.dev/settings/</loc>
+    <loc>https://dev.kubex.world/settings/</loc>
     <lastmod>2025-07-21</lastmod>
     <priority>0.6</priority>
   </url>

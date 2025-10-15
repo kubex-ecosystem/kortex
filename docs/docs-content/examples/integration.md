@@ -1,6 +1,6 @@
 # Examples
 
-Practical examples and code snippets for common Kortex integration scenarios.
+Practical examples and code snippets for common Pulse integration scenarios.
 
 ## 🚀 Quick Start Examples
 
@@ -32,7 +32,7 @@ export const BasicDashboard: React.FC = () => {
     const activeServers = servers.filter(s => s.status === 'online').length;
     const totalRequests = logs.length;
     const errorCount = logs.filter(l => l.level === 'error').length;
-    
+
     setStats({
       servers: servers.length,
       activeConnections: activeServers,
@@ -51,7 +51,7 @@ export const BasicDashboard: React.FC = () => {
           {stats.servers}
         </p>
       </div>
-      
+
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
           Active Connections
@@ -60,7 +60,7 @@ export const BasicDashboard: React.FC = () => {
           {stats.activeConnections}
         </p>
       </div>
-      
+
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
           Total Requests
@@ -69,7 +69,7 @@ export const BasicDashboard: React.FC = () => {
           {stats.totalRequests}
         </p>
       </div>
-      
+
       <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
         <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
           Error Rate
@@ -108,7 +108,7 @@ export const ServerMonitor: React.FC = () => {
   useEffect(() => {
     // Initialize WebSocket connection
     const websocket = new WebSocket(process.env.NEXT_PUBLIC_WS_URL!);
-    
+
     websocket.onopen = () => {
       console.log('Connected to server monitoring WebSocket');
       setWs(websocket);
@@ -116,12 +116,12 @@ export const ServerMonitor: React.FC = () => {
 
     websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      
+
       if (data.type === 'server.status') {
         setServers(prev => {
           const updated = [...prev];
           const index = updated.findIndex(s => s.id === data.payload.id);
-          
+
           if (index >= 0) {
             updated[index] = {
               ...updated[index],
@@ -134,7 +134,7 @@ export const ServerMonitor: React.FC = () => {
               lastChecked: new Date()
             });
           }
-          
+
           return updated;
         });
       }
@@ -176,7 +176,7 @@ export const ServerMonitor: React.FC = () => {
     const days = Math.floor(uptime / (24 * 60 * 60));
     const hours = Math.floor((uptime % (24 * 60 * 60)) / (60 * 60));
     const minutes = Math.floor((uptime % (60 * 60)) / 60);
-    
+
     if (days > 0) return `${days}d ${hours}h`;
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
@@ -189,7 +189,7 @@ export const ServerMonitor: React.FC = () => {
           Server Status
         </h2>
       </div>
-      
+
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
         {servers.map((server) => (
           <div key={server.id} className="px-6 py-4 flex items-center justify-between">
@@ -204,7 +204,7 @@ export const ServerMonitor: React.FC = () => {
                 </p>
               </div>
             </div>
-            
+
             <div className="text-right">
               <p className="text-sm text-gray-900 dark:text-white">
                 {server.responseTime}ms
@@ -215,7 +215,7 @@ export const ServerMonitor: React.FC = () => {
             </div>
           </div>
         ))}
-        
+
         {servers.length === 0 && (
           <div className="px-6 py-8 text-center">
             <p className="text-gray-500 dark:text-gray-400">
@@ -254,7 +254,7 @@ export class GitHubIntegration {
       headers: {
         'Authorization': `token ${this.config.token}`,
         'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'Kortex-Dashboard'
+        'User-Agent': 'PulseDashboard'
       }
     });
 
@@ -325,7 +325,7 @@ export class AzureDevOpsIntegration {
 
   private async makeRequest<T>(endpoint: string): Promise<T> {
     const auth = Buffer.from(`:${this.config.token}`).toString('base64');
-    
+
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       headers: {
         'Authorization': `Basic ${auth}`,
@@ -443,7 +443,7 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({ alerts, onDismiss }) =
 
   const getAlertClasses = (type: Alert['type']) => {
     const baseClasses = "p-4 rounded-lg border-l-4 mb-4";
-    
+
     switch (type) {
       case 'success':
         return `${baseClasses} bg-green-50 border-green-400 text-green-700`;
@@ -465,7 +465,7 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({ alerts, onDismiss }) =
             <div className="flex-shrink-0">
               {getAlertIcon(alert.type)}
             </div>
-            
+
             <div className="ml-3 flex-1">
               <h3 className="text-sm font-medium">{alert.title}</h3>
               <p className="mt-1 text-sm opacity-90">{alert.message}</p>
@@ -473,7 +473,7 @@ export const AlertSystem: React.FC<AlertSystemProps> = ({ alerts, onDismiss }) =
                 {alert.timestamp.toLocaleTimeString()}
               </p>
             </div>
-            
+
             {alert.dismissible !== false && (
               <div className="flex-shrink-0 ml-4">
                 <button
@@ -501,7 +501,7 @@ export const DashboardWithAlerts: React.FC = () => {
       id: Date.now().toString(),
       timestamp: new Date()
     };
-    
+
     setAlerts(prev => [...prev, newAlert]);
   };
 
@@ -513,7 +513,7 @@ export const DashboardWithAlerts: React.FC = () => {
   useEffect(() => {
     const checkServerStatus = async () => {
       try {
-        const response = await fetch('/api/health');
+        const response = await fetch('/api/v1/health');
         if (!response.ok) {
           addAlert({
             type: 'error',
@@ -565,7 +565,7 @@ export const PerformanceChart: React.FC = () => {
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const response = await fetch(`/api/metrics?range=${timeRange}`);
+        const response = await fetch(`/api/v1/metrics?range=${timeRange}`);
         const data = await response.json();
         setMetrics(data.map((item: any) => ({
           ...item,
@@ -591,7 +591,7 @@ export const PerformanceChart: React.FC = () => {
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
           Performance Metrics
         </h2>
-        
+
         <select
           value={timeRange}
           onChange={(e) => setTimeRange(e.target.value as any)}
@@ -617,13 +617,13 @@ export const PerformanceChart: React.FC = () => {
               return `${x},${y}`;
             }).join(' ')}
           />
-          
+
           {/* Request Count Bars */}
           {metrics.map((metric, index) => {
             const x = (index / metrics.length) * 100;
             const height = (metric.requestCount / maxRequestCount) * 60;
             const y = 100 - height;
-            
+
             return (
               <rect
                 key={index}
@@ -636,7 +636,7 @@ export const PerformanceChart: React.FC = () => {
               />
             );
           })}
-          
+
           {/* Error Rate Indicators */}
           {metrics.map((metric, index) => {
             if (metric.errorRate > 5) {
@@ -654,7 +654,7 @@ export const PerformanceChart: React.FC = () => {
             return null;
           })}
         </svg>
-        
+
         {/* Legend */}
         <div className="absolute bottom-0 left-0 flex space-x-4 text-xs">
           <div className="flex items-center">
@@ -688,7 +688,7 @@ export const PerformanceChart: React.FC = () => {
         </div>
         <div>
           <p className="text-lg font-semibold text-red-600">
-            {metrics.length > 0 
+            {metrics.length > 0
               ? (metrics.reduce((sum, m) => sum + m.errorRate, 0) / metrics.length).toFixed(1)
               : 0}%
           </p>
@@ -722,7 +722,7 @@ export class WebSocketManager {
   private connect(): void {
     try {
       this.ws = new WebSocket(this.url);
-      
+
       this.ws.onopen = () => {
         console.log('WebSocket connected');
         this.reconnectAttempts = 0;
@@ -733,7 +733,7 @@ export class WebSocketManager {
         try {
           const data = JSON.parse(event.data);
           this.emit('message', data);
-          
+
           if (data.type) {
             this.emit(data.type, data.payload);
           }
@@ -762,9 +762,9 @@ export class WebSocketManager {
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
       const delay = this.reconnectInterval * Math.pow(2, this.reconnectAttempts - 1);
-      
+
       console.log(`Attempting to reconnect in ${delay}ms (attempt ${this.reconnectAttempts})`);
-      
+
       setTimeout(() => {
         this.connect();
       }, delay);

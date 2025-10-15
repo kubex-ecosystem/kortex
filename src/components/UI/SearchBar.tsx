@@ -35,9 +35,9 @@ export const SearchBar: React.FC = () => {
 
   const getCategoryColor = (category: string) => {
     const colors = {
-      page: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400',
+      page: 'bg-primary-subtle dark:bg-primary/20/30 text-primary-foreground dark:text-primary',
       server: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400',
-      task: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-400',
+      task: 'bg-accent-subtle dark:bg-purple-900/30 text-purple-800 dark:text-purple-400',
       log: 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-400'
     };
     return colors[category as keyof typeof colors] || colors.page;

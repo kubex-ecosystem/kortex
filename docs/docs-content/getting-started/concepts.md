@@ -1,25 +1,25 @@
 # Basic Concepts
 
-Understanding the core concepts behind Kortex will help you make the most of its monitoring and management capabilities.
+Understanding the core concepts behind Pulse will help you make the most of its monitoring and management capabilities.
 
 ## 🏗️ Architecture Overview
 
-Kortex follows a modular architecture designed for scalability and maintainability:
+Pulsefollows a modular architecture designed for scalability and maintainability:
 
 ```mermaid
 graph TD
-    A[Kortex Dashboard] --> B[Service Layer]
+    A[PulseDashboard] --> B[Service Layer]
     B --> C[Real-time Engine]
     B --> D[API Integrations]
-    
+
     C --> E[WebSocket System]
     C --> F[Data Synchronization]
-    
+
     D --> G[GitHub API]
     D --> H[Azure DevOps API]
     D --> I[MCP Servers]
     D --> J[Kubernetes API]
-    
+
     K[Mock Server] -.-> B
     L[Production APIs] -.-> B
 ```

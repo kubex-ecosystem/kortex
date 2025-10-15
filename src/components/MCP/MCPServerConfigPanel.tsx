@@ -157,7 +157,7 @@ export function MCPServerConfigPanel({ serverId, onConfigUpdate }: MCPServerConf
           </div>
           
           <div className="flex items-center space-x-3">
-            <Zap className="w-5 h-5 text-blue-500" />
+            <Zap className="w-5 h-5 text-primary" />
             <div>
               <p className="text-sm text-gray-600">Port</p>
               <p className="font-medium">{config.settings.port}</p>
@@ -165,7 +165,7 @@ export function MCPServerConfigPanel({ serverId, onConfigUpdate }: MCPServerConf
           </div>
           
           <div className="flex items-center space-x-3">
-            <Database className="w-5 h-5 text-purple-500" />
+            <Database className="w-5 h-5 text-accent" />
             <div>
               <p className="text-sm text-gray-600">Log Level</p>
               <p className="font-medium">{config.settings.logLevel}</p>
@@ -285,7 +285,7 @@ export function MCPServerConfigPanel({ serverId, onConfigUpdate }: MCPServerConf
                   {rateLimit && (
                     <button
                       onClick={() => optimizeRateLimit(provider)}
-                      className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200"
+                      className="px-3 py-1 text-sm bg-primary-subtle text-primary-hover rounded-lg hover:bg-primary-subtle"
                     >
                       Optimize
                     </button>
@@ -408,7 +408,7 @@ export function MCPServerConfigPanel({ serverId, onConfigUpdate }: MCPServerConf
                         const updatedProvider = tempConfig.providers?.[provider as keyof typeof tempConfig.providers] || providerConfig;
                         handleProviderUpdate(provider, updatedProvider);
                       }}
-                      className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      className="flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover"
                     >
                       <Save className="w-4 h-4 mr-2" />
                       Save
@@ -430,7 +430,7 @@ export function MCPServerConfigPanel({ serverId, onConfigUpdate }: MCPServerConf
               <div key={index} className="flex items-start space-x-3 p-2 hover:bg-gray-50 rounded">
                 <div className={`w-2 h-2 rounded-full mt-2 ${
                   event.severity === 'error' ? 'bg-red-500' :
-                  event.severity === 'warning' ? 'bg-yellow-500' : 'bg-blue-500'
+                  event.severity === 'warning' ? 'bg-yellow-500' : 'bg-primary'
                 }`} />
                 <div className="flex-1">
                   <p className="text-sm">{event.message}</p>

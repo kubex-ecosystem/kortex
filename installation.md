@@ -1,10 +1,10 @@
 # Installation
 
-Get Kortex up and running in minutes with our comprehensive installation guide.
+Get Pulse up and running in minutes with our comprehensive installation guide.
 
 ## Prerequisites
 
-Before installing Kortex, ensure you have the following prerequisites:
+Before installing Pulse, ensure you have the following prerequisites:
 
 ### System Requirements
 
@@ -25,8 +25,8 @@ Before installing Kortex, ensure you have the following prerequisites:
 
 ```bash
 # Clone the repository
-git clone https://github.com/rafa-mori/kortex.git
-cd kortex
+git clone https://github.com/rafa-mori/pulse.git
+cd pulse
 
 # Install dependencies
 npm install
@@ -39,13 +39,13 @@ npm run dev
 
 ```bash
 # Pull and run the container
-docker run -p 3000:3000 rafa-mori/kortex:latest
+docker run -p 3000:3000 rafa-mori/pulse:latest
 
 # Or build from source
-git clone https://github.com/rafa-mori/kortex.git
-cd kortex
-docker build -t kortex .
-docker run -p 3000:3000 kortex
+git clone https://github.com/rafa-mori/pulse.git
+cd pulse
+docker build -t pulse .
+docker run -p 3000:3000 pulse
 ```
 
 ### Method 3: Static Deployment
@@ -111,7 +111,7 @@ npm run dev     # Should start on http://localhost:3000
 
 ### Health Check
 
-After starting Kortex, verify these endpoints:
+After starting Pulse, verify these endpoints:
 
 - **Frontend**: [http://localhost:3000](http://localhost:3000)
 - **Mock API**: [http://localhost:3002](http://localhost:3002)
@@ -173,7 +173,7 @@ After successful installation:
 
 If you encounter issues during installation:
 
-- **GitHub Issues**: [Report bugs or request help](https://github.com/rafa-mori/kortex/issues)
+- **GitHub Issues**: [Report bugs or request help](https://github.com/rafa-mori/pulse/issues)
 - **Documentation**: Check our comprehensive guides
 - **Community**: Join our Discord or discussions
 

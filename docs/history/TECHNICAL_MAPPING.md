@@ -10,7 +10,7 @@
 // Hook para Dashboard - GitHub + Azure DevOps
 // Refresh: 5 minutos automático
 // Fallback: resilientMcpService com indicadores visuais
-// Endpoints: /api/github/repos, /api/github/user, /api/azure/projects, /api/azure/pipelines
+// Endpoints: /api/v1/github/repos, /api/v1/github/user, /api/v1/azure/projects, /api/v1/azure/pipelines
 ```
 
 #### `src/hooks/useRealMCPData.ts`
@@ -19,7 +19,7 @@
 // Hook para Servers Page - Gerenciamento MCP
 // Refresh: 3 minutos automático
 // CRUD: Create, Read, Update, Delete servers
-// Endpoints: /api/mcp/servers, /api/mcp/server/:id/health
+// Endpoints: /api/v1/mcp/servers, /api/v1/mcp/server/:id/health
 ```
 
 #### `src/hooks/useRealAnalyticsData.ts`
@@ -60,7 +60,7 @@
 #### `src/pages/helm.tsx` - Kubernetes Management
 
 ```typescript
-// Endpoints: /api/helm/context, /api/helm/releases, /api/helm/deploy, /api/helm/uninstall
+// Endpoints: /api/v1/helm/context, /api/v1/helm/releases, /api/v1/helm/deploy, /api/v1/helm/uninstall
 // Features: Namespace management, Helm releases, deployment operations
 ```
 
@@ -80,31 +80,31 @@
 ### GitHub APIs
 
 ```bash
-GET /api/github/repos      # Lista repositórios (5 repos)
-GET /api/github/user       # Dados do usuário GitHub
+GET /api/v1/github/repos      # Lista repositórios (5 repos)
+GET /api/v1/github/user       # Dados do usuário GitHub
 ```
 
 ### Azure DevOps APIs
 
 ```bash
-GET /api/azure/projects    # Lista projetos (3 projetos)
-GET /api/azure/pipelines   # Lista pipelines com status
+GET /api/v1/azure/projects    # Lista projetos (3 projetos)
+GET /api/v1/azure/pipelines   # Lista pipelines com status
 ```
 
 ### MCP Server APIs
 
 ```bash
-GET /api/mcp/servers           # Lista servidores MCP (4 servers)
-GET /api/mcp/server/:id/health # Health check individual
+GET /api/v1/mcp/servers           # Lista servidores MCP (4 servers)
+GET /api/v1/mcp/server/:id/health # Health check individual
 ```
 
 ### Helm/Kubernetes APIs
 
 ```bash
-GET /api/helm/context     # Contextos Kubernetes (6 namespaces)
-GET /api/helm/releases    # Releases Helm (5 releases)
-POST /api/helm/deploy     # Deploy de aplicações
-DELETE /api/helm/uninstall # Uninstall de releases
+GET /api/v1/helm/context     # Contextos Kubernetes (6 namespaces)
+GET /api/v1/helm/releases    # Releases Helm (5 releases)
+POST /api/v1/helm/deploy     # Deploy de aplicações
+DELETE /api/v1/helm/uninstall # Uninstall de releases
 ```
 
 ## 🔄 Fluxo de Dados

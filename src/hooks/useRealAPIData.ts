@@ -1,6 +1,6 @@
 /**
  * useRealAPIData Hook
- * Faz a ponte do dashboard do Kortex com o Gateway real do GoBE / Analyzer.
+ * Faz a ponte do dashboard do Pulse com o Gateway real do GoBE / Analyzer.
  * Normaliza scorecards, métricas de IA e provedores para consumo na UI,
  * mantendo fallback resiliente quando os serviços não estiverem disponíveis.
  */
@@ -16,8 +16,8 @@ const DEFAULT_ANALYZER_REPO = (() => {
 })();
 
 const DEFAULT_ANALYZER_USER = (() => {
-  const raw = (envRecord.VITE_ANALYZER_USER ?? envRecord.NEXT_PUBLIC_ANALYZER_USER ?? 'kortex-dashboard') as string;
-  return raw?.trim() || 'kortex-dashboard';
+  const raw = (envRecord.VITE_ANALYZER_USER ?? envRecord.NEXT_PUBLIC_ANALYZER_USER ?? 'pulse-dashboard') as string;
+  return raw?.trim() || 'pulse-dashboard';
 })();
 
 const DEFAULT_ANALYZER_PERIOD = (() => {
@@ -156,7 +156,7 @@ interface AnalyzerAIMetricsResponse {
   period_days?: number;
   contributors?: AnalyzerContributor[];
   aggregates?: AnalyzerAggregateMetrics;
-  provenance?: { sources?: string[] };
+  provenance?: { sources?: string[]; };
   confidence?: AnalyzerConfidenceMetrics;
 }
 
@@ -278,7 +278,7 @@ const normalizeScorecard = (
   const avgScore =
     items.length > 0
       ? items.reduce((sum, item) => sum + (typeof item.score === 'number' ? item.score : 0), 0) /
-        items.length
+      items.length
       : null;
 
   return {
@@ -379,8 +379,8 @@ const buildStats = (
   const derivedDataSource: DataSourceKind = scorecard.fallback && metrics.fallback
     ? 'fallback'
     : !scorecard.fallback || !metrics.fallback
-    ? 'real'
-    : 'fallback';
+      ? 'real'
+      : 'fallback';
 
   return {
     chiScore: scorecard.chiScore,
@@ -549,10 +549,10 @@ export function useRealAPIData() {
     };
   }, []);
 
-  const fetchProviders = useCallback(async (): Promise<GatewayFetchResult<{ providers?: GatewayProviderItem[]; timestamp?: string }>> => {
-    const response = (await resilientGatewayService.safeRequest<{ providers?: GatewayProviderItem[]; timestamp?: string }>(
+  const fetchProviders = useCallback(async (): Promise<GatewayFetchResult<{ providers?: GatewayProviderItem[]; timestamp?: string; }>> => {
+    const response = (await resilientGatewayService.safeRequest<{ providers?: GatewayProviderItem[]; timestamp?: string; }>(
       '/providers'
-    )) as ServiceResponse<{ providers?: GatewayProviderItem[]; timestamp?: string }>;
+    )) as ServiceResponse<{ providers?: GatewayProviderItem[]; timestamp?: string; }>;
 
     if (response.success && response.data) {
       return { data: response.data, raw: response };

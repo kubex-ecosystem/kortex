@@ -38,7 +38,7 @@ export const MCPLogSettings: React.FC<MCPLogSettingsProps> = ({
   const getLogLevelColor = (level: LogLevel) => {
     switch (level) {
       case 'debug': return 'text-gray-500';
-      case 'info': return 'text-blue-500';
+      case 'info': return 'text-primary';
       case 'warn': return 'text-yellow-500';
       case 'error': return 'text-red-500';
       default: return 'text-gray-500';
@@ -48,7 +48,7 @@ export const MCPLogSettings: React.FC<MCPLogSettingsProps> = ({
   const getLogLevelBadgeColor = (level: LogLevel) => {
     switch (level) {
       case 'debug': return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
-      case 'info': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+      case 'info': return 'bg-primary-subtle text-primary-foreground dark:bg-primary/20 dark:text-primary';
       case 'warn': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
       case 'error': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
@@ -72,7 +72,7 @@ export const MCPLogSettings: React.FC<MCPLogSettingsProps> = ({
                 onClick={() => handleLogLevelChange(level)}
                 className={`p-3 rounded-md border transition-colors ${
                   localLogLevel === level
-                    ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/30 dark:border-blue-500'
+                    ? 'bg-primary-subtle border-primary dark:bg-primary/20/30 dark:border-primary'
                     : 'bg-gray-50 border-gray-300 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-600'
                 }`}
               >

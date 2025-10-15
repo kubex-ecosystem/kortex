@@ -118,7 +118,7 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
           <button
             onClick={() => ((objConfigActions || {refreshConfig: undefined}).refreshConfig as Function)()}
             disabled={objConfigState.isLoading}
-            className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+            className="p-2 bg-primary text-white rounded hover:bg-primary-hover disabled:opacity-50"
             title="Atualizar configuração"
             aria-label="Atualizar configuração"
           >
@@ -158,7 +158,7 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
               onClick={() => setActiveTab(tab.id as any)}
               className={`px-4 py-2 flex items-center gap-2 border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? 'border-blue-500 text-blue-400'
+                  ? 'border-primary text-primary'
                   : 'border-transparent text-gray-400 hover:text-white'
               }`}
             >
@@ -282,7 +282,7 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
               <button
                 onClick={objConfigActions.refreshCommands}
                 disabled={objConfigState.isLoading}
-                className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                className="p-2 bg-primary text-white rounded hover:bg-primary-hover disabled:opacity-50"
                 title="Atualizar lista de comandos"
                 aria-label="Atualizar lista de comandos"
               >
@@ -344,7 +344,7 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
                 title="Validar comando"
                 onClick={() => ((objConfigActions || {validateCommand: () => {}}).validateCommand as Function)(selectedCommand, commandArgs.split(' '))}
                 disabled={!selectedCommand}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+                className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-hover disabled:opacity-50"
               >
                 Validar
               </button>
@@ -382,7 +382,7 @@ const DynamicConfigPanel: React.FC<DynamicConfigPanelProps> = ({ className = '' 
               <h3 className="text-lg font-medium text-white">Backup & Restore</h3>
               <button
                 onClick={createBackup}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2"
+                className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-hover flex items-center gap-2"
               >
                 <Download className="w-4 h-4" />
                 Criar Backup

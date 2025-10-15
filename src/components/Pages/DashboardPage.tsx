@@ -102,7 +102,7 @@ export const DashboardPage = (): JSX.Element => {
     {
       label: 'CHI Score',
       value: chiScoreDisplay,
-      icon: <Award className="h-8 w-8 text-blue-600" />,
+      icon: <Award className="h-8 w-8 text-primary" />,
       color: 'blue',
       subtitle: scorecard.repoLabel ? `Repo ${scorecard.repoLabel}` : 'Aguardando dados',
       trend: scorecard.generatedAt
@@ -120,7 +120,7 @@ export const DashboardPage = (): JSX.Element => {
     {
       label: 'Human Input Ratio',
       value: formatPercentage(stats.hir),
-      icon: <Gauge className="h-8 w-8 text-purple-600" />,
+      icon: <Gauge className="h-8 w-8 text-accent" />,
       color: 'purple',
       subtitle: `AAC ${formatPercentage(stats.aac)}`,
       trend: aiMetrics.periodDays ? `${aiMetrics.periodDays} dias` : undefined,
@@ -140,13 +140,13 @@ export const DashboardPage = (): JSX.Element => {
       label: 'CPU Uso',
       value: Number.isFinite(cpuUtilization) ? `${cpuUtilization.toFixed(1)}%` : 'N/A',
       subtitle: `${systemMetrics.cpu.cores} cores`,
-      icon: <Cpu className="w-6 h-6 text-purple-500" />,
+      icon: <Cpu className="w-6 h-6 text-accent" />,
     },
     {
       label: 'Memória',
       value: Number.isFinite(memoryUtilization) ? `${memoryUtilization.toFixed(1)}%` : 'N/A',
       subtitle: `${systemMetrics.memory.used.toFixed(1)} GB / ${systemMetrics.memory.total.toFixed(1)} GB`,
-      icon: <Gauge className="w-6 h-6 text-blue-500" />,
+      icon: <Gauge className="w-6 h-6 text-primary" />,
     },
     {
       label: 'Disco',
@@ -187,7 +187,7 @@ export const DashboardPage = (): JSX.Element => {
         systemDataSource === 'real'
           ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-200'
           : systemDataSource === 'cached'
-            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-200'
+            ? 'bg-primary-subtle dark:bg-primary/20/30 text-primary-hover dark:text-primary'
             : 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-200'
       }`}
     >
@@ -196,7 +196,7 @@ export const DashboardPage = (): JSX.Element => {
           systemDataSource === 'real'
             ? 'bg-green-500'
             : systemDataSource === 'cached'
-              ? 'bg-blue-500'
+              ? 'bg-primary'
               : 'bg-yellow-500'
         }`}
       />

@@ -29,7 +29,7 @@ export const UserMenu: React.FC = () => {
 
   const handleMenuAction = (action: string) => {
     setIsOpen(false);
-    
+
     switch (action) {
       case 'profile':
         // Navegar para perfil - por enquanto vai para settings
@@ -40,7 +40,7 @@ export const UserMenu: React.FC = () => {
         break;
       case 'documentation':
         // Abrir documentação em nova aba
-        window.open('https://kortex.rafa-mori.dev/', '_blank', 'noopener,noreferrer');
+        window.open('https://docs.kubex.world/pulse/', '_blank', 'noopener,noreferrer');
         break;
       case 'login':
         router.push('/login');
@@ -56,27 +56,27 @@ export const UserMenu: React.FC = () => {
   };
 
   const menuItems = [
-    { 
-      id: 'profile', 
-      label: 'View Profile', 
+    {
+      id: 'profile',
+      label: 'View Profile',
       icon: <UserCircle size={16} />,
       description: 'Manage your account'
     },
-    { 
-      id: 'settings', 
-      label: 'Settings', 
+    {
+      id: 'settings',
+      label: 'Settings',
       icon: <Settings size={16} />,
       description: 'Application preferences'
     },
-    { 
-      id: 'documentation', 
-      label: 'Documentation', 
+    {
+      id: 'documentation',
+      label: 'Documentation',
       icon: <BookOpen size={16} />,
       description: 'User guide and API reference'
     },
-    { 
-      id: 'login', 
-      label: 'Login Page', 
+    {
+      id: 'login',
+      label: 'Login Page',
       icon: <User size={16} />,
       description: 'Access login screen'
     },
@@ -84,7 +84,7 @@ export const UserMenu: React.FC = () => {
 
   return (
     <div ref={menuRef} className="relative">
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
       >
@@ -103,11 +103,10 @@ export const UserMenu: React.FC = () => {
             {user.role}
           </div>
         </div>
-        <ChevronDown 
-          size={16} 
-          className={`text-gray-400 transition-transform duration-200 ${
-            isOpen ? 'transform rotate-180' : ''
-          }`} 
+        <ChevronDown
+          size={16}
+          className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''
+            }`}
         />
       </button>
 

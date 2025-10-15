@@ -1,19 +1,19 @@
 # 🎯 RESUMO EXECUTIVO - Sessão Concluída
 
-**Data:** 25 de Julho, 2025  
-**Status:** ✅ **MISSÃO CUMPRIDA**  
+**Data:** 25 de Julho, 2025
+**Status:** ✅ **MISSÃO CUMPRIDA**
 **Resultado:** Sistema 100% desmockado e operacional
 
 ## 📊 O Que Foi Realizado
 
 ### Estratégia Completa de Desmocking
 
-Implementação bem-sucedida da substituição de **todos os dados mock** por **integrações reais de API** em 5 páginas principais do sistema Kortex.
+Implementação bem-sucedida da substituição de **todos os dados mock** por **integrações reais de API** em 5 páginas principais do sistema Pulse.
 
 ### Páginas Transformadas
 
 1. **Dashboard** → Dados reais GitHub + Azure DevOps
-2. **Servers** → Gerenciamento real de servidores MCP  
+2. **Servers** → Gerenciamento real de servidores MCP
 3. **Analytics** → Dashboard analítico com dados agregados
 4. **Helm** → Integração completa Kubernetes
 5. **API Config** → Configurações de API funcionais
@@ -21,7 +21,7 @@ Implementação bem-sucedida da substituição de **todos os dados mock** por **
 ### Infraestrutura Criada
 
 - **Mock API Server** com 10 endpoints realísticos
-- **3 Hooks customizados** para dados reais  
+- **3 Hooks customizados** para dados reais
 - **Sistema WebSocket** em tempo real
 - **Fallbacks resilientes** com indicadores visuais
 - **Build 100% funcional** (14/14 páginas)
@@ -34,18 +34,18 @@ Implementação bem-sucedida da substituição de **todos os dados mock** por **
 # Abrir 2 terminais e executar:
 
 # Terminal 1 - Mock API Server
-cd /srv/apps/LIFE/KUBEX/kortex && node scripts/mock-api-server.cjs
+cd /srv/apps/LIFE/KUBEX/pulse && node scripts/mock-api-server.cjs
 
-# Terminal 2 - Aplikação  
-cd /srv/apps/LIFE/KUBEX/kortex && npm run dev
+# Terminal 2 - Aplikação
+cd /srv/apps/LIFE/KUBEX/pulse&& npm run dev
 ```
 
 ### Validação Rápida
 
 ```bash
 # Testar endpoints
-curl localhost:3002/api/github/repos
-curl localhost:3002/api/mcp/servers
+curl localhost:3002/api/v1/github/repos
+curl localhost:3002/api/v1/mcp/servers
 
 # Abrir no browser
 open http://localhost:3000
@@ -54,7 +54,7 @@ open http://localhost:3000
 ### Documentação Completa
 
 - **📋 Índice Principal:** `docs/SESSION_INDEX.md`
-- **🚀 Quick Start:** `docs/QUICK_START_CONTINUATION.md`  
+- **🚀 Quick Start:** `docs/QUICK_START_CONTINUATION.md`
 - **📊 Resumo Completo:** `docs/SESSION_SUMMARY_DESMOCKING.md`
 - **🛠️ Detalhes Técnicos:** `docs/TECHNICAL_MAPPING.md`
 
@@ -75,7 +75,7 @@ open http://localhost:3000
 ### Arquitetura Robusta
 
 - **Resilientes Fallbacks** → Sistema não quebra se API falhar
-- **Indicadores Visuais** → Usuário sempre sabe fonte dos dados  
+- **Indicadores Visuais** → Usuário sempre sabe fonte dos dados
 - **Performance Otimizada** → Caching inteligente e auto-refresh
 - **Type Safety** → 100% TypeScript sem warnings
 
@@ -107,7 +107,7 @@ open http://localhost:3000
 ### Estado Técnico
 
 - **Mock Server:** Operacional em localhost:3002
-- **Frontend:** Operacional em localhost:3000  
+- **Frontend:** Operacional em localhost:3000
 - **Build System:** 100% funcional
 - **TypeScript:** Zero erros ou warnings
 - **APIs:** 10 endpoints testados e validados
@@ -117,7 +117,7 @@ open http://localhost:3000
 ```bash
 scripts/mock-api-server.cjs     ← Mock server (deve estar rodando)
 src/hooks/useRealAPIData.ts     ← Dashboard data
-src/hooks/useRealMCPData.ts     ← Servers data  
+src/hooks/useRealMCPData.ts     ← Servers data
 src/hooks/useRealAnalyticsData.ts ← Analytics data
 src/pages/index.tsx             ← Dashboard page
 src/pages/servers.tsx           ← Servers page
@@ -129,7 +129,7 @@ src/pages/helm.tsx              ← Helm page
 
 ```bash
 # Se algo não funcionar:
-cd /srv/apps/LIFE/KUBEX/kortex
+cd /srv/apps/LIFE/KUBEX/pulse
 
 # 1. Verificar build
 npm run build
@@ -142,7 +142,7 @@ pkill -f mock-api-server
 node scripts/mock-api-server.cjs
 
 # 4. Testar endpoints
-curl localhost:3002/api/mcp/servers
+curl localhost:3002/api/v1/mcp/servers
 ```
 
 ---

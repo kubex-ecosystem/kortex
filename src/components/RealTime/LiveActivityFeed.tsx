@@ -65,7 +65,7 @@ export const LiveActivityFeed: React.FC<LiveActivityFeedProps> = ({
           ...baseEvent,
           icon: <Activity className="w-4 h-4" />,
           color: data.status === 'success' ? 'text-green-600' : 
-                 data.status === 'failed' ? 'text-red-600' : 'text-blue-600',
+                 data.status === 'failed' ? 'text-red-600' : 'text-primary',
           title: 'Pipeline Update',
           description: `${data.pipelineId} at ${data.stage} (${data.status}${data.progress ? ` ${data.progress}%` : ''})`
         };
@@ -74,7 +74,7 @@ export const LiveActivityFeed: React.FC<LiveActivityFeedProps> = ({
         return {
           ...baseEvent,
           icon: <User className="w-4 h-4" />,
-          color: 'text-purple-600',
+          color: 'text-accent',
           title: 'User Activity',
           description: `${data.userId} performed ${data.action} on ${data.target}`
         };
@@ -87,7 +87,7 @@ export const LiveActivityFeed: React.FC<LiveActivityFeedProps> = ({
                 <Zap className="w-4 h-4" />,
           color: data.type === 'success' ? 'text-green-600' :
                  data.type === 'error' ? 'text-red-600' :
-                 data.type === 'warning' ? 'text-yellow-600' : 'text-blue-600',
+                 data.type === 'warning' ? 'text-yellow-600' : 'text-primary',
           title: data.title || 'System Alert',
           description: data.message
         };

@@ -1,10 +1,10 @@
 # API Reference
 
-Comprehensive API documentation for Kortex integrations and endpoints.
+Comprehensive API documentation for Pulse integrations and endpoints.
 
 ## 🌐 Core API Overview
 
-Kortex interfaces with multiple APIs to provide unified monitoring and management:
+Pulseinterfaces with multiple APIs to provide unified monitoring and management:
 
 - **GitHub API**: Repository monitoring, Actions workflows, Issues tracking
 - **Azure DevOps API**: Pipeline monitoring, Work items, Releases
@@ -52,7 +52,7 @@ const azureClient = new AzureClient({
 ### Repository Information
 
 ```typescript
-// GET /api/github/repos/{owner}/{repo}
+// GET /api/v1/github/repos/{owner}/{repo}
 interface GitHubRepo {
   id: number;
   name: string;
@@ -75,7 +75,7 @@ interface GitHubRepo {
 ### Workflow Runs
 
 ```typescript
-// GET /api/github/repos/{owner}/{repo}/actions/runs
+// GET /api/v1/github/repos/{owner}/{repo}/actions/runs
 interface WorkflowRun {
   id: number;
   name: string;
@@ -98,7 +98,7 @@ interface WorkflowRun {
 ### Issues and Pull Requests
 
 ```typescript
-// GET /api/github/repos/{owner}/{repo}/issues
+// GET /api/v1/github/repos/{owner}/{repo}/issues
 interface GitHubIssue {
   id: number;
   number: number;
@@ -132,7 +132,7 @@ interface GitHubIssue {
 ### Pipeline Information
 
 ```typescript
-// GET /api/azure/pipelines/{project}/{pipelineId}
+// GET /api/v1/azure/pipelines/{project}/{pipelineId}
 interface AzurePipeline {
   id: number;
   name: string;
@@ -153,7 +153,7 @@ interface AzurePipeline {
 ### Build Runs
 
 ```typescript
-// GET /api/azure/builds/{project}
+// GET /api/v1/azure/builds/{project}
 interface AzureBuild {
   id: number;
   buildNumber: string;
@@ -182,7 +182,7 @@ interface AzureBuild {
 ### Work Items
 
 ```typescript
-// GET /api/azure/workitems/{project}
+// GET /api/v1/azure/workitems/{project}
 interface AzureWorkItem {
   id: number;
   rev: number;
@@ -210,7 +210,7 @@ interface AzureWorkItem {
 ### Server Registration
 
 ```typescript
-// POST /api/mcp/servers
+// POST /api/v1/mcp/servers
 interface MCPServerRegistration {
   id: string;
   name: string;
@@ -235,7 +235,7 @@ interface MCPServerRegistration {
 ### Server Status
 
 ```typescript
-// GET /api/mcp/servers/{serverId}/status
+// GET /api/v1/mcp/servers/{serverId}/status
 interface MCPServerStatus {
   id: string;
   name: string;
@@ -262,7 +262,7 @@ interface MCPServerStatus {
 ### MCP Commands
 
 ```typescript
-// POST /api/mcp/servers/{serverId}/execute
+// POST /api/v1/mcp/servers/{serverId}/execute
 interface MCPCommand {
   command: string;
   parameters: Record<string, any>;
@@ -290,7 +290,7 @@ interface MCPCommandResult {
 ### Real-time Events
 
 ```typescript
-// WebSocket connection: /api/ws
+// WebSocket connection: /api/v1/ws
 interface WebSocketEvent {
   type: string;
   payload: any;
@@ -331,32 +331,32 @@ interface WorkflowEvent extends WebSocketEvent {
 ```typescript
 class KortexWebSocket {
   private ws: WebSocket;
-  
+
   constructor(url: string) {
     this.ws = new WebSocket(url);
     this.setupEventHandlers();
   }
-  
+
   private setupEventHandlers() {
     this.ws.onopen = () => {
-      console.log('Connected to Kortex WebSocket');
+      console.log('Connected to PulseWebSocket');
     };
-    
+
     this.ws.onmessage = (event) => {
       const message: WebSocketEvent = JSON.parse(event.data);
       this.handleEvent(message);
     };
-    
+
     this.ws.onerror = (error) => {
       console.error('WebSocket error:', error);
     };
-    
+
     this.ws.onclose = () => {
       console.log('WebSocket connection closed');
       this.reconnect();
     };
   }
-  
+
   private handleEvent(event: WebSocketEvent) {
     switch (event.type) {
       case 'server.status':
@@ -422,7 +422,7 @@ class RateLimitManager {
     if (response.status === 429) {
       const retryAfter = response.headers.get('Retry-After');
       const resetTime = response.headers.get('X-RateLimit-Reset');
-      
+
       if (retryAfter) {
         await this.delay(parseInt(retryAfter) * 1000);
       } else if (resetTime) {
@@ -431,7 +431,7 @@ class RateLimitManager {
       }
     }
   }
-  
+
   private static delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
@@ -477,12 +477,12 @@ class ErrorRecoveryService {
         return await operation();
       } catch (error) {
         if (attempt === maxRetries) throw error;
-        
+
         const delay = baseDelay * Math.pow(2, attempt);
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
-    
+
     throw new Error('All retry attempts failed');
   }
 }
@@ -499,10 +499,10 @@ export async function testGitHubConnection(token: string): Promise<boolean> {
     const response = await fetch('https://api.github.com/user', {
       headers: {
         'Authorization': `token ${token}`,
-        'User-Agent': 'Kortex-Dashboard'
+        'User-Agent': 'PulseDashboard'
       }
     });
-    
+
     return response.ok;
   } catch (error) {
     return false;
@@ -524,7 +524,7 @@ export async function testAzureConnection(
         }
       }
     );
-    
+
     return response.ok;
   } catch (error) {
     return false;
@@ -540,7 +540,7 @@ export async function testMCPHealth(
     const response = await fetch(`${endpoint}${healthPath}`, {
       timeout: 5000
     });
-    
+
     return response.ok;
   } catch (error) {
     return false;
@@ -584,25 +584,25 @@ class APICache {
     timestamp: number;
     ttl: number;
   }>();
-  
+
   static async get<T>(
     key: string,
     fetcher: () => Promise<T>,
     ttl: number = 300000
   ): Promise<T> {
     const cached = this.cache.get(key);
-    
+
     if (cached && Date.now() - cached.timestamp < cached.ttl) {
       return cached.data;
     }
-    
+
     const data = await fetcher();
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
       ttl
     });
-    
+
     return data;
   }
 }
@@ -619,7 +619,7 @@ class RequestBatcher {
     }>;
     timer: NodeJS.Timeout;
   }>();
-  
+
   async batchRequest<T>(
     batchKey: string,
     request: () => Promise<T[]>,
@@ -632,19 +632,19 @@ class RequestBatcher {
           timer: setTimeout(() => this.executeBatch(batchKey, request), delay)
         });
       }
-      
+
       const batch = this.batches.get(batchKey)!;
       batch.requests.push({ resolve, reject });
     });
   }
-  
+
   private async executeBatch<T>(
     batchKey: string,
     request: () => Promise<T[]>
   ) {
     const batch = this.batches.get(batchKey);
     if (!batch) return;
-    
+
     try {
       const results = await request();
       batch.requests.forEach((req, index) => {
@@ -655,7 +655,7 @@ class RequestBatcher {
         req.reject(error);
       });
     }
-    
+
     this.batches.delete(batchKey);
   }
 }

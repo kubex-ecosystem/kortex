@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { X, Eye, EyeOff, TestTube, Check, AlertCircle } from 'lucide-react';
-import { APIProvider } from '../../types/APITypes';
+import { Check, Eye, EyeOff, TestTube, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { mcpService } from '../../lib/mcpService';
+import { APIProvider } from '../../types/APITypes';
 
 interface APIProviderModalProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
     monthlyLimit: 10000,
     costPerRequest: 0.002,
     // MCP specific fields
-    mcpEndpoint: 'http://127.0.0.1:3002',
+    mcpEndpoint: 'https://api.kubex.world',
     githubToken: '',
     azureToken: '',
     azureOrg: '',
@@ -45,7 +45,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
         requestsToday: provider.requestsToday || 0,
         monthlyLimit: provider.monthlyLimit || 10000,
         costPerRequest: provider.costPerRequest || 0.002,
-        mcpEndpoint: provider.mcpEndpoint || 'http://127.0.0.1:3002',
+        mcpEndpoint: provider.mcpEndpoint || 'https://api.kubex.world',
         githubToken: provider.githubToken || '',
         azureToken: provider.azureToken || '',
         azureOrg: provider.azureOrg || '',
@@ -61,7 +61,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
         requestsToday: 0,
         monthlyLimit: 10000,
         costPerRequest: 0.002,
-        mcpEndpoint: 'http://127.0.0.1:3002',
+        mcpEndpoint: 'https://api.kubex.world',
         githubToken: '',
         azureToken: '',
         azureOrg: '',
@@ -142,7 +142,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -190,7 +190,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
           {/* Basic Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white">Informações Básicas</h3>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Nome do Provider
@@ -199,9 +199,8 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
                 type="text"
                 value={formData.name}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:text-white ${
-                  errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                }`}
+                className={`w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:text-white ${errors.name ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                  }`}
                 placeholder="Ex: OpenAI Production, MCP Server Local"
               />
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
@@ -237,9 +236,8 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
                   type={showApiKey ? 'text' : 'password'}
                   value={formData.keyPreview}
                   onChange={(e) => handleInputChange('keyPreview', e.target.value)}
-                  className={`w-full px-3 py-2 pr-10 border rounded-md dark:bg-gray-700 dark:text-white ${
-                    errors.keyPreview ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                  }`}
+                  className={`w-full px-3 py-2 pr-10 border rounded-md dark:bg-gray-700 dark:text-white ${errors.keyPreview ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    }`}
                   placeholder="sk-..."
                 />
                 <button
@@ -259,7 +257,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
           {formData.provider === 'StatusRafa MCP' && (
             <div className="space-y-4">
               <h3 className="text-lg font-medium text-gray-900 dark:text-white">Configuração MCP</h3>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Endpoint MCP
@@ -270,10 +268,9 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
                   type="text"
                   value={formData.mcpEndpoint}
                   onChange={(e) => handleInputChange('mcpEndpoint', e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:text-white ${
-                    errors.mcpEndpoint ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                  }`}
-                  placeholder="http://127.0.0.1:3002"
+                  className={`w-full px-3 py-2 border rounded-md dark:bg-gray-700 dark:text-white ${errors.mcpEndpoint ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+                    }`}
+                  placeholder="https://api.kubex.world"
                 />
                 {errors.mcpEndpoint && <p className="text-red-500 text-xs mt-1">{errors.mcpEndpoint}</p>}
               </div>
@@ -364,7 +361,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
           {/* Configuration */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white">Configuração</h3>
-            
+
             <div className="grid grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -413,36 +410,33 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
           {/* Connection Test */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white">Teste de Conexão</h3>
-            
+
             <div className="flex items-center space-x-4">
               <button
                 type="button"
                 onClick={testConnection}
                 disabled={isTesting}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-md font-medium transition-colors"
+                className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary-hover disabled:bg-blue-400 text-white rounded-md font-medium transition-colors"
               >
                 <TestTube className={`h-4 w-4 mr-2 ${isTesting ? 'animate-spin' : ''}`} />
                 {isTesting ? 'Testando...' : 'Testar Conexão'}
               </button>
-              
-              <div className={`flex items-center space-x-1 ${
-                formData.status === 'Connected' ? 'text-green-600' : 
+
+              <div className={`flex items-center space-x-1 ${formData.status === 'Connected' ? 'text-green-600' :
                 formData.status === 'Testing' ? 'text-yellow-600' : 'text-red-600'
-              }`}>
-                <div className={`w-2 h-2 rounded-full ${
-                  formData.status === 'Connected' ? 'bg-green-500' : 
+                }`}>
+                <div className={`w-2 h-2 rounded-full ${formData.status === 'Connected' ? 'bg-green-500' :
                   formData.status === 'Testing' ? 'bg-yellow-500' : 'bg-red-500'
-                }`} />
+                  }`} />
                 <span className="text-sm font-medium">{formData.status}</span>
               </div>
             </div>
 
             {testResult && (
-              <div className={`p-3 rounded-md text-sm ${
-                testResult.startsWith('✅') 
-                  ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700'
-                  : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700'
-              }`}>
+              <div className={`p-3 rounded-md text-sm ${testResult.startsWith('✅')
+                ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700'
+                : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-700'
+                }`}>
                 {testResult}
               </div>
             )}
@@ -459,7 +453,7 @@ export function APIProviderModal({ isOpen, onClose, onSave, provider }: APIProvi
             </button>
             <button
               type="submit"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-md font-medium transition-colors"
             >
               <Check className="h-4 w-4 mr-2" />
               {provider ? 'Atualizar' : 'Adicionar'} Provider

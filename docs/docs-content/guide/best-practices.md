@@ -1,6 +1,6 @@
 # Best Practices
 
-Comprehensive guide to best practices for using Kortex effectively in production environments.
+Comprehensive guide to best practices for using Pulse effectively in production environments.
 
 ## 🏗️ Architecture Best Practices
 
@@ -499,8 +499,8 @@ const environments: Record<string, EnvironmentConfig> = {
     },
   },
   staging: {
-    apiUrl: 'https://staging-api.kortex.example.com',
-    wsUrl: 'wss://staging-api.kortex.example.com/ws',
+    apiUrl: 'https://staging-api.pulse.example.com',
+    wsUrl: 'wss://staging-api.pulseexample.com/ws',
     logLevel: 'info',
     features: {
       mockData: false,
@@ -508,8 +508,8 @@ const environments: Record<string, EnvironmentConfig> = {
     },
   },
   production: {
-    apiUrl: 'https://api.kortex.example.com',
-    wsUrl: 'wss://api.kortex.example.com/ws',
+    apiUrl: 'https://api.pulseexample.com',
+    wsUrl: 'wss://api.pulseexample.com/ws',
     logLevel: 'warn',
     features: {
       mockData: false,

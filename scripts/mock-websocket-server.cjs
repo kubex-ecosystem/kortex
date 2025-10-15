@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * 🔥 Mock WebSocket Server para Testar Kortex Real-Time
+ * 🔥 Mock WebSocket Server para Testar Pulse Real-Time
  * Simula Kosmos/StatusRafa MCP para desenvolvimento
  */
 
@@ -119,7 +119,7 @@ wss.on('connection', function connection(ws, req) {
     try {
       const parsed = JSON.parse(data);
       console.log(`📨 Received from client:`, parsed);
-      
+
       // Echo de volta como confirmação
       ws.send(JSON.stringify({
         event: 'system:alert',
@@ -165,4 +165,4 @@ process.on('SIGINT', () => {
 });
 
 console.log('🔥 Broadcasting random events every 3-8 seconds');
-console.log('🎯 Connect Kortex to ws://localhost:8001 to see real-time magic!');
+console.log('🎯 Connect Pulseto ws://localhost:8001 to see real-time magic!');

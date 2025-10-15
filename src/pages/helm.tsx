@@ -42,9 +42,9 @@ const HelmPage: React.FC = () => {
 
   const loadSystemContext = async () => {
     try {
-      const response = await fetch('/api/helm/context');
+      const response = await fetch('/api/v1/helm/context');
       const data: HelmContextResponse = await response.json();
-      
+
       if (data.success) {
         setSystemContext(data.context);
       } else {
@@ -59,13 +59,13 @@ const HelmPage: React.FC = () => {
   const loadReleases = async () => {
     try {
       setLoading(true);
-      const url = selectedNamespace 
-        ? `/api/helm/releases?namespace=${selectedNamespace}`
-        : '/api/helm/releases';
-      
+      const url = selectedNamespace
+        ? `/api/v1/helm/releases?namespace=${selectedNamespace}`
+        : '/api/v1/elm/releases';
+
       const response = await fetch(url);
       const data: HelmReleasesResponse = await response.json();
-      
+
       if (data.success) {
         setReleases(data.releases);
         setError('');
@@ -102,8 +102,8 @@ const HelmPage: React.FC = () => {
       }
 
       const deployRequest = { ...deployForm, values };
-      
-      const response = await fetch('/api/helm/deploy', {
+
+      const response = await fetch('/api/v1/helm/deploy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -112,7 +112,7 @@ const HelmPage: React.FC = () => {
       });
 
       const result: HelmDeployResult = await response.json();
-      
+
       if (result.success) {
         setLastOperation(`✅ ${deployForm.release_name} deployed successfully`);
         setDeployFormVisible(false);
@@ -151,12 +151,12 @@ const HelmPage: React.FC = () => {
       setLoading(true);
       setLastOperation(`Uninstalling ${releaseName}...`);
 
-      const response = await fetch(`/api/helm/releases/${releaseName}?namespace=${namespace}`, {
+      const response = await fetch(`/api/v1/helm/releases/${releaseName}?namespace=${namespace}`, {
         method: 'DELETE',
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         setLastOperation(`✅ ${releaseName} uninstalled successfully`);
         await loadReleases();
@@ -198,7 +198,7 @@ const HelmPage: React.FC = () => {
         {/* Header */}
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3 mb-4">
-            <Package className="w-8 h-8 text-blue-600" />
+            <Package className="w-8 h-8 text-primary" />
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                 Helm Chart Manager
@@ -208,7 +208,7 @@ const HelmPage: React.FC = () => {
               </p>
             </div>
           </div>
-          
+
           {/* System Context */}
           {systemContext && (
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
@@ -246,13 +246,13 @@ const HelmPage: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <button
             onClick={() => setDeployFormVisible(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
             disabled={loading}
           >
             <Play className="w-4 h-4" />
             Deploy Chart
           </button>
-          
+
           <button
             onClick={loadReleases}
             className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
@@ -279,8 +279,8 @@ const HelmPage: React.FC = () => {
 
         {/* Last Operation */}
         {lastOperation && (
-          <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p className="text-sm text-blue-800 dark:text-blue-200">{lastOperation}</p>
+          <div className="mb-4 p-3 bg-primary-subtle dark:bg-primary/20 border border-primary dark:border-primary rounded-lg">
+            <p className="text-sm text-primary-foreground dark:text-primary">{lastOperation}</p>
           </div>
         )}
 
@@ -296,7 +296,7 @@ const HelmPage: React.FC = () => {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Deploy Helm Chart</h2>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -305,7 +305,7 @@ const HelmPage: React.FC = () => {
                   <input
                     type="text"
                     value={deployForm.release_name}
-                    onChange={(e) => setDeployForm({...deployForm, release_name: e.target.value})}
+                    onChange={(e) => setDeployForm({ ...deployForm, release_name: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="my-app"
                   />
@@ -318,7 +318,7 @@ const HelmPage: React.FC = () => {
                   <input
                     type="text"
                     value={deployForm.chart_path}
-                    onChange={(e) => setDeployForm({...deployForm, chart_path: e.target.value})}
+                    onChange={(e) => setDeployForm({ ...deployForm, chart_path: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     placeholder="oci://ghcr.io/user/chart or ./local-chart"
                   />
@@ -332,7 +332,7 @@ const HelmPage: React.FC = () => {
                     <input
                       type="text"
                       value={deployForm.namespace}
-                      onChange={(e) => setDeployForm({...deployForm, namespace: e.target.value})}
+                      onChange={(e) => setDeployForm({ ...deployForm, namespace: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       title='Filter by Namespace'
                     />
@@ -345,7 +345,7 @@ const HelmPage: React.FC = () => {
                     <input
                       type="number"
                       value={deployForm.timeout}
-                      onChange={(e) => setDeployForm({...deployForm, timeout: parseInt(e.target.value)})}
+                      onChange={(e) => setDeployForm({ ...deployForm, timeout: parseInt(e.target.value) })}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       title='Set Timeout in Seconds'
                     />
@@ -370,7 +370,7 @@ const HelmPage: React.FC = () => {
                     <input
                       type="checkbox"
                       checked={deployForm.dry_run}
-                      onChange={(e) => setDeployForm({...deployForm, dry_run: e.target.checked})}
+                      onChange={(e) => setDeployForm({ ...deployForm, dry_run: e.target.checked })}
                       className="mr-2"
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-300">Dry Run (simulate only)</span>
@@ -380,7 +380,7 @@ const HelmPage: React.FC = () => {
                     <input
                       type="checkbox"
                       checked={deployForm.create_namespace}
-                      onChange={(e) => setDeployForm({...deployForm, create_namespace: e.target.checked})}
+                      onChange={(e) => setDeployForm({ ...deployForm, create_namespace: e.target.checked })}
                       className="mr-2"
                     />
                     <span className="text-sm text-gray-700 dark:text-gray-300">Create Namespace</span>
@@ -392,12 +392,12 @@ const HelmPage: React.FC = () => {
                 <button
                   onClick={deployChart}
                   disabled={loading}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors disabled:opacity-50"
                 >
                   <Play className="w-4 h-4" />
                   {loading ? 'Deploying...' : 'Deploy'}
                 </button>
-                
+
                 <button
                   onClick={() => setDeployFormVisible(false)}
                   className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
@@ -440,18 +440,17 @@ const HelmPage: React.FC = () => {
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        release.status === 'deployed' 
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
-                          : release.status === 'failed'
+                      <span className={`px-2 py-1 text-xs rounded-full ${release.status === 'deployed'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                        : release.status === 'failed'
                           ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
                           : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
-                      }`}>
+                        }`}>
                         {release.status}
                       </span>
-                      
+
                       <button
                         onClick={() => uninstallRelease(release.name, release.namespace)}
                         className="p-1 text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 rounded"
@@ -462,7 +461,7 @@ const HelmPage: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                  
+
                   <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 grid grid-cols-3 gap-4">
                     <span>Rev: {release.revision}</span>
                     <span>Updated: {new Date(release.updated).toLocaleDateString()}</span>

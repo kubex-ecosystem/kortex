@@ -1,16 +1,16 @@
 # Real-time Monitoring
 
-Kortex provides comprehensive real-time monitoring capabilities across your DevOps and AI infrastructure. This guide covers how to effectively use and configure real-time features.
+Pulse provides comprehensive real-time monitoring capabilities across your DevOps and AI infrastructure. This guide covers how to effectively use and configure real-time features.
 
 ## 🚀 WebSocket-Powered Updates
 
 ### Instant Data Synchronization
 
-Kortex uses WebSocket connections to deliver real-time updates without requiring page refreshes:
+Pulseuses WebSocket connections to deliver real-time updates without requiring page refreshes:
 
 ```mermaid
 sequenceDiagram
-    participant UI as Kortex UI
+    participant UI as PulseUI
     participant WS as WebSocket
     participant API as API Server
     participant EXT as External APIs
@@ -98,7 +98,7 @@ Advanced analytics with real-time data processing:
 
 ### Real-time Notifications
 
-Kortex provides intelligent alerting for critical events:
+Pulseprovides intelligent alerting for critical events:
 
 #### Alert Types
 
@@ -130,11 +130,11 @@ alerts:
   api_rate_limit:
     warning: 80%    # Warn at 80% usage
     critical: 95%   # Critical at 95% usage
-  
+
   server_response_time:
     warning: 500ms  # Warn if response > 500ms
     critical: 2000ms # Critical if response > 2s
-  
+
   error_rate:
     warning: 5%     # Warn if error rate > 5%
     critical: 15%   # Critical if error rate > 15%
@@ -227,11 +227,11 @@ websocket:
       initial: 1000ms
       max: 30000ms
       multiplier: 1.5
-  
+
   heartbeat:
     interval: 30000ms
     timeout: 10000ms
-  
+
   compression: true
   bufferSize: 1024kb
 ```
@@ -281,7 +281,7 @@ graph TD
     B -->|Critical| C[Immediate Action]
     B -->|Warning| D[Monitor Trend]
     B -->|Info| E[Log for Review]
-    
+
     C --> F[Auto-remediation]
     C --> G[Team Notification]
     D --> H[Trend Analysis]
@@ -292,7 +292,7 @@ graph TD
 
 ### Responsive Design
 
-Kortex adapts monitoring displays for different screen sizes:
+Pulseadapts monitoring displays for different screen sizes:
 
 #### Mobile Optimizations
 
@@ -340,7 +340,7 @@ curl -i -N -H "Connection: Upgrade" \
 
 ```javascript
 // Enable debug logging
-localStorage.setItem('kortex:debug', 'true');
+localStorage.setItem('pulse:debug', 'true');
 
 // Monitor WebSocket messages
 window.addEventListener('message', (event) => {

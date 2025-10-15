@@ -5,10 +5,10 @@ export type SitemapEntry = {
 
 const resolveBaseUrl = () => {
   const envRecord = (globalThis as typeof globalThis & {
-    process?: { env?: Record<string, string | undefined> };
+    process?: { env?: Record<string, string | undefined>; };
   }).process?.env;
 
-  return envRecord?.VITE_BASE_URL || envRecord?.BASE_URL || 'https://kortex.rafa-mori.dev';
+  return envRecord?.VITE_BASE_URL || envRecord?.BASE_URL || 'https://dev.kubex.world';
 };
 
 export default function sitemap(): SitemapEntry[] {

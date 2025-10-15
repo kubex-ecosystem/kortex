@@ -120,8 +120,8 @@ const server = http.createServer((req, res) => {
     // Health check
     if (path === '/health') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ 
-        status: 'healthy', 
+      res.end(JSON.stringify({
+        status: 'healthy',
         timestamp: new Date().toISOString(),
         uptime: process.uptime()
       }));
@@ -140,7 +140,7 @@ const server = http.createServer((req, res) => {
     // Helm API endpoints
     if (path === '/api/helm/context') {
       console.log('📡 GET /api/helm/context');
-      
+
       const helmContext = {
         success: true,
         context: {
@@ -155,18 +155,18 @@ const server = http.createServer((req, res) => {
           }
         }
       };
-      
+
       console.log('✅ Serving Helm context:', { namespaces: helmContext.context.namespaces.length });
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(helmContext));
       return;
     }
 
-    if (path === '/api/helm/releases') {
-      console.log('📡 GET /api/helm/releases');
-      
+    if (path === '/api/v1/helm/releases') {
+      console.log('📡 GET /api/v1/helm/releases');
+
       const namespace = parsedUrl.query.namespace;
-      
+
       // Generate realistic Helm releases
       const generateReleases = (targetNamespace) => {
         const releases = [
@@ -221,25 +221,25 @@ const server = http.createServer((req, res) => {
             description: 'Certificate management controller'
           }
         ];
-        
+
         // Filter by namespace if specified
         if (targetNamespace) {
           return releases.filter(r => r.namespace === targetNamespace);
         }
-        
+
         return releases;
       };
-      
+
       const releases = generateReleases(namespace);
-      
+
       const response = {
         success: true,
         releases: releases
       };
-      
-      console.log('✅ Serving Helm releases:', { 
-        namespace: namespace || 'all', 
-        count: releases.length 
+
+      console.log('✅ Serving Helm releases:', {
+        namespace: namespace || 'all',
+        count: releases.length
       });
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(response));
@@ -247,14 +247,14 @@ const server = http.createServer((req, res) => {
     }
 
     // Handle POST requests for Helm deploy
-    if (req.method === 'POST' && path === '/api/helm/deploy') {
-      console.log('📡 POST /api/helm/deploy');
-      
+    if (req.method === 'POST' && path === '/api/v1/helm/deploy') {
+      console.log('📡 POST /api/v1/helm/deploy');
+
       let body = '';
       req.on('data', (chunk) => {
         body += chunk.toString();
       });
-      
+
       req.on('end', () => {
         try {
           const deployRequest = JSON.parse(body);
@@ -264,7 +264,7 @@ const server = http.createServer((req, res) => {
             namespace: deployRequest.namespace,
             dry_run: deployRequest.dry_run
           });
-          
+
           // Simulate deployment process
           const response = {
             success: true,
@@ -276,10 +276,10 @@ const server = http.createServer((req, res) => {
               status: 'deployed',
               chart: deployRequest.chart_path,
               updated: new Date().toISOString(),
-              description: `Deployed ${deployRequest.release_name} via Kortex`
+              description: `Deployed ${deployRequest.release_name} via Pulse`
             }
           };
-          
+
           console.log('✅ Deployment successful:', deployRequest.release_name);
           res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify(response));
@@ -293,20 +293,20 @@ const server = http.createServer((req, res) => {
     }
 
     // Handle DELETE requests for Helm uninstall
-    if (req.method === 'DELETE' && path.startsWith('/api/helm/uninstall/')) {
-      console.log('📡 DELETE /api/helm/uninstall');
-      
+    if (req.method === 'DELETE' && path.startsWith('/api/v1/helm/uninstall/')) {
+      console.log('📡 DELETE /api/v1/helm/uninstall');
+
       const releaseName = path.split('/').pop();
       const namespace = parsedUrl.query.namespace || 'default';
-      
+
       console.log('Uninstall request:', { release: releaseName, namespace });
-      
+
       const response = {
         success: true,
         message: `Release "${releaseName}" uninstalled successfully`,
         release: releaseName
       };
-      
+
       console.log('✅ Uninstall successful:', releaseName);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(response));
@@ -317,7 +317,7 @@ const server = http.createServer((req, res) => {
     if (path === '/stats') {
       const githubStats = generateGitHubStats();
       const azureStats = generateAzureStats();
-      
+
       const combinedStats = {
         github: githubStats,
         azure: azureStats,
@@ -349,17 +349,27 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`🚀 Mock API Server running on http://localhost:${PORT}`);
+  let baseUrl = `https://api.kubex.world`;
+
+  if (PORT === 3002) {
+    console.warn('⚠️ Warning: Running on default port 3002. Ensure no conflicts with other services.');
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    baseUrl = `http://localhost:${PORT}`;
+  }
+
+
+  console.log(`🚀 Mock API Server running on ${baseUrl}`);
   console.log(`📊 Endpoints available:`);
-  console.log(`   GET /github/stats    - GitHub statistics`);
-  console.log(`   GET /azure/stats     - Azure DevOps statistics`);
-  console.log(`   GET /mcp/servers     - MCP servers list`);
-  console.log(`   GET /stats           - Combined statistics`);
+  console.log(`   GET /api/v1/github/stats    - GitHub statistics`);
+  console.log(`   GET /api/v1/azure/stats     - Azure DevOps statistics`);
+  console.log(`   GET /api/v1/mcp/servers     - MCP servers list`);
+  console.log(`   GET /api/v1/stats           - Combined statistics`);
   console.log(`   GET /health          - Health check`);
-  console.log(`   GET /api/helm/context - Helm system context`);
-  console.log(`   GET /api/helm/releases - Helm releases`);
-  console.log(`   POST /api/helm/deploy - Deploy Helm chart`);
-  console.log(`   DELETE /api/helm/uninstall/:release - Uninstall release`);
+  console.log(`   GET /api/v1/helm/context - Helm system context`);
+  console.log(`   GET /api/v1/helm/releases - Helm releases`);
+  console.log(`   POST /api/v1/helm/deploy - Deploy Helm chart`);
+  console.log(`   DELETE /api/v1/helm/uninstall/:release - Uninstall release`);
   console.log(`🔄 Data refreshes on each request with realistic variations`);
 });
 

@@ -14,7 +14,7 @@ interface UseMCPServersReturn {
   servers: MCPServerType[];
   isLoading: boolean;
   error: string | null;
-  
+
   // Statistics
   stats: {
     total: number;
@@ -22,7 +22,7 @@ interface UseMCPServersReturn {
     offline: number;
     warning: number;
   };
-  
+
   // Actions
   addServer: (server: MCPServerType) => Promise<void>;
   updateServer: (server: MCPServerType) => Promise<void>;
@@ -51,16 +51,16 @@ export function useMCPServers(): UseMCPServersReturn {
   // Load servers using resilient service - NUNCA QUEBRA!
   const loadServers = useCallback(async () => {
     if (!isClient) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       console.log('🔄 Loading servers using resilient service...');
-      
+
       // Try to get servers from resilient service
       const response = await resilientMCPService.safeRequest('/servers', { method: 'GET' });
-      
+
       if (response.success && response.data) {
         console.log('✅ Got servers from API:', response.data);
         setServers(response.data);
@@ -68,7 +68,7 @@ export function useMCPServers(): UseMCPServersReturn {
         // Fallback - create demo servers based on service status
         const isOffline = response.isFromFallback || !response.success;
         console.log(`🔴 Using fallback servers (offline: ${isOffline})`);
-        
+
         const demoServers: MCPServerType[] = [
           {
             id: 'mcp-statusrafa-1',
@@ -81,7 +81,7 @@ export function useMCPServers(): UseMCPServersReturn {
               connectionConfig: {
                 id: 'http-config-1',
                 type: 'HTTP',
-                baseURL: 'http://127.0.0.1:3002',
+                baseURL: 'https://api.kubex.world',
                 wsUrl: 'ws://127.0.0.1:3002',
                 apiKey: '',
                 enableWebSocket: false,
@@ -206,13 +206,13 @@ export function useMCPServers(): UseMCPServersReturn {
             avgResponseTime: isOffline ? 999 : 0.8
           }
         ];
-        
+
         setServers(demoServers);
       }
     } catch (err) {
       console.error('🔴 Error loading servers (using emergency fallback):', err);
       setError(err instanceof Error ? err.message : 'Failed to load servers');
-      
+
       // EMERGENCY FALLBACK - NUNCA DEIXA VAZIO!
       setServers([
         {
@@ -226,7 +226,7 @@ export function useMCPServers(): UseMCPServersReturn {
             connectionConfig: {
               id: 'emergency-config-1',
               type: 'HTTP',
-              baseURL: 'http://127.0.0.1:3002',
+              baseURL: 'https://api.kubex.world',
               wsUrl: '',
               apiKey: '',
               enableWebSocket: false,
@@ -275,30 +275,30 @@ export function useMCPServers(): UseMCPServersReturn {
   };
 
   // RESILIENT ACTIONS - NUNCA QUEBRAM!
-  
+
   const addServer = useCallback(async (server: MCPServerType) => {
     if (!isClient) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Test connection first using resilient service
       const connected = await testConnection(server);
-      
+
       const newServer = {
         ...server,
         status: connected ? 'Online' as ServerStatus : 'Offline' as ServerStatus,
         lastUpdated: new Date()
       };
-      
+
       setServers(prev => [...prev, newServer]);
       console.log('✅ Server added successfully:', newServer.name);
-      
+
     } catch (err) {
       console.error('🔴 Failed to add server (non-critical):', err);
       setError(err instanceof Error ? err.message : 'Failed to add server');
-      
+
       // Add anyway with offline status - better than crashing!
       const fallbackServer = {
         ...server,
@@ -313,27 +313,27 @@ export function useMCPServers(): UseMCPServersReturn {
 
   const updateServer = useCallback(async (server: MCPServerType) => {
     if (!isClient) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Test connection using resilient service
       const connected = await testConnection(server);
-      
+
       const updatedServer = {
         ...server,
         status: connected ? 'Online' as ServerStatus : 'Offline' as ServerStatus,
         lastUpdated: new Date()
       };
-      
+
       setServers(prev => prev.map(s => s.id === server.id ? updatedServer : s));
       console.log('✅ Server updated successfully:', updatedServer.name);
-      
+
     } catch (err) {
       console.error('🔴 Failed to update server (non-critical):', err);
       setError(err instanceof Error ? err.message : 'Failed to update server');
-      
+
       // Update anyway - better than crashing!
       const fallbackServer = {
         ...server,
@@ -347,7 +347,7 @@ export function useMCPServers(): UseMCPServersReturn {
 
   const removeServer = useCallback(async (id: string) => {
     if (!isClient) return;
-    
+
     try {
       setServers(prev => prev.filter(s => s.id !== id));
       console.log('✅ Server removed successfully:', id);
@@ -364,13 +364,13 @@ export function useMCPServers(): UseMCPServersReturn {
 
   const testConnection = useCallback(async (server: MCPServerType): Promise<boolean> => {
     if (!isClient) return false;
-    
+
     try {
       console.log(`🔍 Testing connection to ${server.name}...`);
-      
+
       // Use resilient service for connection test
       const response = await resilientMCPService.safeRequest('/health', { method: 'GET' });
-      
+
       if (response.success) {
         console.log(`✅ Connection test passed: ${server.name}`);
         return true;
@@ -378,7 +378,7 @@ export function useMCPServers(): UseMCPServersReturn {
         console.log(`🔴 Connection test failed: ${server.name} (using fallback)`);
         return false;
       }
-      
+
     } catch (error) {
       console.error('🔴 Connection test error (non-critical):', error);
       return false; // Always return something, never crash!
@@ -391,8 +391,8 @@ export function useMCPServers(): UseMCPServersReturn {
     isLoading,
     error,
     stats,
-    
-    // Actions  
+
+    // Actions
     addServer,
     updateServer,
     removeServer,

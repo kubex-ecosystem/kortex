@@ -1,18 +1,18 @@
 # Sumário da Sessão - Estratégia de Desmocking Completa
 
-**Data:** 25 de Julho de 2025  
-**Objetivo Principal:** Implementar estratégia completa de "desmocking" - substituir todos os dados mock por integrações reais de API  
+**Data:** 25 de Julho de 2025
+**Objetivo Principal:** Implementar estratégia completa de "desmocking" - substituir todos os dados mock por integrações reais de API
 **Status:** ✅ **COMPLETO** - Todas as páginas principais desmockadas com sucesso
 
 ## 🎯 Objetivos Alcançados
 
 ### ✅ Páginas Desmockadas (100% Completo)
 
-1. **Dashboard** - Integração GitHub + Azure DevOps  
-2. **Servers Page** - Dados reais de servidores MCP  
-3. **Analytics Page** - Analytics abrangente com KPIs e métricas  
-4. **API Config Page** - Configurações de API  
-5. **Helm Page** - Integração completa com Kubernetes/Helm  
+1. **Dashboard** - Integração GitHub + Azure DevOps
+2. **Servers Page** - Dados reais de servidores MCP
+3. **Analytics Page** - Analytics abrangente com KPIs e métricas
+4. **API Config Page** - Configurações de API
+5. **Helm Page** - Integração completa com Kubernetes/Helm
 
 ### ✅ Infraestrutura Implementada
 
@@ -29,10 +29,10 @@
 ```bash
 # Server rodando em localhost:3002
 # 10 endpoints implementados:
-# GitHub: /api/github/repos, /api/github/user
-# Azure: /api/azure/projects, /api/azure/pipelines  
-# MCP: /api/mcp/servers, /api/mcp/server/:id/health
-# Helm: /api/helm/context, /api/helm/releases, /api/helm/deploy, /api/helm/uninstall
+# GitHub: /api/v1/github/repos, /api/v1/github/user
+# Azure: /api/v1/azure/projects, /api/v1/azure/pipelines
+# MCP: /api/v1/mcp/servers, /api/v1/mcp/server/:id/health
+# Helm: /api/v1/helm/context, /api/v1/helm/releases, /api/v1/helm/deploy, /api/v1/helm/uninstall
 ```
 
 ### Hooks de Dados Reais
@@ -71,7 +71,7 @@
 
 ```typescript
 // DashboardPage.tsx - Usando useRealAPIData
-// ServersPage.tsx - Usando useRealMCPData  
+// ServersPage.tsx - Usando useRealMCPData
 // AnalyticsPage.tsx - Usando useRealAnalyticsData
 // HelmPage.tsx - Integração Kubernetes completa
 // Todas com indicadores visuais de fonte de dados
@@ -81,11 +81,11 @@
 
 ```bash
 # Todos respondendo corretamente:
-curl localhost:3002/api/github/repos     # ✅ 5 repositórios
-curl localhost:3002/api/azure/projects   # ✅ 3 projetos  
-curl localhost:3002/api/mcp/servers      # ✅ 4 servidores
-curl localhost:3002/api/helm/context     # ✅ 6 namespaces
-curl localhost:3002/api/helm/releases    # ✅ 5 releases
+curl localhost:3002/api/v1/github/repos     # ✅ 5 repositórios
+curl localhost:3002/api/v1/azure/projects   # ✅ 3 projetos
+curl localhost:3002/api/v1/mcp/servers      # ✅ 4 servidores
+curl localhost:3002/api/v1/helm/context     # ✅ 6 namespaces
+curl localhost:3002/api/v1/helm/releases    # ✅ 5 releases
 ```
 
 ### Build Status
@@ -103,10 +103,10 @@ npm run build
 
 ```bash
 # Terminal 1 - Mock API Server
-cd /srv/apps/LIFE/KUBEX/kortex
+cd /srv/apps/LIFE/KUBEX/pulse
 node scripts/mock-api-server.cjs
 
-# Terminal 2 - Kortex Dashboard  
+# Terminal 2 - Pulse Dashboard
 npm run dev
 
 # Terminal 3 - Kosmos MCP Server (opcional)
@@ -121,9 +121,9 @@ python -m kbx_kosmos.server
 npm run build
 
 # API endpoints check
-curl localhost:3002/api/github/repos
-curl localhost:3002/api/mcp/servers
-curl localhost:3002/api/helm/context
+curl localhost:3002/api/v1/github/repos
+curl localhost:3002/api/v1/mcp/servers
+curl localhost:3002/api/v1/helm/context
 
 # Browser check
 open http://localhost:3000/helm
@@ -178,7 +178,7 @@ open http://localhost:3000/helm
 - Sem auto-refresh ou tempo real
 
 + Dados reais de APIs funcionais
-+ Variação temporal realística  
++ Variação temporal realística
 + Indicadores visuais claros
 + Auto-refresh e WebSocket real-time
 + Sistema resiliente com fallbacks

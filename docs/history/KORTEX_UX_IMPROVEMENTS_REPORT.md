@@ -1,8 +1,8 @@
-# 🎨 Melhorias UX/UI Implementadas - Kortex Frontend
+# 🎨 Melhorias UX/UI Implementadas - Pulse Frontend
 
 ## ✅ **Status: IMPLEMENTADO COM SUCESSO**
 
-Transformamos o Kortex em uma experiência de usuário **excepcional** e **profissional**! 🚀
+Transformamos o Pulse em uma experiência de usuário **excepcional** e **profissional**! 🚀
 
 ---
 
@@ -15,7 +15,7 @@ Transformamos o Kortex em uma experiência de usuário **excepcional** e **profi
 #### 🔥 **Funcionalidades Novas:**
 
 1. **Persistência no localStorage**:
-   - ✅ Tema salvo automaticamente como `'kortex-theme'`
+   - ✅ Tema salvo automaticamente como `'pulse-theme'`
    - ✅ Carrega preferência do usuário na inicialização
 
 2. **Auto-detecção do sistema**:
@@ -35,13 +35,13 @@ Transformamos o Kortex em uma experiência de usuário **excepcional** e **profi
 ```typescript
 // Auto-detecta tema inicial (salvo ou sistema)
 const getInitialTheme = () => {
-  const saved = localStorage.getItem('kortex-theme');
+  const saved = localStorage.getItem('pulsetheme');
   return saved ? saved === 'dark' : systemPrefersDark;
 };
 
 // Persiste e aplica mudanças
 const toggleTheme = () => {
-  localStorage.setItem('kortex-theme', newTheme ? 'dark' : 'light');
+  localStorage.setItem('pulsetheme', newTheme ? 'dark' : 'light');
   document.documentElement.classList.toggle('dark', newTheme);
 };
 ```
@@ -86,7 +86,7 @@ const toggleTheme = () => {
 2. **Navegação Funcional**:
    - ✅ View Profile → Settings
    - ✅ Settings → /settings
-   - ✅ Login Page → /login  
+   - ✅ Login Page → /login
    - ✅ Sign Out → /login (preparado para backend)
 
 3. **Design Profissional**:
@@ -146,7 +146,7 @@ const toggleTheme = () => {
 ```typescript
 // Mock atual - substituir por API real
 const handleSubmit = async (e) => {
-  const response = await fetch('/api/auth/login', {
+  const response = await fetch('/api/v1/auth/login', {
     method: 'POST',
     body: JSON.stringify(formData)
   });
@@ -190,7 +190,7 @@ const handleSubmit = async (e) => {
 
 ```bash
 ✓ Compiled successfully in 4.0s
-✓ Collecting page data 
+✓ Collecting page data
 ✓ Generating static pages (13/13)
 ✓ All components working perfectly
 ```
@@ -201,7 +201,7 @@ const handleSubmit = async (e) => {
 - ✅ `/login` - **NOVA** página completa
 - ✅ `/monitor` - Live Monitor
 - ✅ `/analytics` - Analytics
-- ✅ `/helm` - Helm Charts  
+- ✅ `/helm` - Helm Charts
 - ✅ `/servers` - Servers
 - ✅ `/api-config` - API Config
 - ✅ `/settings` - Settings
@@ -212,11 +212,11 @@ const handleSubmit = async (e) => {
 
 ```bash
 # Iniciar development server
-cd /srv/apps/LIFE/KUBEX/kortex
+cd /srv/apps/LIFE/KUBEX/pulse
 npm run dev
 
 # Acesse as URLs:
-# http://localhost:3000/login  <- NOVA página linda! 
+# http://localhost:3000/login  <- NOVA página linda!
 # http://localhost:3000/       <- Dashboard melhorado
 ```
 
@@ -248,10 +248,10 @@ npm run dev
 **🚀 Solução Entregue**:
 
 - ✅ **Tema 100% persistente** com auto-detecção
-- ✅ **Todos os componentes funcionais** e elegantes  
+- ✅ **Todos os componentes funcionais** e elegantes
 - ✅ **Tela de login profissional** para imersão total
 - ✅ **UX de nível enterprise**
 
-**🎨 O Kortex agora oferece uma experiência de usuário IMPECÁVEL e está pronto para impressionar qualquer stakeholder!**
+**🎨 O Pulse agora oferece uma experiência de usuário IMPECÁVEL e está pronto para impressionar qualquer stakeholder!**
 
 **Próximo passo**: Conectar com backends reais e adicionar mais funcionalidades avançadas! 🚀

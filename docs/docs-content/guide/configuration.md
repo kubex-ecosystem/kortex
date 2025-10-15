@@ -1,6 +1,6 @@
 # Configuration Guide
 
-This comprehensive guide covers all configuration options for Kortex, from basic setup to advanced customization.
+This comprehensive guide covers all configuration options for Pulse, from basic setup to advanced customization.
 
 ## 🚀 Quick Configuration
 
@@ -25,7 +25,7 @@ NEXT_PUBLIC_DEBUG_MODE=false
 
 ### Configuration
 
-Kortex automatically validates your configuration on startup:
+Pulse automatically validates your configuration on startup:
 
 ```typescript
 interface KortexConfig {
@@ -61,14 +61,14 @@ interface KortexConfig {
 2. **Create New Token**:
 
    ```bash
-   # Required scopes for Kortex
+   # Required scopes for Pulse
    repo              # Repository access
    user              # User information
    read:org          # Organization data
    workflow          # GitHub Actions
    ```
 
-3. **Configure in Kortex**:
+3. **Configure in Pulse**:
 
    ```env
    GITHUB_TOKEN=ghp_your_token_here
@@ -80,7 +80,7 @@ interface KortexConfig {
 // Optional: Custom GitHub configuration
 const githubConfig = {
   apiVersion: '2022-11-28',
-  userAgent: 'Kortex-Dashboard/1.0',
+  userAgent: 'Pulse-Dashboard/1.0',
   timeout: 10000,
   retries: 3,
   rateLimit: {
@@ -170,7 +170,7 @@ servers:
       type: "bearer"
       credentials: "${MCP_TOKEN}"
     healthCheck:
-      path: "/api/health"
+      path: "/api/v1/health"
       interval: 60000
       timeout: 10000
 ```
@@ -343,13 +343,13 @@ NEXT_PUBLIC_ANALYTICS_ID=your_analytics_id
 ```env
 # .env.production
 NODE_ENV=production
-NEXT_PUBLIC_API_BASE_URL=https://api.kortex.example.com
-NEXT_PUBLIC_WS_URL=wss://api.kortex.example.com/ws
+NEXT_PUBLIC_API_BASE_URL=https://api.pulse.example.com
+NEXT_PUBLIC_WS_URL=wss://api.pulseexample.com/ws
 NEXT_PUBLIC_DEBUG_MODE=false
 NEXT_PUBLIC_MOCK_MODE=false
 
 # Production optimizations
-NEXT_PUBLIC_CDN_URL=https://cdn.kortex.example.com
+NEXT_PUBLIC_CDN_URL=https://cdn.pulseexample.com
 NEXT_PUBLIC_CACHE_STRATEGY=aggressive
 NEXT_PUBLIC_MONITORING=full
 ```

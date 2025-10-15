@@ -1,15 +1,15 @@
 
-# ![Kortex Banner](assets/images/top_banner.png)
+# ![Pulse Banner](assets/images/top_banner.png)
 
-Your comprehensive guide to the Kortex MCP Server Management Dashboard.
+Your comprehensive guide to the PulseMCP Server Management Dashboard.
 
 ## 🚀 Quick Navigation
 
 ### Getting Started
 
 - **[Quick Start Guide](getting-started/quick-start.md)** - Get up and running in 5 minutes
-- **[Installation](getting-started/installation.md)** - Detailed installation instructions  
-- **[Core Concepts](getting-started/concepts.md)** - Understand Kortex architecture
+- **[Installation](getting-started/installation.md)** - Detailed installation instructions
+- **[Core Concepts](getting-started/concepts.md)** - Understand Pulsearchitecture
 
 ### User Guide
 
@@ -67,7 +67,7 @@ Your comprehensive guide to the Kortex MCP Server Management Dashboard.
 ## 🚀 Demo Locally
 
 ```bash
-git clone https://github.com/rafa-mori/kortex.git && cd kortex
+git clone https://github.com/rafa-mori/pulse.git && cd pulse
 npm install && npm run dev
 ```
 
@@ -81,4 +81,4 @@ Made by Rafael Mori · [GitHub](https://github.com/rafa-mori) · [Email](mailto\
 
 ---
 
-Kortex is part of the Kubex ecosystem.
+Pulseis part of the Kubex ecosystem.

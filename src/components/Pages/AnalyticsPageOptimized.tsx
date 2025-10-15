@@ -1,15 +1,15 @@
 import {
-    Activity,
-    BarChart3,
-    Database,
-    Download,
-    FileText,
-    Loader2,
-    PieChart,
-    Server,
-    Target,
-    TrendingUp,
-    Zap
+  Activity,
+  BarChart3,
+  Database,
+  Download,
+  FileText,
+  Loader2,
+  PieChart,
+  Server,
+  Target,
+  TrendingUp,
+  Zap
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { StatusBadge } from '../UI/StatusBadge';
@@ -35,7 +35,7 @@ export const AnalyticsPageOptimized: React.FC = () => {
   // Client-side only loading simulation
   useEffect(() => {
     setIsClient(true); // Mark as client-side rendered
-    
+
     // Only show loading on client-side
     setIsLoading(true);
     const timer = setTimeout(() => {
@@ -58,31 +58,31 @@ export const AnalyticsPageOptimized: React.FC = () => {
   }
 
   const primaryMetrics = [
-    { 
-      title: 'Total Repositories', 
-      value: analytics.totalRepositories, 
-      trend: '+12%', 
+    {
+      title: 'Total Repositories',
+      value: analytics.totalRepositories,
+      trend: '+12%',
       icon: <Database className="h-5 w-5" />,
       color: 'text-blue-600'
     },
-    { 
-      title: 'Active Pull Requests', 
-      value: analytics.totalPullRequests, 
-      trend: '+8%', 
+    {
+      title: 'Active Pull Requests',
+      value: analytics.totalPullRequests,
+      trend: '+8%',
       icon: <FileText className="h-5 w-5" />,
-      color: 'text-green-600' 
+      color: 'text-green-600'
     },
-    { 
-      title: 'Running Pipelines', 
-      value: analytics.totalPipelines, 
-      trend: '-3%', 
+    {
+      title: 'Running Pipelines',
+      value: analytics.totalPipelines,
+      trend: '-3%',
       icon: <Activity className="h-5 w-5" />,
       color: 'text-purple-600'
     },
-    { 
-      title: 'Server Uptime', 
-      value: `${analytics.serverUptime.toFixed(1)}%`, 
-      trend: '+2%', 
+    {
+      title: 'Server Uptime',
+      value: `${analytics.serverUptime.toFixed(1)}%`,
+      trend: '+2%',
       icon: <Server className="h-5 w-5" />,
       color: 'text-emerald-600'
     },
@@ -98,7 +98,7 @@ export const AnalyticsPageOptimized: React.FC = () => {
   const topRepositories = [
     { name: 'kbx-kosmos', commits: 156, prs: 8, status: 'Active' },
     { name: 'kbx-synex', commits: 89, prs: 5, status: 'Active' },
-    { name: 'kortex', commits: 124, prs: 3, status: 'Active' },
+    { name: 'pulse', commits: 124, prs: 3, status: 'Active' },
     { name: 'kbx-horizon', commits: 67, prs: 2, status: 'Stable' }
   ];
 
@@ -140,10 +140,9 @@ export const AnalyticsPageOptimized: React.FC = () => {
               <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-700 ${metric.color}`}>
                 {metric.icon}
               </div>
-              <div className={`flex items-center gap-1 text-sm font-medium ${
-                metric.trend.startsWith('+') ? 'text-green-600' : 
+              <div className={`flex items-center gap-1 text-sm font-medium ${metric.trend.startsWith('+') ? 'text-green-600' :
                 metric.trend.startsWith('-') ? 'text-red-600' : 'text-gray-600'
-              }`}>
+                }`}>
                 <TrendingUp size={14} className={metric.trend.startsWith('-') ? 'rotate-180' : ''} />
                 {metric.trend}
               </div>
@@ -263,11 +262,10 @@ export const AnalyticsPageOptimized: React.FC = () => {
             <div className="space-y-4">
               {recentActivity.map((activity, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <div className={`w-2 h-2 rounded-full mt-2 ${
-                    activity.type === 'success' ? 'bg-green-500' :
+                  <div className={`w-2 h-2 rounded-full mt-2 ${activity.type === 'success' ? 'bg-green-500' :
                     activity.type === 'warning' ? 'bg-yellow-500' :
-                    activity.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-                  }`}></div>
+                      activity.type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+                    }`}></div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm text-gray-900 dark:text-white">
                       <span className="font-medium">{activity.user}</span> {activity.action}

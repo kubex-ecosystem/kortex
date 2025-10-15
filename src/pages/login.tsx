@@ -67,11 +67,11 @@ const LoginPage: React.FC = () => {
                 
                 {/* Header */}
                 <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl mb-4">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-xl mb-4">
                     <div className="text-2xl font-bold text-white">K</div>
                   </div>
                   <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">KorteX</span>
+                    Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">KorteX</span>
                   </h1>
                   <p className="text-gray-600 dark:text-gray-400">
                     Sign in to access your MCP management dashboard
@@ -144,13 +144,13 @@ const LoginPage: React.FC = () => {
                     <label className="flex items-center">
                       <input 
                         type="checkbox" 
-                        className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-600" 
+                        className="w-4 h-4 text-primary bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-600" 
                       />
                       <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Remember me</span>
                     </label>
                     <button
                       type="button"
-                      className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                      className="text-sm text-primary dark:text-primary hover:text-primary-foreground dark:hover:text-primary transition-colors"
                     >
                       Forgot password?
                     </button>
@@ -160,7 +160,7 @@ const LoginPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 
+                    className="w-full bg-gradient-to-r from-primary to-accent hover:from-primary-hover hover:to-accent-hover 
                              text-white py-3 px-4 rounded-lg font-medium transition-all duration-200 
                              transform hover:scale-[1.02] active:scale-[0.98] 
                              disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
@@ -181,18 +181,18 @@ const LoginPage: React.FC = () => {
                 </form>
 
                 {/* Demo Credentials */}
-                <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                  <p className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-2">Demo Credentials:</p>
-                  <p className="text-sm text-blue-600 dark:text-blue-300">
-                    Email: <code className="bg-blue-100 dark:bg-blue-800 px-1 py-0.5 rounded">admin@kubex.local</code><br/>
-                    Password: <code className="bg-blue-100 dark:bg-blue-800 px-1 py-0.5 rounded">demo123</code>
+                <div className="mt-8 p-4 bg-primary-subtle dark:bg-primary/20 border border-primary dark:border-primary rounded-lg">
+                  <p className="text-sm font-medium text-primary-foreground dark:text-primary mb-2">Demo Credentials:</p>
+                  <p className="text-sm text-primary dark:text-primary">
+                    Email: <code className="bg-primary-subtle dark:bg-primary/20 px-1 py-0.5 rounded">admin@kubex.local</code><br/>
+                    Password: <code className="bg-primary-subtle dark:bg-primary/20 px-1 py-0.5 rounded">demo123</code>
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Right Side - Features */}
-            <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-8 lg:p-12 text-white">
+            <div className="bg-gradient-to-br from-primary to-accent p-8 lg:p-12 text-white">
               <div className="h-full flex flex-col justify-center">
                 
                 <div className="mb-8">

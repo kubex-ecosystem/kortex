@@ -1,16 +1,16 @@
-site_name: Kortex
-site_url: https://rafa-mori.github.io/kortex/
-site_description: 'Real-time monitoring for DevOps & AI pipelines'
-site_author: 'Rafael Mori'
+site_name: Pulse
+site_url: https://rafa-mori.github.io/pulse/
+site_description: "Real-time monitoring for DevOps & AI pipelines"
+site_author: "Rafael Mori"
 
-repo_name: 'rafa-mori/kortex'
-repo_url: https://github.com/rafa-mori/kortex
+repo_name: "rafa-mori/pulse"
+repo_url: https://github.com/rafa-mori/pulse
 
 theme:
   name: material
   palette:
-    primary: 'indigo'
-    accent: 'indigo'
+    primary: "indigo"
+    accent: "indigo"
   features:
     - navigation.tabs
     - navigation.top
@@ -76,22 +76,22 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Documentation:
-    - Getting Started:
-      - README: README.en.md
-      - Installation: INSTALL.md
-      - AI Integration: INSTALL_AI.md
-    - User Guide:
-      - README (Portuguese): README.pt-BR.md
+      - Getting Started:
+          - README: README.en.md
+          - Installation: INSTALL.md
+          - AI Integration: INSTALL_AI.md
+      - User Guide:
+          - README (Portuguese): README.pt-BR.md
   - Community:
-    - Contributing: CONTRIBUTING.md
-    - Code of Conduct: CODE_OF_CONDUCT.md
-    - Support: SUPPORT.md
-    - Authors: AUTHORS.md
+      - Contributing: CONTRIBUTING.md
+      - Code of Conduct: CODE_OF_CONDUCT.md
+      - Support: SUPPORT.md
+      - Authors: AUTHORS.md
   - Project Info:
-    - License: LICENSE
-    - Notice: NOTICE.md
-    - Security Policy: SECURITY.md
-    - Changelog: CHANGELOG.md
+      - License: LICENSE
+      - Notice: NOTICE.md
+      - Security Policy: SECURITY.md
+      - Changelog: CHANGELOG.md
 
 extra:
   social:

@@ -137,8 +137,8 @@ export const ServersPage: React.FC = () => {
       <div className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
-              <Server className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="p-2 bg-primary-subtle dark:bg-primary/20 rounded-lg">
+              <Server className="w-6 h-6 text-primary dark:text-primary" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -191,7 +191,7 @@ export const ServersPage: React.FC = () => {
           </div>
           <button 
             onClick={() => handleTestConnection(server)}
-            className="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors duration-200"
+            className="inline-flex items-center px-3 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-md text-sm font-medium transition-colors duration-200"
           >
             <Activity className="w-4 h-4 mr-1" />
             Test Connection
@@ -243,7 +243,7 @@ export const ServersPage: React.FC = () => {
               <button
                 onClick={refreshData}
                 disabled={isLoading}
-                className="flex items-center space-x-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 disabled:opacity-50"
+                className="flex items-center space-x-1 text-xs text-primary dark:text-primary hover:text-primary-hover disabled:opacity-50"
               >
                 <RefreshCw className={`w-3 h-3 ${isLoading ? 'animate-spin' : ''}`} />
                 <span>Refresh</span>
@@ -252,7 +252,7 @@ export const ServersPage: React.FC = () => {
           </div>
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
+            className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors duration-200"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add Server
@@ -324,7 +324,7 @@ export const ServersPage: React.FC = () => {
           {!searchTerm && selectedStatus === 'all' && (
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200"
+              className="inline-flex items-center px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg font-medium transition-colors duration-200"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add First Server

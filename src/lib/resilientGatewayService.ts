@@ -1,10 +1,11 @@
 import ResilientMCPService from './resilientMcpService';
 
 function defaultGatewayBaseUrl() {
-  if (process.env.NEXT_PUBLIC_GATEWAY_BASE_URL && process.env.NEXT_PUBLIC_GATEWAY_BASE_URL.trim().length > 0) {
-    return process.env.NEXT_PUBLIC_GATEWAY_BASE_URL;
-  }
-  return '/api/gateway';
+  // if (process.env.VITE_GATEWAY_SERVER_URL && process.env.VITE_GATEWAY_SERVER_URL.trim().length > 0) {
+  //   return process.env.VITE_GATEWAY_SERVER_URL;
+  // }
+
+  return '/api/v1/gateway';
 }
 
 export const resilientGatewayService = new ResilientMCPService(defaultGatewayBaseUrl());

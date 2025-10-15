@@ -1,24 +1,24 @@
-# 🚀 Kortex → MCP Server Integration Roadmap
+# 🚀 Pulse → MCP Server Integration Roadmap
 
 ## 🎯 Visão Geral da Integração
 
-O Kortex Dashboard está sendo desenvolvido para se integrar perfeitamente com o **StatusRafa MCP Server**, criando um ecossistema completo de monitoramento e gerenciamento de desenvolvimento.
+O PulseDashboard está sendo desenvolvido para se integrar perfeitamente com o **StatusRafa MCP Server**, criando um ecossistema completo de monitoramento e gerenciamento de desenvolvimento.
 
 ### 🏗️ Arquitetura da Integração
 
 ```mermaid
 graph TD
-    A[Kortex Dashboard - Next.js] --> B[MCP Service Layer]
+    A[PulseDashboard - Next.js] --> B[MCP Service Layer]
     B --> C[StatusRafa HTTP API :3002]
     B --> D[StatusRafa MCP Server :3001]
     C --> E[GitHub Integration]
-    C --> F[Azure DevOps Integration] 
+    C --> F[Azure DevOps Integration]
     C --> G[Memory System]
-    
+
     H[TimeCraft AI] --> C
     I[LookAtNi] --> C
     J[Other Projects] --> C
-    
+
     K[Kubex Ecosystem] --> A
     K --> H
     K --> I
@@ -63,13 +63,13 @@ graph TD
 
 | Endpoint | Método | Função Frontend | Status |
 |----------|--------|-----------------|---------|
-| `/api/status` | GET | Test connection, server health | ✅ |
-| `/api/repos` | GET | List GitHub repositories | 🚧 |
-| `/api/prs` | GET/POST | Pull requests management | 🚧 |
-| `/api/pipelines` | GET/POST | Azure DevOps pipelines | 🚧 |
-| `/api/memory` | GET/POST | Shared memory system | 🚧 |
-| `/api/suggest` | GET | AI-powered suggestions | 🚧 |
-| `/api/session` | GET | Session ID generation | 🚧 |
+| `/api/v1/status` | GET | Test connection, server health | ✅ |
+| `/api/v1/repos` | GET | List GitHub repositories | 🚧 |
+| `/api/v1/prs` | GET/POST | Pull requests management | 🚧 |
+| `/api/v1/pipelines` | GET/POST | Azure DevOps pipelines | 🚧 |
+| `/api/v1/memory` | GET/POST | Shared memory system | 🚧 |
+| `/api/v1/suggest` | GET | AI-powered suggestions | 🚧 |
+| `/api/v1/session` | GET | Session ID generation | 🚧 |
 
 ## 🛠️ Comandos de Desenvolvimento
 
@@ -79,11 +79,11 @@ graph TD
 # API Server HTTP
 uv run --env-file ../.env mcp/api_server.py
 
-# FastMCP Server 
+# FastMCP Server
 uv run --env-file ./.env ./timecraft_ai/mcp/server.py
 ```
 
-### Kortex Frontend
+### PulseFrontend
 
 ```bash
 # Development
@@ -111,7 +111,7 @@ PORT=3001
 
 ### Portas Utilizadas
 
-- **3000**: Kortex Dashboard (Next.js)
+- **3000**: PulseDashboard (Next.js)
 - **3001**: StatusRafa MCP Server (FastMCP/SSE)
 - **3002**: StatusRafa HTTP API Server
 
@@ -123,7 +123,7 @@ PORT=3001
 - **Pull Requests**: Status, drafts, reviews pendentes
 - **Atividade**: Commits, issues, discussões
 
-### Azure DevOps Integration  
+### Azure DevOps Integration
 
 - **Pipelines**: Status de build, deploy, testes
 - **Work Items**: Tasks, bugs, user stories
@@ -194,7 +194,7 @@ src/
 ### Unique Features
 
 1. **Dual MCP Interface**: HTTP + FastMCP SSE
-2. **Cross-Project Integration**: Lookatni + Kortex + TimeCraft AI
+2. **Cross-Project Integration**: Lookatni + Pulse+ TimeCraft AI
 3. **AI-Powered Suggestions**: Context-aware next steps
 4. **Unified Dashboard**: GitHub + Azure DevOps + Custom tools
 5. **Memory Persistence**: Shared context across sessions
@@ -227,6 +227,6 @@ src/
 
 ***Excited to see this integration come to life! 🔥***
 
-The combination of modern frontend (Kortex) + intelligent backend (StatusRafa MCP) + ecosystem integration (Kubex) is going to be **incredible**!
+The combination of modern frontend (Pulse + intelligent backend (StatusRafa MCP) + ecosystem integration (Kubex) is going to be **incredible**!
 
 *Let's make development monitoring and project management a delightful experience!* ✨

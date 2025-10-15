@@ -1,12 +1,12 @@
 # Deployment Guide
 
-Complete deployment guide for Kortex across different environments and platforms.
+Complete deployment guide for Pulse across different environments and platforms.
 
 ## 🚀 Quick Deployment
 
 ### Vercel (Recommended)
 
-Kortex is optimized for Vercel deployment with zero configuration:
+Pulse is optimized for Vercel deployment with zero configuration:
 
 ```bash
 # Install Vercel CLI
@@ -43,14 +43,14 @@ Use the provided Dockerfile for containerized deployment:
 
 ```bash
 # Build Docker image
-docker build -t kortex:latest .
+docker build -t pulse:latest .
 
 # Run container
 docker run -p 3000:3000 \
   -e NEXT_PUBLIC_API_BASE_URL=http://localhost:3002 \
   -e NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws \
   -e GITHUB_TOKEN=your_token \
-  kortex:latest
+  pulselatest
 ```
 
 ## 🏗️ Build Configuration
@@ -85,8 +85,8 @@ module.exports = nextConfig;
     "export": "next build && next export",
     "deploy:vercel": "vercel --prod",
     "deploy:netlify": "npm run build && netlify deploy --prod --dir=out",
-    "docker:build": "docker build -t kortex:latest .",
-    "docker:run": "docker run -p 3000:3000 kortex:latest"
+    "docker:build": "docker build -t pulselatest .",
+    "docker:run": "docker run -p 3000:3000 pulselatest"
   }
 }
 ```
@@ -145,7 +145,7 @@ CMD ["npx", "serve", "out", "-l", "3000"]
 version: '3.8'
 
 services:
-  kortex:
+  pulse
     build: .
     ports:
       - "3000:3000"
@@ -164,7 +164,7 @@ services:
       retries: 3
 
   api:
-    image: kortex-api:latest
+    image: pulseapi:latest
     ports:
       - "3002:3002"
     environment:
@@ -181,7 +181,7 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./ssl:/etc/nginx/ssl
     depends_on:
-      - kortex
+      - pulse
     restart: unless-stopped
 ```
 
@@ -205,7 +205,7 @@ AZURE_DEVOPS_ORGANIZATION=your_organization
 
 ```json
 {
-  "family": "kortex-task",
+  "family": "pulsetask",
   "networkMode": "awsvpc",
   "requiresCompatibilities": ["FARGATE"],
   "cpu": "256",
@@ -213,8 +213,8 @@ AZURE_DEVOPS_ORGANIZATION=your_organization
   "executionRoleArn": "arn:aws:iam::account:role/ecsTaskExecutionRole",
   "containerDefinitions": [
     {
-      "name": "kortex",
-      "image": "your-account.dkr.ecr.region.amazonaws.com/kortex:latest",
+      "name": "pulse,
+      "image": "your-account.dkr.ecr.region.amazonaws.com/pulselatest",
       "portMappings": [
         {
           "containerPort": 3000,
@@ -224,19 +224,19 @@ AZURE_DEVOPS_ORGANIZATION=your_organization
       "environment": [
         {
           "name": "NEXT_PUBLIC_API_BASE_URL",
-          "value": "https://api.kortex.example.com"
+          "value": "https://api.pulseexample.com"
         }
       ],
       "secrets": [
         {
           "name": "GITHUB_TOKEN",
-          "valueFrom": "arn:aws:secretsmanager:region:account:secret:kortex/github-token"
+          "valueFrom": "arn:aws:secretsmanager:region:account:secret:pulsegithub-token"
         }
       ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/kortex",
+          "awslogs-group": "/ecs/pulse,
           "awslogs-region": "us-east-1",
           "awslogs-stream-prefix": "ecs"
         }
@@ -257,13 +257,13 @@ AZURE_DEVOPS_ORGANIZATION=your_organization
 
 ```yaml
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Kortex Dashboard Deployment'
+Description: 'Pulse Dashboard Deployment'
 
 Parameters:
   ImageUri:
     Type: String
-    Description: 'ECR image URI for Kortex'
-  
+    Description: 'ECR image URI for Pulse'
+
   GitHubToken:
     Type: String
     NoEcho: true
@@ -282,7 +282,7 @@ Resources:
   ECSCluster:
     Type: AWS::ECS::Cluster
     Properties:
-      ClusterName: kortex-cluster
+      ClusterName: pulsecluster
       CapacityProviders:
         - FARGATE
         - FARGATE_SPOT
@@ -325,31 +325,31 @@ Resources:
 steps:
   # Build Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/kortex:$COMMIT_SHA', '.']
-  
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/pulse$COMMIT_SHA', '.']
+
   # Push to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/kortex:$COMMIT_SHA']
-  
+    args: ['push', 'gcr.io/$PROJECT_ID/pulse$COMMIT_SHA']
+
   # Deploy to Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
     args:
       - 'run'
       - 'deploy'
-      - 'kortex'
+      - 'pulse
       - '--image'
-      - 'gcr.io/$PROJECT_ID/kortex:$COMMIT_SHA'
+      - 'gcr.io/$PROJECT_ID/pulse$COMMIT_SHA'
       - '--region'
       - 'us-central1'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
       - '--set-env-vars'
-      - 'NEXT_PUBLIC_API_BASE_URL=https://api.kortex.example.com'
+      - 'NEXT_PUBLIC_API_BASE_URL=https://api.pulseexample.com'
 
 images:
-  - 'gcr.io/$PROJECT_ID/kortex:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/pulse$COMMIT_SHA'
 ```
 
 #### Service Configuration
@@ -359,7 +359,7 @@ images:
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: kortex
+  name: pulse
   annotations:
     run.googleapis.com/ingress: all
 spec:
@@ -371,7 +371,7 @@ spec:
     spec:
       containerConcurrency: 80
       containers:
-      - image: gcr.io/PROJECT_ID/kortex:latest
+      - image: gcr.io/PROJECT_ID/pulselatest
         ports:
         - containerPort: 3000
         resources:
@@ -380,7 +380,7 @@ spec:
             memory: 512Mi
         env:
         - name: NEXT_PUBLIC_API_BASE_URL
-          value: "https://api.kortex.example.com"
+          value: "https://api.pulseexample.com"
         - name: GITHUB_TOKEN
           valueFrom:
             secretKeyRef:
@@ -399,11 +399,11 @@ spec:
   "parameters": {
     "containerName": {
       "type": "string",
-      "defaultValue": "kortex"
+      "defaultValue": "pulse
     },
     "imageName": {
       "type": "string",
-      "defaultValue": "kortex:latest"
+      "defaultValue": "pulselatest"
     }
   },
   "resources": [
@@ -427,7 +427,7 @@ spec:
               "environmentVariables": [
                 {
                   "name": "NEXT_PUBLIC_API_BASE_URL",
-                  "value": "https://api.kortex.example.com"
+                  "value": "https://api.pulseexample.com"
                 }
               ],
               "resources": {
@@ -461,7 +461,7 @@ spec:
 
 ```yaml
 # .github/workflows/deploy.yml
-name: Deploy Kortex
+name: Deploy Pulse
 
 on:
   push:
@@ -474,22 +474,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run tests
         run: npm test
-      
+
       - name: Run lint
         run: npm run lint
-      
+
       - name: Type check
         run: npm run type-check
 
@@ -498,22 +498,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build application
         run: npm run build
         env:
           NEXT_PUBLIC_API_BASE_URL: ${{ secrets.API_BASE_URL }}
           NEXT_PUBLIC_WS_URL: ${{ secrets.WS_URL }}
-      
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -531,7 +531,7 @@ jobs:
         with:
           name: build-output
           path: out/
-      
+
       - name: Deploy to Vercel
         uses: amondnet/vercel-action@v25
         with:
@@ -551,7 +551,7 @@ jobs:
         with:
           name: build-output
           path: out/
-      
+
       - name: Deploy to Production
         uses: amondnet/vercel-action@v25
         with:
@@ -652,15 +652,15 @@ stages:
 # nginx.conf
 upstream kortex_backend {
     least_conn;
-    server kortex-1:3000 max_fails=3 fail_timeout=30s;
-    server kortex-2:3000 max_fails=3 fail_timeout=30s;
-    server kortex-3:3000 max_fails=3 fail_timeout=30s;
+    server pulse1:3000 max_fails=3 fail_timeout=30s;
+    server pulse2:3000 max_fails=3 fail_timeout=30s;
+    server pulse3:3000 max_fails=3 fail_timeout=30s;
 }
 
 server {
     listen 80;
     listen 443 ssl http2;
-    server_name kortex.example.com;
+    server_name pulseexample.com;
 
     # SSL configuration
     ssl_certificate /etc/nginx/ssl/cert.pem;
@@ -711,7 +711,7 @@ server {
     }
 
     # WebSocket proxy
-    location /api/ws {
+    location /api/v1/ws {
         proxy_pass http://kortex_backend;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -740,34 +740,34 @@ server {
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kortex
+  name: pulse
   labels:
-    app: kortex
+    app: pulse
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: kortex
+      app: pulse
   template:
     metadata:
       labels:
-        app: kortex
+        app: pulse
     spec:
       containers:
-      - name: kortex
-        image: kortex:latest
+      - name: pulse
+        image: pulselatest
         ports:
         - containerPort: 3000
         env:
         - name: NEXT_PUBLIC_API_BASE_URL
           valueFrom:
             configMapKeyRef:
-              name: kortex-config
+              name: pulseconfig
               key: api-base-url
         - name: GITHUB_TOKEN
           valueFrom:
             secretKeyRef:
-              name: kortex-secrets
+              name: pulsesecrets
               key: github-token
         resources:
           requests:
@@ -793,10 +793,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: kortex-service
+  name: pulseservice
 spec:
   selector:
-    app: kortex
+    app: pulse
   ports:
   - protocol: TCP
     port: 80
@@ -807,12 +807,12 @@ spec:
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: kortex-hpa
+  name: pulsehpa
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: kortex
+    name: pulse
   minReplicas: 2
   maxReplicas: 10
   metrics:
@@ -835,7 +835,7 @@ spec:
 ### Health Check Endpoint
 
 ```typescript
-// pages/api/health.ts
+// pages/api/v1/health.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 interface HealthCheck {
@@ -865,7 +865,7 @@ export default async function handler(
     const apiResponse = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/health', {
       timeout: 5000
     });
-    
+
     healthCheck.services.api = {
       status: apiResponse.ok ? 'up' : 'down',
       responseTime: Date.now() - start

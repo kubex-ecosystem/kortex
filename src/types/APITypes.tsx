@@ -8,7 +8,7 @@ export type APIProviderType = 'internal' | 'external' | 'custom';
 export interface MCPServerConnection {
   id: string;
   name: string;
-  endpoint: string; // http://127.0.0.1:3002
+  endpoint: string; // https://api.kubex.world
   type: 'StatusRafa' | 'Custom';
   status: 'Connected' | 'Disconnected' | 'Testing';
   lastTested: Date;

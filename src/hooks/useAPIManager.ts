@@ -3,16 +3,16 @@
  * Hook personalizado para gerenciar API providers com state management integrado
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { apiManager, ConnectionTestResult } from '../lib/apiService';
 import { APIProvider } from '../types/APITypes';
-import { apiManager, ConnectionTestResult, ServiceResponse } from '../lib/apiService';
 
 interface UseAPIManagerReturn {
   // State
   providers: APIProvider[];
   isLoading: boolean;
   error: string | null;
-  
+
   // Statistics
   stats: {
     total: number;
@@ -20,14 +20,14 @@ interface UseAPIManagerReturn {
     totalRequests: number;
     totalCost: number;
   };
-  
+
   // Actions
   addProvider: (provider: APIProvider) => Promise<void>;
   updateProvider: (provider: APIProvider) => Promise<void>;
   removeProvider: (id: string) => Promise<void>;
   testProvider: (provider: APIProvider) => Promise<ConnectionTestResult>;
   refreshProviders: () => Promise<void>;
-  
+
   // MCP specific
   mcpData: {
     repos: any[] | null;
@@ -43,7 +43,7 @@ export function useAPIManager(): UseAPIManagerReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
-  
+
   // MCP Data state
   const [mcpData, setMcpData] = useState({
     repos: null as any[] | null,
@@ -64,21 +64,21 @@ export function useAPIManager(): UseAPIManagerReturn {
     const initializeProviders = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
         // Try to load from storage first
         const savedProviders = apiManager.getAllProviders();
-        
+
         // If no saved providers, try to detect MCP servers automatically
         if (savedProviders.length === 0) {
           console.log('🔍 Detecting MCP servers automatically...');
-          
+
           // Test StatusRafa MCP Server
           try {
-            const mcpResponse = await fetch('/api/mcp/api/status');
+            const mcpResponse = await fetch('/api/v1/mcp/api/v1/status');
             if (mcpResponse.ok) {
               const statusData = await mcpResponse.json();
-              
+
               const mcpProvider: APIProvider = {
                 id: `mcp-${Date.now()}`,
                 name: 'StatusRafa MCP Server',
@@ -89,24 +89,24 @@ export function useAPIManager(): UseAPIManagerReturn {
                 requestsToday: statusData.metrics?.totalRequests || 0,
                 monthlyLimit: 999999,
                 costPerRequest: 0,
-                mcpEndpoint: 'http://127.0.0.1:3002',
+                mcpEndpoint: 'https://api.kubex.world',
                 githubToken: '***',
                 azureToken: '***',
                 azureOrg: 'detected',
                 azureProject: 'detected'
               };
-              
+
               apiManager.addProvider(mcpProvider);
               console.log('✅ StatusRafa MCP Server detected and added');
             }
           } catch (err) {
             console.log('❌ StatusRafa MCP Server not available');
           }
-          
+
           // Refresh providers list
           const updatedProviders = apiManager.getAllProviders();
           setProviders(updatedProviders);
-          
+
           // If still no providers after detection, start with empty array
           if (updatedProviders.length === 0) {
             console.log('📋 Starting with empty providers list - user can add manually');
@@ -139,24 +139,24 @@ export function useAPIManager(): UseAPIManagerReturn {
   // Actions
   const addProvider = useCallback(async (provider: APIProvider) => {
     if (!isClient) return; // Skip SSR
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Test connection first
       const testResult = await apiManager.testProvider(provider);
-      
+
       // Update provider status based on test result
       const updatedProvider = {
         ...provider,
         status: testResult.connected ? 'Connected' as const : 'Disconnected' as const,
         lastTested: new Date().toISOString()
       };
-      
+
       apiManager.addProvider(updatedProvider);
       setProviders(prev => [...prev, updatedProvider]);
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add provider');
     } finally {
@@ -166,10 +166,10 @@ export function useAPIManager(): UseAPIManagerReturn {
 
   const updateProvider = useCallback(async (provider: APIProvider) => {
     if (!isClient) return; // Skip SSR
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       apiManager.updateProvider(provider);
       setProviders(prev => prev.map(p => p.id === provider.id ? provider : p));
@@ -182,10 +182,10 @@ export function useAPIManager(): UseAPIManagerReturn {
 
   const removeProvider = useCallback(async (id: string) => {
     if (!isClient) return; // Skip SSR
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       apiManager.removeProvider(id);
       setProviders(prev => prev.filter(p => p.id !== id));
@@ -200,37 +200,37 @@ export function useAPIManager(): UseAPIManagerReturn {
     if (!isClient) {
       return { connected: false, error: 'Not available in SSR' };
     }
-    
+
     setError(null);
-    
+
     try {
       // Update provider status to testing
-      setProviders(prev => prev.map(p => 
+      setProviders(prev => prev.map(p =>
         p.id === provider.id ? { ...p, status: 'Testing' as const } : p
       ));
 
       const result = await apiManager.testProvider(provider);
-      
+
       // Update provider with test result
       const updatedProvider = {
         ...provider,
         status: result.connected ? 'Connected' as const : 'Disconnected' as const,
         lastTested: new Date().toISOString()
       };
-      
-      setProviders(prev => prev.map(p => 
+
+      setProviders(prev => prev.map(p =>
         p.id === provider.id ? updatedProvider : p
       ));
-      
+
       return result;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Connection test failed');
-      
+
       // Update provider status to disconnected on error
-      setProviders(prev => prev.map(p => 
+      setProviders(prev => prev.map(p =>
         p.id === provider.id ? { ...p, status: 'Disconnected' as const } : p
       ));
-      
+
       return {
         connected: false,
         error: err instanceof Error ? err.message : 'Connection test failed'
@@ -240,10 +240,10 @@ export function useAPIManager(): UseAPIManagerReturn {
 
   const refreshProviders = useCallback(async () => {
     if (!isClient) return; // Skip SSR
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Test all providers concurrently
       const testPromises = providers.map(async (provider) => {
@@ -262,10 +262,10 @@ export function useAPIManager(): UseAPIManagerReturn {
           };
         }
       });
-      
+
       const updatedProviders = await Promise.all(testPromises);
       setProviders(updatedProviders);
-      
+
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to refresh providers');
     } finally {
@@ -274,17 +274,17 @@ export function useAPIManager(): UseAPIManagerReturn {
   }, [providers, isClient]);
 
   const fetchMCPData = useCallback(async (
-    operation: 'repos' | 'prs' | 'pipelines' | 'memory', 
+    operation: 'repos' | 'prs' | 'pipelines' | 'memory',
     query?: string
   ) => {
     if (!isClient) return; // Skip SSR
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const result = await apiManager.getMCPData(operation, query);
-      
+
       if (result.success) {
         setMcpData(prev => ({
           ...prev,
@@ -306,14 +306,14 @@ export function useAPIManager(): UseAPIManagerReturn {
     isLoading,
     error,
     stats,
-    
+
     // Actions
     addProvider,
     updateProvider,
     removeProvider,
     testProvider,
     refreshProviders,
-    
+
     // MCP specific
     mcpData,
     fetchMCPData,

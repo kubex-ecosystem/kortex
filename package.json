@@ -1,18 +1,19 @@
 {
-  "name": "kortex",
+  "name": "pulse",
   "version": "0.1.0",
   "private": true,
   "license": "MIT",
   "author": "Rafael Mori <faelmori@gmail.com>",
-  "description": "Kortex is a web application for managing MCP (Model Context Protocol) servers and devices, providing a user-friendly interface for configuration and monitoring.",
-  "homepage": "https://rafa-mori.dev/kortex",
+  "description": "Pulse is a web application for managing MCP (Model Context Protocol) servers and devices, providing a user-friendly interface for configuration and monitoring.",
+  "homepage": "https://dev.kubex.world",
   "main": "dist/index.js",
-  "displayName": "Kortex",
-  "icon": "https://raw.githubusercontent.com/rafa-mori/kortex/main/public/favicon.ico",
+  "displayName": "Pulse",
+  "icon": "https://raw.githubusercontent.com/kubex-ecosystem/pulse/main/public/favicon.ico",
   "sideEffects": false,
   "enginesStrict": true,
   "type": "module",
-  "packageManager": "npm@11.6.0",
+  "packageManager": "pnpm@8.6.0",
+  "repositoryType": "git",
   "markdown": "github",
   "categories": [
     "AI",
@@ -27,17 +28,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/rafa-mori/kortex.git"
+    "url": "https://github.com/kubex-ecosystem/pulse.git"
   },
   "bugs": {
-    "url": "https://github.com/rafa-mori/kortex/issues"
+    "url": "https://github.com/kubex-ecosystem/pulse/issues"
   },
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/rafa-mori"
   },
   "keywords": [
-    "kortex",
+    "pulse",
     "mcp",
     "management",
     "web application",
@@ -55,14 +56,13 @@
     "url": "https://rafamori.pro"
   },
   "readme": "README.md",
-  "publisher": "mori",
+  "publisher": "kubex-ecosystem",
   "scripts": {
-    "prepare": "husky install",
     "precommit": "lint-staged",
     "prettier": "prettier --write .",
     "prettier:check": "prettier --check .",
     "prettier:fix": "prettier --write .",
-    "setup": "npm install --no-fund --no-audit --legacy-peer-deps --loglevel=error && npx husky add .husky/pre-commit 'npm run lint-staged' && npx husky add .husky/pre-push 'npm test'",
+    "setup": "pnpm install --force && npx husky add .husky/pre-commit 'pnpm run lint-staged' && npx husky add .husky/pre-push 'pnpm test'",
     "dev": "vite",
     "dev:mock": "node scripts/mock-api-server.cjs",
     "build": "vite build",
@@ -88,70 +88,70 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "compression": "^1.7.4",
-    "express": "^4.21.1",
+    "compression": "^1.8.1",
+    "express": "^4.21.2",
     "framer-motion": "^10.18.0",
-    "http-proxy-middleware": "^3.0.3",
-    "i18next": "^25.3.2",
+    "http-proxy-middleware": "^3.0.5",
+    "i18next": "^25.6.0",
     "i18next-browser-languagedetector": "^8.2.0",
     "idb": "^8.0.3",
     "jszip": "^3.10.1",
-    "lookatni-file-markers": "^1.1.0",
+    "lookatni-file-markers": "^1.2.0",
     "lucide-react": "^0.542.0",
     "material-icons-react": "^1.0.4",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-hook-form": "^7.43.1",
-    "react-i18next": "^14.0.0",
-    "react-icons": "^4.6.0",
-    "react-query": "^3.39.2",
-    "react-router-dom": "^6.28.0",
-    "react-toastify": "^9.1.2",
-    "react-use": "^17.4.0",
-    "react-window": "^1.8.6",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-hook-form": "^7.65.0",
+    "react-i18next": "^14.1.3",
+    "react-icons": "^4.12.0",
+    "react-query": "^3.39.3",
+    "react-router-dom": "^6.30.1",
+    "react-toastify": "^9.1.3",
+    "react-use": "^17.6.0",
+    "react-window": "^1.8.11",
     "ws": "^8.18.3",
-    "zustand": "^4.0.0"
+    "zustand": "^4.5.7"
   },
   "devDependencies": {
     "@babel/plugin-syntax-flow": "^7.27.1",
-    "@swc/jest": "^0.2.36",
-    "@testing-library/jest-dom": "^6.6.3",
+    "@swc/jest": "^0.2.39",
+    "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/history": "^4.7.11",
     "@types/jest": "^30.0.0",
-    "@types/node": "^22.9.0",
-    "@types/react": "^19.1.13",
-    "@types/react-dom": "^19.1.9",
+    "@types/node": "^22.18.10",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "@types/uuid": "^10.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.14.0",
-    "@typescript-eslint/parser": "^8.14.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
     "@vitejs/plugin-react-swc": "^4.1.0",
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.21",
     "dependency-cruiser": "^16.10.4",
     "eslint": "^8.57.1",
-    "eslint-plugin-react": "^7.37.0",
-    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "globby": "^14.1.0",
     "husky": "^9.1.7",
-    "jest": "^30.0.5",
-    "jest-environment-jsdom": "^30.0.5",
-    "lint-staged": "^15.4.2",
-    "postcss": "^8.4.38",
-    "react-aria-components": "^1.10.1",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "lint-staged": "^15.5.2",
+    "postcss": "^8.5.6",
+    "react-aria-components": "^1.13.0",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^3.4.4",
-    "typescript": "~5.8.2",
-    "vite": "^7.1.6",
-    "vite-tsconfig-paths": "^5.1.2"
+    "tailwindcss": "^3.4.18",
+    "typescript": "~5.8.3",
+    "vite": "^7.1.10",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint-staged",
-      "pre-push": "npm test",
+      "pre-commit": "pnpm run lint-staged",
+      "pre-push": "pnpm run test",
       "commit-msg": "commitlint --edit $HUSKY_GIT_PARAMS",
-      "post-merge": "npm install --no-fund --no-audit --legacy-peer-deps --loglevel=error",
-      "post-checkout": "npm install --no-fund --no-audit --legacy-peer-deps --loglevel=error"
+      "post-merge": "pnpm install --force",
+      "post-checkout": "pnpm install --force"
     }
   },
   "lint-staged": {
@@ -289,9 +289,6 @@
       },
       "github": {
         "release": true
-      },
-      "npm": {
-        "publish": true
       }
     }
   }

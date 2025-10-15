@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Kortex Documentation Scripts
+# Pulse Documentation Scripts
 # Usage: ./docs-dev.sh [command]
 
 set -e
@@ -25,7 +25,7 @@ fi
 
 # Function to show usage
 show_usage() {
-    print_color "📚 Kortex Documentation Development Scripts" "$BLUE"
+    print_color "📚 Pulse Documentation Development Scripts" "$BLUE"
     echo ""
     print_color "Available commands:" "$YELLOW"
     echo "  serve    - Start development server (default: localhost:8000)"
@@ -92,16 +92,16 @@ install_deps() {
 
 # Function to show status
 show_status() {
-    print_color "📊 Kortex Documentation Status" "$BLUE"
+    print_color "📊 Pulse Documentation Status" "$BLUE"
     echo ""
-    
+
     # Check if virtual environment exists
     if [ -d ".venv" ]; then
         print_color "✅ Virtual environment: .venv (exists)" "$GREEN"
     else
         print_color "❌ Virtual environment: Not found" "$RED"
     fi
-    
+
     # Check if dependencies are installed
     check_venv
     if mkdocs --version > /dev/null 2>&1; then
@@ -110,18 +110,18 @@ show_status() {
     else
         print_color "❌ MkDocs: Not installed" "$RED"
     fi
-    
+
     # Check configuration
     if [ -f "mkdocs.yml" ]; then
         print_color "✅ Configuration: mkdocs.yml (exists)" "$GREEN"
     else
         print_color "❌ Configuration: mkdocs.yml (missing)" "$RED"
     fi
-    
+
     # Count documentation files
     MD_FILES=$(find . -name "*.md" -not -path "./.venv/*" | wc -l)
     print_color "📄 Markdown files: $MD_FILES" "$BLUE"
-    
+
     # Check if site is built
     if [ -d "site" ]; then
         SITE_SIZE=$(du -sh site | cut -f1)

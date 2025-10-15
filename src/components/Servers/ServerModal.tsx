@@ -220,7 +220,7 @@ export const ServerModal: React.FC<ServerModalProps> = ({
                     type="checkbox"
                     checked={formData.enableWebSocket}
                     onChange={(e) => setFormData({ ...formData, enableWebSocket: e.target.checked })}
-                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-blue-500"
                   />
                   <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Enable WebSocket</span>
                 </label>
@@ -230,7 +230,7 @@ export const ServerModal: React.FC<ServerModalProps> = ({
                     type="checkbox"
                     checked={formData.autoReconnect}
                     onChange={(e) => setFormData({ ...formData, autoReconnect: e.target.checked })}
-                    className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-blue-500"
                   />
                   <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Auto Reconnect</span>
                 </label>
@@ -285,7 +285,7 @@ export const ServerModal: React.FC<ServerModalProps> = ({
               </button>
               <button
                 type="submit"
-                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+                className="flex-1 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors duration-200"
               >
                 {server ? 'Update Server' : 'Add Server'}
               </button>

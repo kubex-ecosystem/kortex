@@ -1,8 +1,8 @@
-# Kortex - MCP Server Management Dashboard
+# Pulse - MCP Server Management Dashboard
 
 ## Architecture Overview
 
-Kortex is a Next.js TypeScript dashboard for managing MCP (Model Context Protocol) servers. The app follows a modular architecture with clear separation between layout, components, pages, and business logic.
+Pulse is a Next.js TypeScript dashboard for managing MCP (Model Context Protocol) servers. The app follows a modular architecture with clear separation between layout, components, pages, and business logic.
 
 ### Key Structure
 - **Framework**: Next.js 15 with App Router + Pages Router hybrid
@@ -92,7 +92,7 @@ The app is designed to interface with Model Context Protocol servers:
 
 Use `npm` with lockfiles committed. Prefer native workspaces if the repo evolves into a monorepo. Avoid unnecessary dependencies.
 
-Organize code in: `src/`, `src/components/`, `src/hooks/`, `src/pages/`, `src/context/`, `src/lib/`, `src/types/`, `src/interfaces/`, `tests/`, `scripts/`, `bin/`.  
+Organize code in: `src/`, `src/components/`, `src/hooks/`, `src/pages/`, `src/context/`, `src/lib/`, `src/types/`, `src/interfaces/`, `tests/`, `scripts/`, `bin/`.
 Main entry: `src/index.ts`. CLI entry: `bin/cli.ts`. Avoid deep folder nesting.
 
 Enable strict mode in `tsconfig.json`. Use `paths` and `baseUrl` to simplify imports (e.g., `@core/`, `@utils/`).
@@ -162,6 +162,6 @@ Use `markdownlint`, `prettier`, or `mdformat` to automate formatting.
 
 Be readable. Be informative. Be clean. Be Markdown.
 
-## working with Kortex
+## working with Pulse
 
-When working on the Kortex codebase, adhere to the TypeScript Craftsmanship Standards outlined above. Focus on maintaining type safety, leveraging the context pattern for state management, and ensuring modularity in component design.
+When working on the Pulse codebase, adhere to the TypeScript Craftsmanship Standards outlined above. Focus on maintaining type safety, leveraging the context pattern for state management, and ensuring modularity in component design.

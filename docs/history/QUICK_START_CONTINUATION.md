@@ -5,8 +5,8 @@
 ### 1. Verificar Estado Atual
 
 ```bash
-# Navegar para o diretório do Kortex
-cd /srv/apps/LIFE/KUBEX/kortex
+# Navegar para o diretório do Pulse
+cd /srv/apps/LIFE/KUBEX/pulse
 
 # Verificar se o build ainda está funcionando
 npm run build
@@ -19,10 +19,10 @@ ls scripts/mock-api-server.cjs
 
 ```bash
 # Terminal 1 - Mock API Server (OBRIGATÓRIO)
-cd /srv/apps/LIFE/KUBEX/kortex
+cd /srv/apps/LIFE/KUBEX/pulse
 node scripts/mock-api-server.cjs
 
-# Terminal 2 - Aplicação Kortex
+# Terminal 2 - Aplicação Pulse
 npm run dev
 
 # Terminal 3 - Opcional: Kosmos MCP Server
@@ -34,11 +34,11 @@ python -m kbx_kosmos.server
 
 ```bash
 # Testar todos os endpoints críticos
-curl localhost:3002/api/github/repos
-curl localhost:3002/api/azure/projects
-curl localhost:3002/api/mcp/servers
-curl localhost:3002/api/helm/context
-curl localhost:3002/api/helm/releases
+curl localhost:3002/api/v1/github/repos
+curl localhost:3002/api/v1/azure/projects
+curl localhost:3002/api/v1/mcp/servers
+curl localhost:3002/api/v1/helm/context
+curl localhost:3002/api/v1/helm/releases
 
 # Abrir interface no browser
 open http://localhost:3000
@@ -49,7 +49,7 @@ open http://localhost:3000
 ### ✅ Páginas Completamente Desmockadas
 
 - [ ] **Dashboard** (`/`) - useRealAPIData.ts
-- [ ] **Servers** (`/servers`) - useRealMCPData.ts  
+- [ ] **Servers** (`/servers`) - useRealMCPData.ts
 - [ ] **Analytics** (`/analytics`) - useRealAnalyticsData.ts
 - [ ] **Helm** (`/helm`) - Integração Kubernetes
 - [ ] **API Config** (`/api-config`) - Configurações
@@ -63,10 +63,10 @@ open http://localhost:3000
 ### ✅ Mock Server Operacional
 
 - [ ] `scripts/mock-api-server.cjs` - 10 endpoints ativos
-- [ ] GitHub APIs: `/api/github/repos`, `/api/github/user`
-- [ ] Azure APIs: `/api/azure/projects`, `/api/azure/pipelines`
-- [ ] MCP APIs: `/api/mcp/servers`, `/api/mcp/server/:id/health`
-- [ ] Helm APIs: `/api/helm/context`, `/api/helm/releases`, `/api/helm/deploy`, `/api/helm/uninstall`
+- [ ] GitHub APIs: `/api/v1/github/repos`, `/api/v1/github/user`
+- [ ] Azure APIs: `/api/v1/azure/projects`, `/api/v1/azure/pipelines`
+- [ ] MCP APIs: `/api/v1/mcp/servers`, `/api/v1/mcp/server/:id/health`
+- [ ] Helm APIs: `/api/v1/helm/context`, `/api/v1/helm/releases`, `/api/v1/helm/deploy`, `/api/v1/helm/uninstall`
 
 ## 🎯 Próximos Passos Possíveis
 
@@ -113,7 +113,7 @@ open http://localhost:3000
 
 ### URLs de Desenvolvimento
 
-- **Kortex Dashboard:** <http://localhost:3000>
+- **Pulse Dashboard:** <http://localhost:3000>
 - **Mock API Server:** <http://localhost:3002>
 - **Kosmos MCP Server:** <http://localhost:8000> (opcional)
 
@@ -124,7 +124,7 @@ open http://localhost:3000
 node scripts/mock-api-server.cjs | grep -E "(GET|POST|PUT|DELETE)"
 
 # Testar endpoint específico com headers
-curl -H "Content-Type: application/json" localhost:3002/api/mcp/servers
+curl -H "Content-Type: application/json" localhost:3002/api/v1/mcp/servers
 
 # Build com output detalhado
 npm run build -- --verbose

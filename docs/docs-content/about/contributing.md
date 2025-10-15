@@ -84,7 +84,7 @@ Any other context about the feature request.
    ```bash
    # Start TypeScript compilation in watch mode
    npm run watch:tsc
-   
+
    # Start esbuild bundling in watch mode
    npm run watch:esbuild
    ```
@@ -109,7 +109,7 @@ Any other context about the feature request.
    ```bash
    # Run tests
    npm test
-   
+
    # Test in Extension Development Host
    # Press F5 in VS Code
    ```
@@ -220,11 +220,11 @@ enum FileType {
 ```typescript
 /**
  * Generates marker files for the specified directory.
- * 
+ *
  * @param sourcePath - The path to the source directory
  * @param options - Configuration options for marker generation
  * @returns Promise that resolves to the generated marker file path
- * 
+ *
  * @example
  * ```typescript
  * const markerPath = await generateMarkers('/path/to/project', {
@@ -234,7 +234,7 @@ enum FileType {
  * ```
  */
 async function generateMarkers(
-    sourcePath: string, 
+    sourcePath: string,
     options: MarkerOptions
 ): Promise<string> {
     // Implementation
@@ -301,7 +301,7 @@ export function activate(context: vscode.ExtensionContext) {
 // Command implementation
 async function generateMarkersCommand(uri?: vscode.Uri): Promise<void> {
     const sourcePath = uri?.fsPath || vscode.workspace.rootPath;
-    
+
     if (!sourcePath) {
         throw new Error('No workspace folder selected');
     }
@@ -314,12 +314,12 @@ async function generateMarkersCommand(uri?: vscode.Uri): Promise<void> {
     }, async (progress, token) => {
         // Implementation with progress updates
         progress.report({ increment: 0, message: 'Scanning files...' });
-        
+
         // Check for cancellation
         if (token.isCancellationRequested) {
             return;
         }
-        
+
         // Continue implementation...
     });
 }
@@ -337,7 +337,7 @@ interface ExtensionConfig {
 
 function getConfiguration(): ExtensionConfig {
     const config = vscode.workspace.getConfiguration('lookatni');
-    
+
     return {
         includeMetadata: config.get<boolean>('includeMetadata', true),
         compressionLevel: config.get<number>('compressionLevel', 1),
@@ -364,7 +364,7 @@ describe('MarkerGenerator', () => {
 
     it('should generate markers for simple project', async () => {
         const result = await generator.generate('/test/project');
-        
+
         assert.ok(result);
         assert.ok(result.includes('// === File:'));
     });
@@ -385,7 +385,7 @@ import * as assert from 'assert';
 describe('Extension Integration Tests', () => {
     it('should activate extension successfully', async () => {
         const extension = vscode.extensions.getExtension('rafa-mori.lookatni-file-markers');
-        
+
         assert.ok(extension);
         await extension.activate();
         assert.ok(extension.isActive);
@@ -393,7 +393,7 @@ describe('Extension Integration Tests', () => {
 
     it('should register all commands', async () => {
         const commands = await vscode.commands.getCommands();
-        
+
         assert.ok(commands.includes('lookatni.generateMarkers'));
         assert.ok(commands.includes('lookatni.extractFiles'));
         // ... test other commands
@@ -572,8 +572,8 @@ Contributors are recognized in:
 ### Getting Started with VS Code Extensions
 
 - [VS Code Extension API](https://code.visualstudio.com/api)
-- [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-- [Publishing Extensions](https://code.visualstudio.com/api/working-with-extensions/publishing-extension)
+- [Extension Guidelines](https://code.visualstudio.com/api/v1/references/extension-guidelines)
+- [Publishing Extensions](https://code.visualstudio.com/api/v1/working-with-extensions/publishing-extension)
 
 ### TypeScript Resources
 
@@ -583,7 +583,7 @@ Contributors are recognized in:
 ### Testing Resources
 
 - [Mocha Testing Framework](https://mochajs.org/)
-- [VS Code Extension Testing](https://code.visualstudio.com/api/working-with-extensions/testing-extension)
+- [VS Code Extension Testing](https://code.visualstudio.com/api/v1/working-with-extensions/testing-extension)
 
 ---
 

@@ -19,7 +19,7 @@ Removidos todos os mocks das implementações de produção do servidor Kosmos, 
 **Correções Implementadas**:
 
 - ✅ Implementado `get_github_rate_limit()` no StatusRafaService
-- ✅ Implementado `get_azure_rate_limit()` no StatusRafaService  
+- ✅ Implementado `get_azure_rate_limit()` no StatusRafaService
 - ✅ Implementado `calculate_hourly_usage()` baseado em dados reais
 - ✅ Substituído `random.randint()` por dados da API do GitHub
 - ✅ Estatísticas baseadas em `status_service.get_recent_memory()`
@@ -32,7 +32,7 @@ Removidos todos os mocks das implementações de produção do servidor Kosmos, 
 
 ```python
 async def get_github_rate_limit() -> Dict[str, Any] | None
-async def get_azure_rate_limit() -> Dict[str, Any] | None  
+async def get_azure_rate_limit() -> Dict[str, Any] | None
 async def calculate_hourly_usage(provider: str) -> int
 ```
 
@@ -153,7 +153,7 @@ Estes arquivos **PERMANECERAM** como solicitado (contém mocks apenas para demon
 grep -r "random\|simulate\|mock" kbx_kosmos/kbx_kosmos/ --exclude-dir=examples --exclude-dir=tests --exclude="*demo*"
 
 # Testar rate limit real
-curl http://localhost:8000/api/status
+curl http://localhost:8000/api/v1/status
 
 # Testar WebSocket com dados reais
 curl -X GET http://localhost:8000/ws/server/main/ratelimits/github

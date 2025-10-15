@@ -26,7 +26,7 @@ const getToastConfig = (type: Toast['type']) => {
         bgColor: 'bg-green-50 dark:bg-green-900/20',
         borderColor: 'border-green-200 dark:border-green-800',
         textColor: 'text-green-800 dark:text-green-200',
-        iconColor: 'text-green-500'
+        iconColor: 'text-success'
       };
     case 'error':
       return {
@@ -34,7 +34,7 @@ const getToastConfig = (type: Toast['type']) => {
         bgColor: 'bg-red-50 dark:bg-red-900/20',
         borderColor: 'border-red-200 dark:border-red-800',
         textColor: 'text-red-800 dark:text-red-200',
-        iconColor: 'text-red-500'
+        iconColor: 'text-danger'
       };
     case 'warning':
       return {
@@ -42,16 +42,16 @@ const getToastConfig = (type: Toast['type']) => {
         bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
         borderColor: 'border-yellow-200 dark:border-yellow-800',
         textColor: 'text-yellow-800 dark:text-yellow-200',
-        iconColor: 'text-yellow-500'
+        iconColor: 'text-warning'
       };
     case 'info':
     default:
       return {
         icon: Info,
-        bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-        borderColor: 'border-blue-200 dark:border-blue-800',
-        textColor: 'text-blue-800 dark:text-blue-200',
-        iconColor: 'text-blue-500'
+        bgColor: 'bg-primary-subtle dark:bg-primary-foreground/20',
+        borderColor: 'border-primary dark:border-primary',
+        textColor: 'text-primary-foreground dark:text-primary',
+        iconColor: 'text-primary'
       };
   }
 };
@@ -124,13 +124,13 @@ export const ToastNotification: React.FC<ToastNotificationProps> = ({ toast, onC
               <button
                 onClick={toast.action.onClick}
                 className={`text-xs font-medium px-2 py-1 rounded transition-colors ${
-                  toast.type === 'success' 
+                  toast.type === 'success'
                     ? 'bg-green-100 dark:bg-green-800 hover:bg-green-200 dark:hover:bg-green-700'
                     : toast.type === 'error'
                     ? 'bg-red-100 dark:bg-red-800 hover:bg-red-200 dark:hover:bg-red-700'
                     : toast.type === 'warning'
                     ? 'bg-yellow-100 dark:bg-yellow-800 hover:bg-yellow-200 dark:hover:bg-yellow-700'
-                    : 'bg-blue-100 dark:bg-blue-800 hover:bg-blue-200 dark:hover:bg-blue-700'
+                    : 'bg-primary-subtle dark:bg-primary-foreground/30 hover:bg-primary dark:hover:bg-primary-hover'
                 }`}
               >
                 {toast.action.label}

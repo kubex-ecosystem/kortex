@@ -1,6 +1,6 @@
 # LookAtni Code - Gerado automaticamente
 # Data: 2025-07-21T05:34:17.849Z
-# Fonte: ./kortex-extension
+# Fonte: ./pulse-extension
 # Total de arquivos: 9
 
 /// CODE_OF_CONDUCT.md ///
@@ -23,9 +23,9 @@ Revise os testes e siga os padrões de codificação definidos no repositório. 
 
 /// README.md ///
 
-# 🧠 Kortex: AI-Driven Cloud Orchestration Interface
+# 🧠 Pulse: AI-Driven Cloud Orchestration Interface
 
-O Kortex é a camada de interface inteligente do ecossistema Kubex. Ele se comunica com MCPs locais/remotos, provê dashboards, interações com clusters Kubernetes e integrações com ferramentas DevOps modernas. 100% modular e com suporte a extensões.
+O Pulse é a camada de interface inteligente do ecossistema Kubex. Ele se comunica com MCPs locais/remotos, provê dashboards, interações com clusters Kubernetes e integrações com ferramentas DevOps modernas. 100% modular e com suporte a extensões.
 
 ## Principais recursos
 - Painel de controle unificado
@@ -87,9 +87,9 @@ in the Software without restriction...
 
 /// README.md ///
 
-# 🧠 Kortex: AI-Driven Cloud Orchestration Interface
+# 🧠 Pulse: AI-Driven Cloud Orchestration Interface
 
-O Kortex é a camada de interface inteligente do ecossistema Kubex. Ele se comunica com MCPs locais/remotos, provê dashboards, interações com clusters Kubernetes e integrações com ferramentas DevOps modernas. 100% modular e com suporte a extensões.
+O Pulse é a camada de interface inteligente do ecossistema Kubex. Ele se comunica com MCPs locais/remotos, provê dashboards, interações com clusters Kubernetes e integrações com ferramentas DevOps modernas. 100% modular e com suporte a extensões.
 
 ## Principais recursos
 - Painel de controle unificado
@@ -111,9 +111,9 @@ Se você encontrar qualquer vulnerabilidade de segurança, por favor reporte ime
 /// manifest.json ///
 {
   "manifest_version": 3,
-  "name": "Kortex Local Connector",
+  "name": "Pulse Local Connector",
   "version": "0.1",
-  "description": "Bridge between Kortex SaaS and local MCP.",
+  "description": "Bridge between Pulse SaaS and local MCP.",
   "permissions": [
     "scripting",
     "storage",
@@ -144,11 +144,11 @@ Se você encontrar qualquer vulnerabilidade de segurança, por favor reporte ime
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Kortex Connector</title>
+    <title>Pulse Connector</title>
     <script defer src="popup.js"></script>
   </head>
   <body>
-    <h1>Kortex ↔ MCP</h1>
+    <h1>Pulse ↔ MCP</h1>
     <button id="ping">Ping MCP</button>
     <pre id="result"></pre>
   </body>

@@ -1,6 +1,6 @@
-# Kortex Documentation
+# Pulse Documentation
 
-This directory contains the complete documentation for Kortex, built with MkDocs Material.
+This directory contains the complete documentation for Pulse, built with MkDocs Material.
 
 ## 🚀 Quick Start
 
@@ -39,9 +39,9 @@ This directory contains the complete documentation for Kortex, built with MkDocs
 
 ## 🌐 Real-Time DevOps & AI Monitoring Dashboard
 
-**Kortex** is a production-ready, enterprise-grade monitoring dashboard designed for modern development teams. It provides real-time insights into API usage, system health, and development workflows across GitHub, Azure DevOps, Kubernetes, and AI infrastructure.
+**Pulse** is a production-ready, enterprise-grade monitoring dashboard designed for modern development teams. It provides real-time insights into API usage, system health, and development workflows across GitHub, Azure DevOps, Kubernetes, and AI infrastructure.
 
-Built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**, Kortex offers a responsive, real-time interface powered by WebSocket connections and resilient API integrations.
+Built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**, Pulse offers a responsive, real-time interface powered by WebSocket connections and resilient API integrations.
 
 ---
 
@@ -123,20 +123,20 @@ Built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**, Kortex offers a
 
 ```mermaid
 graph TD
-    A[Kortex Dashboard] --> B[Real-Time Hooks]
+    A[Pulse Dashboard] --> B[Real-Time Hooks]
     B --> C[Resilient Service Layer]
     C --> D[Mock API Server]
     C --> E[Production APIs]
-    
+
     D --> F[GitHub API Mock]
     D --> G[Azure DevOps Mock]
     D --> H[MCP Server Mock]
     D --> I[Helm/K8s Mock]
-    
+
     E --> J[StatusRafa MCP]
     E --> K[Kosmos Backend]
     E --> L[External APIs]
-    
+
     A --> M[WebSocket System]
     M --> N[Real-time Events]
     M --> O[Auto-reconnect]
@@ -157,8 +157,8 @@ graph TD
 
 ```bash
 # Clone the repository
-git clone https://github.com/rafa-mori/kortex.git
-cd kortex
+git clone https://github.com/rafa-mori/pulse.git
+cd pulse
 
 # Install dependencies
 npm install
@@ -188,8 +188,8 @@ This will start both the Next.js application and the mock API server.
 
 ```bash
 # 1. Clone and navigate
-git clone https://github.com/rafa-mori/kortex.git
-cd kortex
+git clone https://github.com/rafa-mori/pulse.git
+cd pulse
 
 # 2. Install dependencies
 npm install
@@ -248,14 +248,14 @@ The development environment includes a comprehensive mock API server that simula
 node scripts/mock-api-server.cjs
 
 # Available endpoints:
-# - /api/github/repos
-# - /api/github/user
-# - /api/azure/projects
-# - /api/azure/pipelines
-# - /api/mcp/servers
-# - /api/mcp/server/:id/health
-# - /api/helm/context
-# - /api/helm/releases
+# - /api/v1/github/repos
+# - /api/v1/github/user
+# - /api/v1/azure/projects
+# - /api/v1/azure/pipelines
+# - /api/v1/mcp/servers
+# - /api/v1/mcp/server/:id/health
+# - /api/v1/helm/context
+# - /api/v1/helm/releases
 ```
 
 ---
@@ -324,7 +324,7 @@ node scripts/mock-api-server.cjs
 
 ### KUBEX Ecosystem
 
-Kortex is part of the larger KUBEX ecosystem:
+Pulse is part of the larger KUBEX ecosystem:
 
 - **KbxHorizon**: Go CLI framework for production applications
 - **KbxKosmos**: Python MCP server with intelligent routing
@@ -338,7 +338,7 @@ Kortex is part of the larger KUBEX ecosystem:
 ### Project Structure
 
 ```bash
-kortex/
+pulse/
 ├── src/
 │   ├── components/        # UI components
 │   ├── pages/            # Next.js pages
@@ -396,8 +396,8 @@ npm run test:e2e
 npm run test:coverage
 
 # API endpoint testing
-curl http://localhost:3002/api/github/repos
-curl http://localhost:3002/api/mcp/servers
+curl http://localhost:3002/api/v1/github/repos
+curl http://localhost:3002/api/v1/mcp/servers
 ```
 
 ---
@@ -406,7 +406,7 @@ curl http://localhost:3002/api/mcp/servers
 
 ### Static Site Generation
 
-Kortex supports static site generation for fast, reliable deployments:
+Pulse supports static site generation for fast, reliable deployments:
 
 ```bash
 # Build static site
@@ -509,7 +509,7 @@ copies or substantial portions of the Software.
 - **Author**: Rafael Mori
 - **Email**: <faelmori@gmail.com>
 - **GitHub**: [@rafa-mori](https://github.com/rafa-mori)
-- **Project Issues**: [GitHub Issues](https://github.com/rafa-mori/kortex/issues)
+- **Project Issues**: [GitHub Issues](https://github.com/rafa-mori/pulse/issues)
 
 ---
 
@@ -517,4 +517,4 @@ copies or substantial portions of the Software.
 
 Built with ❤️ by the KUBEX team
 
-[🌐 Website](https://rafa-mori.dev) · [📚 Docs](./docs) · [🚀 Roadmap](./docs/ROADMAP.md) · [🐛 Issues](https://github.com/rafa-mori/kortex/issues)
+[🌐 Website](https://kubex.world) · [📚 Docs](./docs) · [🚀 Roadmap](./docs/ROADMAP.md) · [🐛 Issues](https://github.com/rafa-mori/pulse/issues)

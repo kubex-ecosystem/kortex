@@ -1,6 +1,6 @@
 # TypeScript Scripts
 
-Advanced TypeScript development patterns and custom scripts for extending Kortex functionality.
+Advanced TypeScript development patterns and custom scripts for extending Pulse functionality.
 
 ## 🛠️ Custom Hook Development
 
@@ -390,7 +390,7 @@ class ConfigValidator {
             enabled: true,
             interval: 10000,
             timeout: 5000,
-            endpoint: '/api/health',
+            endpoint: '/api/v1/health',
           },
         },
       ],
@@ -408,9 +408,9 @@ class ConfigValidator {
 
 // CLI script usage
 if (require.main === module) {
-  const configPath = process.argv[2] || './kortex.config.json';
+  const configPath = process.argv[2] || './pulse.config.json';
 
-  console.log('🔍 Validating Kortex configuration...\n');
+  console.log('🔍 Validating Pulseconfiguration...\n');
 
   // Validate configuration file
   const file = ConfigValidator.validateFile(configPath);
@@ -731,7 +731,7 @@ import { setupServer } from 'msw/node';
 
 export const handlers = [
   // Servers API
-  rest.get('/api/servers', (req, res, ctx) => {
+  rest.get('/api/v1/servers', (req, res, ctx) => {
     return res(
       ctx.json([
         createMockServer({ id: '1', name: 'Server 1' }),
@@ -740,34 +740,34 @@ export const handlers = [
     );
   }),
 
-  rest.post('/api/servers', (req, res, ctx) => {
+  rest.post('/api/v1/servers', (req, res, ctx) => {
     return res(
       ctx.status(201),
       ctx.json(createMockServer({ id: '3', name: 'New Server' }))
     );
   }),
 
-  rest.get('/api/servers/:id', (req, res, ctx) => {
+  rest.get('/api/v1/servers/:id', (req, res, ctx) => {
     const { id } = req.params;
     return res(
       ctx.json(createMockServer({ id, name: `Server ${id}` }))
     );
   }),
 
-  rest.post('/api/servers/:id/connect', (req, res, ctx) => {
+  rest.post('/api/v1/servers/:id/connect', (req, res, ctx) => {
     return res(
       ctx.json({ success: true, message: 'Connected successfully' })
     );
   }),
 
-  rest.post('/api/servers/:id/disconnect', (req, res, ctx) => {
+  rest.post('/api/v1/servers/:id/disconnect', (req, res, ctx) => {
     return res(
       ctx.json({ success: true, message: 'Disconnected successfully' })
     );
   }),
 
   // Health check API
-  rest.get('/api/servers/:id/health', (req, res, ctx) => {
+  rest.get('/api/v1/servers/:id/health', (req, res, ctx) => {
     return res(
       ctx.json({
         status: 'healthy',
@@ -778,7 +778,7 @@ export const handlers = [
   }),
 
   // Metrics API
-  rest.get('/api/servers/:id/metrics', (req, res, ctx) => {
+  rest.get('/api/v1/servers/:id/metrics', (req, res, ctx) => {
     return res(
       ctx.json({
         responseTime: Array.from({ length: 20 }, (_, i) => ({

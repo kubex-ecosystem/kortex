@@ -100,7 +100,7 @@ export const MCPConnectionSettings: React.FC<MCPConnectionSettingsProps> = ({ co
               type="checkbox"
               checked={localConfig.enableWebSocket}
               onChange={(e) => handleChange('enableWebSocket', e.target.checked)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-800 dark:border-gray-700"
+              className="h-4 w-4 text-primary focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-800 dark:border-gray-700"
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">Enable WebSocket</span>
           </label>
@@ -110,7 +110,7 @@ export const MCPConnectionSettings: React.FC<MCPConnectionSettingsProps> = ({ co
               type="checkbox"
               checked={localConfig.autoReconnect}
               onChange={(e) => handleChange('autoReconnect', e.target.checked)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-800 dark:border-gray-700"
+              className="h-4 w-4 text-primary focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-800 dark:border-gray-700"
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">Auto-reconnect</span>
           </label>
@@ -120,7 +120,7 @@ export const MCPConnectionSettings: React.FC<MCPConnectionSettingsProps> = ({ co
               type="checkbox"
               checked={localConfig.retryOnFailure}
               onChange={(e) => handleChange('retryOnFailure', e.target.checked)}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-800 dark:border-gray-700"
+              className="h-4 w-4 text-primary focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-800 dark:border-gray-700"
             />
             <span className="text-sm text-gray-700 dark:text-gray-300">Retry on failure</span>
           </label>

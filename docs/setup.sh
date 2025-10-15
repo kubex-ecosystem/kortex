@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Kortex Documentation Setup Script
+# Pulse Documentation Setup Script
 # This script sets up the documentation environment using uv and starts the development server
 
 set -e
 
-echo "🚀 Setting up Kortex Documentation with uv..."
+echo "🚀 Setting up Pulse Documentation with uv..."
 
 # Check if Python is installed
 if ! command -v python3 &> /dev/null; then
@@ -19,7 +19,7 @@ if ! command -v uv &> /dev/null; then
     echo "📦 uv not found. Installing uv..."
     curl -LsSf https://astral.sh/uv/install.sh | sh
     source ~/.bashrc 2>/dev/null || source ~/.zshrc 2>/dev/null || true
-    
+
     # Check again
     if ! command -v uv &> /dev/null; then
         echo "❌ Failed to install uv. Please install manually:"

@@ -1,6 +1,6 @@
 # Development
 
-Complete development guide for contributing to Kortex, including setup, workflows, and best practices.
+Complete development guide for contributing to Pulse, including setup, workflows, and best practices.
 
 ## 🚀 Getting Started
 
@@ -34,8 +34,8 @@ Complete development guide for contributing to Kortex, including setup, workflow
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/rafa-mori/kortex.git
-   cd kortex
+   git clone https://github.com/rafa-mori/pulse.git
+   cd pulse
    ```
 
 2. **Install Dependencies**
@@ -43,7 +43,7 @@ Complete development guide for contributing to Kortex, including setup, workflow
    ```bash
    # Install project dependencies
    npm install
-   
+
    # Install documentation dependencies (optional)
    cd docs
    pip install -r requirements.txt
@@ -55,7 +55,7 @@ Complete development guide for contributing to Kortex, including setup, workflow
    ```bash
    # Copy environment template
    cp .env.example .env.local
-   
+
    # Edit the configuration
    nano .env.local
    ```
@@ -66,11 +66,11 @@ Complete development guide for contributing to Kortex, including setup, workflow
    # API Configuration
    NEXT_PUBLIC_API_BASE_URL=http://localhost:3002
    NEXT_PUBLIC_WS_URL=ws://localhost:3002/ws
-   
+
    # Development Settings
    NODE_ENV=development
    NEXT_PUBLIC_DEBUG_MODE=true
-   
+
    # Optional: External Integrations
    GITHUB_TOKEN=your_github_token_here
    AZURE_DEVOPS_TOKEN=your_azure_token_here
@@ -81,7 +81,7 @@ Complete development guide for contributing to Kortex, including setup, workflow
    ```bash
    # Start the development server
    npm run dev
-   
+
    # The application will be available at http://localhost:3000
    ```
 
@@ -121,10 +121,10 @@ hotfix/production-crash-fix
    # Update main branch
    git checkout main
    git pull origin main
-   
+
    # Create and switch to feature branch
    git checkout -b feature/your-feature-name
-   
+
    # Push branch to remote
    git push -u origin feature/your-feature-name
    ```
@@ -134,13 +134,13 @@ hotfix/production-crash-fix
    ```bash
    # Start development server
    npm run dev
-   
+
    # In another terminal, run tests in watch mode
    npm run test:watch
-   
+
    # Run type checking
    npm run type-check
-   
+
    # Run linting
    npm run lint
    ```
@@ -150,7 +150,7 @@ hotfix/production-crash-fix
    ```bash
    # Before committing, run all checks
    npm run check-all
-   
+
    # This runs:
    # - TypeScript compilation
    # - ESLint
@@ -165,7 +165,7 @@ hotfix/production-crash-fix
 
    ```bash
    type(scope): description
-   
+
    # Examples:
    feat(dashboard): add real-time server monitoring
    fix(api): resolve connection timeout issues
@@ -255,7 +255,7 @@ describe('ServerCard', () => {
 
   it('renders server information correctly', () => {
     render(<ServerCard {...mockProps} />);
-    
+
     expect(screen.getByText(mockProps.server.name)).toBeInTheDocument();
     expect(screen.getByText(mockProps.server.host)).toBeInTheDocument();
     expect(screen.getByText(mockProps.server.port.toString())).toBeInTheDocument();
@@ -263,10 +263,10 @@ describe('ServerCard', () => {
 
   it('calls onConnect when connect button is clicked', async () => {
     render(<ServerCard {...mockProps} />);
-    
+
     const connectButton = screen.getByRole('button', { name: /connect/i });
     fireEvent.click(connectButton);
-    
+
     await waitFor(() => {
       expect(mockProps.onConnect).toHaveBeenCalledWith(mockProps.server.id);
     });
@@ -275,7 +275,7 @@ describe('ServerCard', () => {
   it('disables connect button when server is connecting', () => {
     const connectingServer = createMockServer({ status: 'connecting' });
     render(<ServerCard {...mockProps} server={connectingServer} />);
-    
+
     const connectButton = screen.getByRole('button', { name: /connect/i });
     expect(connectButton).toBeDisabled();
   });
@@ -354,8 +354,8 @@ describe('API Integration', () => {
 
   describe('Server API', () => {
     it('fetches servers list', async () => {
-      const response = await apiClient.get('/api/servers');
-      
+      const response = await apiClient.get('/api/v1/servers');
+
       expect(response.success).toBe(true);
       expect(Array.isArray(response.data)).toBe(true);
       expect(response.data.length).toBeGreaterThan(0);
@@ -369,8 +369,8 @@ describe('API Integration', () => {
         protocol: 'http',
       };
 
-      const response = await apiClient.post('/api/servers', serverData);
-      
+      const response = await apiClient.post('/api/v1/servers', serverData);
+
       expect(response.success).toBe(true);
       expect(response.data).toMatchObject(serverData);
       expect(response.data.id).toBeDefined();
@@ -378,7 +378,7 @@ describe('API Integration', () => {
 
     it('handles API errors correctly', async () => {
       try {
-        await apiClient.get('/api/nonexistent');
+        await apiClient.get('/api/v1/nonexistent');
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
         expect(error.message).toContain('404');
@@ -402,22 +402,22 @@ test.describe('Dashboard', () => {
   });
 
   test('displays dashboard correctly', async ({ page }) => {
-    await expect(page.locator('h1')).toContainText('Kortex Dashboard');
+    await expect(page.locator('h1')).toContainText('Pulse Dashboard');
     await expect(page.locator('[data-testid="server-grid"]')).toBeVisible();
   });
 
   test('can add new server', async ({ page }) => {
     // Click add server button
     await page.click('[data-testid="add-server-btn"]');
-    
+
     // Fill server form
     await page.fill('[data-testid="server-name"]', 'Test Server');
     await page.fill('[data-testid="server-host"]', 'localhost');
     await page.fill('[data-testid="server-port"]', '3001');
-    
+
     // Submit form
     await page.click('[data-testid="submit-server"]');
-    
+
     // Verify server appears in list
     await expect(page.locator('[data-testid="server-card"]')).toContainText('Test Server');
   });
@@ -425,7 +425,7 @@ test.describe('Dashboard', () => {
   test('can connect to server', async ({ page }) => {
     // Assume server exists
     await page.click('[data-testid="connect-btn"]:first-child');
-    
+
     // Wait for connection
     await expect(page.locator('[data-testid="server-status"]')).toContainText('Connected');
   });
@@ -535,16 +535,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - run: npm ci
       - run: npm run test:ci
       - run: npm run build
-      
+
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

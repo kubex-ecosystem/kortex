@@ -1,12 +1,12 @@
 # Architecture
 
-Comprehensive overview of Kortex's architectural design, patterns, and technical decisions.
+Comprehensive overview of Pulse's architectural design, patterns, and technical decisions.
 
 ## 🏗️ System Architecture
 
 ### High-Level Overview
 
-Kortex follows a modern web application architecture with clear separation of concerns:
+Pulsefollows a modern web application architecture with clear separation of concerns:
 
 ```mermaid
 graph TB
@@ -16,26 +16,26 @@ graph TB
         HOOKS[Custom Hooks]
         COMP[Components]
     end
-    
+
     subgraph "Backend Services"
         API[REST API]
         WS[WebSocket Server]
         MCP[MCP Protocol]
     end
-    
+
     subgraph "External Systems"
         GH[GitHub API]
         AZ[Azure DevOps]
         SERV[MCP Servers]
     end
-    
+
     UI --> CTX
     CTX --> HOOKS
     HOOKS --> COMP
-    
+
     HOOKS --> API
     HOOKS --> WS
-    
+
     API --> GH
     API --> AZ
     WS --> SERV
@@ -74,17 +74,17 @@ graph TD
     PAGES[Page Components]
     WIDGETS[Widget Components]
     UI[UI Components]
-    
+
     APP --> LAYOUT
     LAYOUT --> PAGES
     PAGES --> WIDGETS
     WIDGETS --> UI
-    
+
     subgraph "Context Providers"
         APPCTX[AppContext]
         THEME[ThemeContext]
     end
-    
+
     APP --> APPCTX
     APP --> THEME
 ```
@@ -117,7 +117,7 @@ sequenceDiagram
     participant HOOK as Custom Hook
     participant API as API Client
     participant SRV as Backend Service
-    
+
     UI->>CTX: Request Data
     CTX->>HOOK: Trigger Hook
     HOOK->>API: API Call
@@ -139,18 +139,18 @@ interface AppContextValue {
   // Server Management
   servers: Server[];
   connectionStatus: ConnectionStatus;
-  
+
   // Task Management
   tasks: Task[];
   taskQueue: TaskQueue;
-  
+
   // Notification System
   notifications: Notification[];
-  
+
   // Logging and Monitoring
   logs: LogEntry[];
   metrics: MetricsData;
-  
+
   // Actions
   connectToServer: (serverId: string) => Promise<void>;
   disconnectFromServer: (serverId: string) => Promise<void>;
@@ -190,9 +190,9 @@ interface NormalizedState {
 ```typescript
 // Server status update example
 const updateServerStatus = (serverId: string, status: ServerStatus) => {
-  setServers(prevServers => 
-    prevServers.map(server => 
-      server.id === serverId 
+  setServers(prevServers =>
+    prevServers.map(server =>
+      server.id === serverId
         ? { ...server, status }
         : server
     )
@@ -203,7 +203,7 @@ const updateServerStatus = (serverId: string, status: ServerStatus) => {
 const connectToServer = async (serverId: string) => {
   // Optimistic update
   updateServerStatus(serverId, 'connecting');
-  
+
   try {
     await apiClient.connectToServer(serverId);
     updateServerStatus(serverId, 'connected');
@@ -228,45 +228,45 @@ const connectToServer = async (serverId: string) => {
 class WebSocketManager {
   private connections: Map<string, WebSocket> = new Map();
   private reconnectTimers: Map<string, NodeJS.Timeout> = new Map();
-  
+
   connect(endpoint: string, options: WSOptions): Promise<WebSocket> {
     return new Promise((resolve, reject) => {
       const ws = new WebSocket(endpoint);
-      
+
       ws.onopen = () => {
         this.connections.set(endpoint, ws);
         this.setupHeartbeat(endpoint);
         resolve(ws);
       };
-      
+
       ws.onclose = () => {
         this.handleDisconnection(endpoint);
       };
-      
+
       ws.onerror = (error) => {
         reject(error);
       };
-      
+
       ws.onmessage = (event) => {
         this.handleMessage(endpoint, event.data);
       };
     });
   }
-  
+
   private setupHeartbeat(endpoint: string): void {
     const ws = this.connections.get(endpoint);
     if (!ws) return;
-    
+
     const interval = setInterval(() => {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'ping' }));
       }
     }, 30000); // 30 seconds
-    
+
     // Store interval for cleanup
     this.heartbeatIntervals.set(endpoint, interval);
   }
-  
+
   private handleDisconnection(endpoint: string): void {
     this.connections.delete(endpoint);
     this.scheduleReconnection(endpoint);
@@ -290,19 +290,19 @@ const handleWebSocketMessage = (message: WSMessage) => {
     case 'server_status_update':
       updateServerStatus(message.serverId!, message.data.status);
       break;
-      
+
     case 'new_log_entry':
       addLogEntry(message.data);
       break;
-      
+
     case 'metrics_update':
       updateMetrics(message.serverId!, message.data);
       break;
-      
+
     case 'task_completed':
       updateTaskStatus(message.data.taskId, 'completed');
       break;
-      
+
     default:
       console.warn('Unknown message type:', message.type);
   }
@@ -317,25 +317,25 @@ const handleWebSocketMessage = (message: WSMessage) => {
 
 ```typescript
 // Server management endpoints
-GET    /api/servers              // List all servers
-POST   /api/servers              // Create new server
-GET    /api/servers/:id          // Get server details
-PUT    /api/servers/:id          // Update server
-DELETE /api/servers/:id          // Delete server
+GET    /api/v1/servers              // List all servers
+POST   /api/v1/servers              // Create new server
+GET    /api/v1/servers/:id          // Get server details
+PUT    /api/v1/servers/:id          // Update server
+DELETE /api/v1/servers/:id          // Delete server
 
 // Server actions
-POST   /api/servers/:id/connect     // Connect to server
-POST   /api/servers/:id/disconnect  // Disconnect from server
-GET    /api/servers/:id/health      // Health check
-GET    /api/servers/:id/metrics     // Get metrics
+POST   /api/v1/servers/:id/connect     // Connect to server
+POST   /api/v1/servers/:id/disconnect  // Disconnect from server
+GET    /api/v1/servers/:id/health      // Health check
+GET    /api/v1/servers/:id/metrics     // Get metrics
 
 // Task management
-GET    /api/tasks                // List tasks
-POST   /api/tasks                // Create task
-GET    /api/tasks/:id            // Get task details
-PUT    /api/tasks/:id            // Update task
-DELETE /api/tasks/:id            // Delete task
-POST   /api/tasks/:id/execute    // Execute task
+GET    /api/v1/tasks                // List tasks
+POST   /api/v1/tasks                // Create task
+GET    /api/v1/tasks/:id            // Get task details
+PUT    /api/v1/tasks/:id            // Update task
+DELETE /api/v1/tasks/:id            // Delete task
+POST   /api/v1/tasks/:id/execute    // Execute task
 ```
 
 ***Response Patterns***
@@ -386,7 +386,7 @@ interface PaginatedResponse<T> {
 class ApiClient {
   private baseUrl: string;
   private defaultHeaders: Record<string, string>;
-  
+
   constructor(config: ApiClientConfig) {
     this.baseUrl = config.baseUrl;
     this.defaultHeaders = {
@@ -394,7 +394,7 @@ class ApiClient {
       ...config.headers,
     };
   }
-  
+
   async request<T>(
     method: string,
     endpoint: string,
@@ -402,14 +402,14 @@ class ApiClient {
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseUrl}${endpoint}`;
     const headers = { ...this.defaultHeaders, ...options.headers };
-    
+
     try {
       const response = await fetch(url, {
         method,
         headers,
         body: options.body ? JSON.stringify(options.body) : undefined,
       });
-      
+
       if (!response.ok) {
         throw new ApiError(
           `HTTP ${response.status}`,
@@ -417,18 +417,18 @@ class ApiClient {
           response.status
         );
       }
-      
+
       return await response.json();
     } catch (error) {
       throw this.handleError(error);
     }
   }
-  
+
   // Convenience methods
   get<T>(endpoint: string, options?: RequestOptions): Promise<ApiResponse<T>> {
     return this.request<T>('GET', endpoint, options);
   }
-  
+
   post<T>(endpoint: string, data?: any, options?: RequestOptions): Promise<ApiResponse<T>> {
     return this.request<T>('POST', endpoint, { ...options, body: data });
   }
@@ -465,28 +465,28 @@ graph TD
     FEAT[Feature Layer]
     SERV[Service Layer]
     CORE[Core Layer]
-    
+
     UI --> FEAT
     FEAT --> SERV
     SERV --> CORE
-    
+
     subgraph "Core Layer"
         TYPES[Types]
         UTILS[Utils]
         CONFIG[Config]
     end
-    
+
     subgraph "Service Layer"
         API[API Client]
         WS[WebSocket]
         AUTH[Auth Service]
     end
-    
+
     subgraph "Feature Layer"
         HOOKS[Custom Hooks]
         CONTEXT[Context Providers]
     end
-    
+
     subgraph "UI Layer"
         COMP[Components]
         PAGES[Pages]
@@ -512,7 +512,7 @@ import { Server, CreateServerRequest } from '@/types';
 
 export class ServerService {
   constructor(private apiClient: ApiClient) {}
-  
+
   async getServers(): Promise<Server[]> {
     const response = await this.apiClient.get<Server[]>('/servers');
     return response.data || [];
@@ -531,7 +531,7 @@ sequenceDiagram
     participant AUTH as Auth Service
     participant API as API Server
     participant EXT as External APIs
-    
+
     USER->>APP: Login Request
     APP->>AUTH: Authenticate
     AUTH->>API: Validate Credentials
@@ -549,7 +549,7 @@ sequenceDiagram
 class TokenManager {
   private static instance: TokenManager;
   private tokens: Map<string, TokenInfo> = new Map();
-  
+
   setToken(service: string, token: string, expiresAt?: Date): void {
     this.tokens.set(service, {
       value: this.encrypt(token),
@@ -557,24 +557,24 @@ class TokenManager {
       createdAt: new Date(),
     });
   }
-  
+
   getToken(service: string): string | null {
     const tokenInfo = this.tokens.get(service);
     if (!tokenInfo) return null;
-    
+
     if (tokenInfo.expiresAt && tokenInfo.expiresAt < new Date()) {
       this.tokens.delete(service);
       return null;
     }
-    
+
     return this.decrypt(tokenInfo.value);
   }
-  
+
   private encrypt(value: string): string {
     // Implement encryption logic
     return btoa(value); // Simple base64 for demo
   }
-  
+
   private decrypt(value: string): string {
     // Implement decryption logic
     return atob(value); // Simple base64 for demo

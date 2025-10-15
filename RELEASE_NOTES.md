@@ -1,4 +1,4 @@
-# 🚀 Kortex v0.1.0 - Release Notes
+# 🚀 Pulse v0.1.0 - Release Notes
 
 **Release Date:** July 25, 2025
 **Version:** 0.1.0
@@ -8,7 +8,7 @@
 
 ## 🎉 Major Milestone: Complete Desmocking Strategy
 
-This release marks the successful completion of the **desmocking strategy**, transforming Kortex from a prototype with mock data into a production-ready monitoring dashboard with real API integrations.
+This release marks the successful completion of the **desmocking strategy**, transforming Pulse from a prototype with mock data into a production-ready monitoring dashboard with real API integrations.
 
 ---
 
@@ -306,8 +306,8 @@ This release represents a significant milestone in the KUBEX ecosystem developme
 
 ---
 
-**🎉 Thank you for using Kortex! We're excited to see what you build with this foundation.**
+**🎉 Thank you for using Pulse! We're excited to see what you build with this foundation.**
 
 ---
 
-*Kortex v0.1.0 - Built with ❤️ by the KUBEX team*
+*Pulse v0.1.0 - Built with ❤️ by the KUBEX team*

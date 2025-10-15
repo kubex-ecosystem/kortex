@@ -33,7 +33,7 @@ interface Agent {
 
 const PromptEngineeringPage: React.FC = () => {
   const { t } = useTranslation();
-  
+
   // Estados do Prompt Crafter
   const [currentInput, setCurrentInput] = useState('');
   const [ideas, setIdeas] = useState<Idea[]>([]);
@@ -45,17 +45,17 @@ const PromptEngineeringPage: React.FC = () => {
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
-  
+
   // Estados dos Agents
   const [agents, setAgents] = useState<Agent[]>([]);
   const [selectedAgent, setSelectedAgent] = useState<string>('');
   const [showAgentForm, setShowAgentForm] = useState(false);
-  
+
   // Estados de API Integration
   const [apiProvider, setApiProvider] = useState('synex');
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState('claude-3-sonnet');
-  
+
   // UI States
   const [isInputCollapsed, setIsInputCollapsed] = useState(false);
   const [isOutputCollapsed, setIsOutputCollapsed] = useState(true);
@@ -92,8 +92,8 @@ const PromptEngineeringPage: React.FC = () => {
 
   const loadAgents = async () => {
     try {
-      // Carregar agents salvos no Kortex
-      const response = await fetch('/api/prompt-engineering/agents');
+      // Carregar agents salvos no Pulse
+      const response = await fetch('/api/v1/prompt-engineering/agents');
       if (response.ok) {
         const data = await response.json();
         setAgents(data);
@@ -106,7 +106,7 @@ const PromptEngineeringPage: React.FC = () => {
   const checkSynexConnection = async () => {
     try {
       // Verificar conexão com Synex via Kosmos
-      const response = await fetch('/api/synex/status');
+      const response = await fetch('/api/v1/synex/status');
       if (response.ok) {
         const data = await response.json();
         setAvailableModels(data.available_models || []);
@@ -139,8 +139,8 @@ const PromptEngineeringPage: React.FC = () => {
 
   const saveEdit = () => {
     if (editingText.trim() && editingId) {
-      setIdeas(ideas.map(idea => 
-        idea.id === editingId 
+      setIdeas(ideas.map(idea =>
+        idea.id === editingId
           ? { ...idea, text: editingText.trim() }
           : idea
       ));
@@ -167,7 +167,7 @@ const PromptEngineeringPage: React.FC = () => {
         model: selectedModel
       };
 
-      const response = await fetch('/api/synex/generate-prompt', {
+      const response = await fetch('/api/v1/synex/generate-prompt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -236,7 +236,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-gradient-to-r from-purple-500 to-blue-600 p-3 rounded-lg">
+            <div className="bg-gradient-to-r from-accent to-primary p-3 rounded-lg">
               <Sparkles className="h-6 w-6 text-white" />
             </div>
             <div>
@@ -248,16 +248,15 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <button
               title='Switch to Prompt Crafter'
               onClick={() => setActiveTab('crafter')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                activeTab === 'crafter' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'crafter'
+                ? 'bg-primary text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
             >
               <Wand2 className="w-4 h-4 mr-2 inline" />
               Prompt Crafter
@@ -265,11 +264,10 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
             <button
               title='Switch to AI Agents'
               onClick={() => setActiveTab('agents')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                activeTab === 'agents' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'agents'
+                ? 'bg-primary text-white'
+                : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
             >
               <Users className="w-4 h-4 mr-2 inline" />
               AI Agents
@@ -295,7 +293,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                     {isInputCollapsed ? <ChevronDown /> : <ChevronUp />}
                   </button>
                 </div>
-                
+
                 {!isInputCollapsed && (
                   <div className="p-4 space-y-4">
                     {/* Add New Idea */}
@@ -312,7 +310,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                       <button
                         title="Add idea"
                         onClick={addIdea}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
@@ -337,17 +335,17 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                                 className="flex-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                                 onKeyPress={(e) => e.key === 'Enter' && saveEdit()}
                               />
-                              <button  
-                              onClick={saveEdit} 
-                              className="text-green-600 hover:text-green-700" 
-                              title="Save edit"
+                              <button
+                                onClick={saveEdit}
+                                className="text-green-600 hover:text-green-700"
+                                title="Save edit"
                               >
                                 <Check className="w-4 h-4" />
                               </button>
-                              <button 
-                              onClick={cancelEdit} 
-                              className="text-red-600 hover:text-red-700" 
-                              title="Cancel edit"
+                              <button
+                                onClick={cancelEdit}
+                                className="text-red-600 hover:text-red-700"
+                                title="Cancel edit"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -398,10 +396,10 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                       </div>
 
                       <div>
-                        <label 
+                        <label
                           htmlFor="maxLength"
                           data-tooltip-id="maxLengthTooltip"
-                          title="Maximum length of the generated prompt"                        
+                          title="Maximum length of the generated prompt"
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                         >
                           AI Agent (Optional)
@@ -444,7 +442,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                   title='Generate prompt'
                   onClick={generatePrompt}
                   disabled={ideas.length === 0 || isGenerating}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-accent to-primary text-white rounded-lg hover:from-accent-hover hover:to-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isGenerating ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
@@ -453,7 +451,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                   )}
                   {isGenerating ? 'Generating...' : 'Generate Prompt'}
                 </button>
-                
+
                 <button
                   title='Clear all inputs'
                   onClick={clearAll}
@@ -498,7 +496,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                         <pre className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg overflow-auto max-h-96 border">
                           {generatedPrompt}
                         </pre>
-                        
+
                         <div className="flex gap-2">
                           <button
                             title='Copy generated prompt'
@@ -508,10 +506,10 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                             {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                             {copied ? 'Copied!' : 'Copy Prompt'}
                           </button>
-                          
+
                           <button
                             title='Send prompt to AI'
-                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
                           >
                             <Send className="w-4 h-4" />
                             Send to AI
@@ -541,7 +539,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
               <button
                 title='Create new AI Agent'
                 onClick={() => setShowAgentForm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 New Agent
@@ -561,7 +559,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                     {agent.skills.slice(0, 3).map((skill, index) => (
                       <span
                         key={index}
-                        className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded"
+                        className="px-2 py-1 text-xs bg-primary-subtle dark:bg-primary/20 text-primary-foreground dark:text-primary rounded"
                       >
                         {skill}
                       </span>
@@ -573,15 +571,15 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                     )}
                   </div>
                   <div className="flex gap-2">
-                    <button 
+                    <button
                       title='Use this agent'
-                    className="flex-1 px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                      className="flex-1 px-3 py-1 text-sm bg-primary text-white rounded hover:bg-primary-hover transition-colors"
                     >
                       Use Agent
                     </button>
-                    <button 
+                    <button
                       title='Edit this agent'
-                    className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                      className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                       Edit
                     </button>
                   </div>
@@ -597,7 +595,7 @@ ${selectedAgent ? `**Especialista:** ${agents.find(a => a.id === selectedAgent)?
                 <button
                   title='Create your first agent'
                   onClick={() => setShowAgentForm(true)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover transition-colors"
                 >
                   Create Your First Agent
                 </button>

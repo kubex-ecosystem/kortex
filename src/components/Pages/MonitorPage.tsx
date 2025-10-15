@@ -52,7 +52,7 @@ export const MonitorPage: React.FC = () => {
   const getLogIcon = (status: string) => {
     switch (status) {
       case 'queued': return <Clock size={16} className="text-yellow-500" />;
-      case 'running': return <Loader2 size={16} className="text-blue-500 animate-spin" />;
+      case 'running': return <Loader2 size={16} className="text-primary animate-spin" />;
       case 'completed': return <CheckCircle size={16} className="text-green-500" />;
       case 'failed': return <XCircle size={16} className="text-red-500" />;
       default: return <Clock size={16} className="text-gray-500" />;
@@ -186,11 +186,11 @@ export const MonitorPage: React.FC = () => {
                       <span className="text-xs font-mono text-gray-500 dark:text-gray-400">[{log.timestamp}]</span>
                       <span className="text-sm text-gray-900 dark:text-white">{log.taskId}</span>
                       <span className="text-xs text-gray-500 dark:text-gray-400">|</span>
-                      <span className="text-sm text-blue-600 dark:text-blue-400">{log.model}</span>
+                      <span className="text-sm text-primary dark:text-primary">{log.model}</span>
                       {log.serverId && (
                         <>
                           <span className="text-xs text-gray-500 dark:text-gray-400">|</span>
-                          <span className="text-sm text-purple-600 dark:text-purple-400">{log.serverId}</span>
+                          <span className="text-sm text-accent dark:text-purple-400">{log.serverId}</span>
                         </>
                       )}
                       {log.duration && <span className="text-xs text-gray-500 dark:text-gray-400">({log.duration})</span>}
@@ -211,7 +211,7 @@ export const MonitorPage: React.FC = () => {
                 <div key={status} className="flex justify-between items-center">
                   <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">{status}</span>
                   <span className={`text-lg font-bold ${
-                    status === 'running' ? 'text-blue-600' :
+                    status === 'running' ? 'text-primary' :
                     status === 'queued' ? 'text-yellow-600' :
                     status === 'completed' ? 'text-green-600' : 'text-red-600'
                   }`}>

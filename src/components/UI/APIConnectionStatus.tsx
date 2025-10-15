@@ -15,16 +15,16 @@ interface APIConnectionStatusProps {
 
 const getStatusIcon = (status: APIProvider['status']) => {
   const iconProps = { size: 16, className: "inline" };
-  
+
   switch (status) {
     case 'Connected':
-      return <Wifi {...iconProps} className="inline text-green-500" />;
+      return <Wifi {...iconProps} className="inline text-success" />;
     case 'Disconnected':
-      return <WifiOff {...iconProps} className="inline text-red-500" />;
+      return <WifiOff {...iconProps} className="inline text-danger" />;
     case 'Testing':
-      return <Activity {...iconProps} className="inline text-blue-500 animate-pulse" />;
+      return <Activity {...iconProps} className="inline text-primary animate-pulse" />;
     default:
-      return <AlertCircle {...iconProps} className="inline text-gray-400" />;
+      return <AlertCircle {...iconProps} className="inline text-slate-400" />;
   }
 };
 
@@ -35,9 +35,9 @@ const getStatusColor = (status: APIProvider['status']) => {
     case 'Disconnected':
       return 'bg-red-100 text-red-800 border-red-200';
     case 'Testing':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
+      return 'bg-primary-subtle text-primary border-primary';
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return 'bg-slate-100 text-slate-800 border-slate-200';
   }
 };
 
@@ -70,9 +70,9 @@ export function APIConnectionStatus({
       <div className="flex items-center gap-2">
         {getStatusIcon(provider.status)}
         <span className={`text-sm font-medium ${
-          provider.status === 'Connected' ? 'text-green-600' : 
-          provider.status === 'Disconnected' ? 'text-red-600' : 
-          'text-blue-600'
+          provider.status === 'Connected' ? 'text-success' :
+          provider.status === 'Disconnected' ? 'text-danger' :
+          'text-primary'
         }`}>
           {provider.status === 'Testing' ? 'Testando...' : provider.status}
         </span>
@@ -81,30 +81,30 @@ export function APIConnectionStatus({
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
+    <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             {getStatusIcon(provider.status)}
-            <h3 className="font-semibold text-gray-900 dark:text-white">
+            <h3 className="font-semibold text-text-head dark:text-white">
               {provider.name}
             </h3>
           </div>
-          
+
           <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(provider.status)}`}>
             {provider.status === 'Testing' ? 'Testando...' : provider.status}
           </span>
         </div>
 
-        <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="text-sm text-text-body dark:text-slate-400">
           {provider.provider}
         </div>
       </div>
 
       {/* Details */}
       {showDetails && (
-        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+        <div className="space-y-2 text-sm text-text-body dark:text-slate-400">
           {/* Last tested */}
           <div className="flex items-center gap-2">
             <Clock size={14} />
@@ -113,13 +113,13 @@ export function APIConnectionStatus({
 
           {/* Key preview */}
           <div className="flex items-center gap-2">
-            <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-xs">
+            <span className="font-mono bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-xs">
               {provider.keyPreview}
             </span>
           </div>
 
           {/* Usage stats */}
-          <div className="flex items-center justify-between pt-2 border-t border-gray-200 dark:border-gray-600">
+          <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-600">
             <span>Requests hoje: <strong>{provider.requestsToday}</strong></span>
             <span>Custo: <strong>$</strong><strong>{(provider.requestsToday * provider.costPerRequest).toFixed(4)}</strong></span>
           </div>
@@ -130,17 +130,17 @@ export function APIConnectionStatus({
               <span>Limite mensal</span>
               <span>{provider.requestsToday} / {provider.monthlyLimit}</span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div 
+            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+              <div
                 className={`h-2 rounded-full transition-all ${
-                  (provider.requestsToday / provider.monthlyLimit) > 0.8 
-                    ? 'bg-red-500' 
-                    : (provider.requestsToday / provider.monthlyLimit) > 0.6 
-                    ? 'bg-yellow-500' 
-                    : 'bg-green-500'
+                  (provider.requestsToday / provider.monthlyLimit) > 0.8
+                    ? 'bg-danger'
+                    : (provider.requestsToday / provider.monthlyLimit) > 0.6
+                    ? 'bg-warning'
+                    : 'bg-success'
                 }`}
-                style={{ 
-                  width: `${Math.min(100, (provider.requestsToday / provider.monthlyLimit) * 100)}%` 
+                style={{
+                  width: `${Math.min(100, (provider.requestsToday / provider.monthlyLimit) * 100)}%`
                 }}
               />
             </div>
@@ -148,8 +148,8 @@ export function APIConnectionStatus({
 
           {/* MCP specific details */}
           {provider.provider === 'StatusRafa MCP' && (
-            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600 space-y-1">
-              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+            <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-600 space-y-1">
+              <div className="text-xs font-medium text-text-head dark:text-slate-300">
                 MCP Configuration:
               </div>
               {provider.mcpEndpoint && (

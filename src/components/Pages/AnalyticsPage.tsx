@@ -24,7 +24,7 @@ export const AnalyticsPage = (): JSX.Element => {
     return (
       <div className="flex items-center justify-center min-h-96">
         <div className="text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">Carregando analytics...</p>
         </div>
       </div>
@@ -76,7 +76,7 @@ export const AnalyticsPage = (): JSX.Element => {
             <RefreshCw size={16} />
             Atualizar
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-lg transition-colors">
             <Calendar size={16} />
             Last 30 Days
           </button>
@@ -94,7 +94,7 @@ export const AnalyticsPage = (): JSX.Element => {
             title: 'Repositórios', 
             value: analytics.totalRepositories.toString(), 
             change: analytics.trends.repositories, 
-            icon: <Database className="h-8 w-8 text-blue-600" /> 
+            icon: <Database className="h-8 w-8 text-primary" /> 
           },
           { 
             title: 'Pull Requests', 
@@ -106,7 +106,7 @@ export const AnalyticsPage = (): JSX.Element => {
             title: 'Pipelines', 
             value: analytics.totalPipelines.toString(), 
             change: analytics.trends.pipelines, 
-            icon: <Activity className="h-8 w-8 text-purple-600" /> 
+            icon: <Activity className="h-8 w-8 text-accent" /> 
           },
           { 
             title: 'Uptime Servidores', 
@@ -149,7 +149,7 @@ export const AnalyticsPage = (): JSX.Element => {
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     {/* Progress bar width needs to be dynamic based on percentage */}
                     <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                      className="bg-primary h-2 rounded-full transition-all duration-500"
                       style={{ width: `${provider.percentage}%` }}
                     />
                   </div>
@@ -215,7 +215,7 @@ export const AnalyticsPage = (): JSX.Element => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="text-center">
-            <div className="text-3xl font-bold text-blue-600 mb-2">{analytics.totalServers}</div>
+            <div className="text-3xl font-bold text-primary mb-2">{analytics.totalServers}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Total de Servidores</div>
           </div>
           <div className="text-center">
@@ -223,7 +223,7 @@ export const AnalyticsPage = (): JSX.Element => {
             <div className="text-sm text-gray-600 dark:text-gray-400">Uptime dos Servidores</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-purple-600 mb-2">{analytics.totalAPIRequests}</div>
+            <div className="text-3xl font-bold text-accent mb-2">{analytics.totalAPIRequests}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Requisições API Hoje</div>
           </div>
           <div className="text-center">

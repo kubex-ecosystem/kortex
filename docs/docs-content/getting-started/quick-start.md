@@ -1,17 +1,17 @@
 # Quick Start
 
-Get up and running with Kortex in under 5 minutes. This guide will walk you through the essential steps to start monitoring your DevOps and AI infrastructure.
+Get up and running with Pulse in under 5 minutes. This guide will walk you through the essential steps to start monitoring your DevOps and AI infrastructure.
 
 ## 🚀 1-Minute Setup
 
 ```bash
 # Clone and install
-git clone https://github.com/rafa-mori/kortex.git && cd kortex
+git clone https://github.com/rafa-mori/pulse.git && cd pulse
 npm install
 
 # Start development environment
 npm run dev:mock &  # Start mock API server
-npm run dev         # Start Kortex dashboard
+npm run dev         # Start Pulse dashboard
 
 # Open in browser
 open http://localhost:3000
@@ -19,12 +19,12 @@ open http://localhost:3000
 
 ## 🎯 First Look
 
-Once Kortex is running, you'll see:
+Once Pulse is running, you'll see:
 
 ### Dashboard Overview
 
 - **GitHub Integration**: Repository stats and API usage
-- **Azure DevOps**: Pipeline status and project metrics  
+- **Azure DevOps**: Pipeline status and project metrics
 - **Real-time Updates**: Live data via WebSocket connections
 - **Visual Indicators**: Data source status (Real Data vs Demo Mode)
 
@@ -111,7 +111,7 @@ To connect real GitHub data:
 1. **Generate Token**: Go to GitHub Settings → Developer settings → Personal access tokens
 2. **Required Scopes**: `repo`, `user`, `read:org`
 3. **Add to Environment**: Update your `.env.local` file
-4. **Restart Kortex**: The dashboard will detect the new token
+4. **Restart Pulse**: The dashboard will detect the new token
 
 ### 3. Azure DevOps Setup
 
@@ -120,7 +120,7 @@ For Azure DevOps integration:
 1. **Create PAT**: Azure DevOps → User Settings → Personal Access Tokens
 2. **Required Scopes**: `Build (read)`, `Project and team (read)`
 3. **Configure**: Add token to environment variables
-4. **Verify**: Check connection in Kortex dashboard
+4. **Verify**: Check connection in Pulse dashboard
 
 ## 🎪 Demo Mode vs Real Data
 
@@ -146,15 +146,15 @@ Watch as data updates automatically:
 
 ```bash
 # In terminal, watch API calls
-curl http://localhost:3002/api/github/repos
-curl http://localhost:3002/api/azure/projects
+curl http://localhost:3002/api/v1/github/repos
+curl http://localhost:3002/api/v1/azure/projects
 ```
 
 The dashboard will reflect changes within seconds via WebSocket updates.
 
 ### 2. API Rate Monitoring
 
-Kortex automatically tracks your API usage:
+Pulse automatically tracks your API usage:
 
 - **GitHub**: 5,000 requests/hour for authenticated users
 - **Azure DevOps**: Varies by organization plan
@@ -173,7 +173,7 @@ Add and manage MCP servers:
 
 ### Theme and Appearance
 
-Kortex supports:
+Pulse supports:
 
 - **Dark/Light modes**: Automatic detection or manual toggle
 - **Responsive design**: Works on desktop, tablet, and mobile
@@ -194,20 +194,20 @@ Customize your workspace:
 - **API Connection Errors**: Check your tokens and network settings
 - **WebSocket Failures**: Ensure mock API server is running. If you see an error about WebSocket connection failing, make sure your mock API server is running:
   <!-- !!! info "WebSocket Connection Failed" -->
-  
+
   ```bash
   npm run dev:mock
   ```
 
 - **Data Not Updating**: Verify WebSocket connection in browser console. If you see errors, check your `.env.local` settings.
   <!-- !!! tip "No Data Showing" -->
-  
+
   ```bash
   # Verify environment variables
   cat .env.local
-  
+
   # Test API endpoints
-  curl http://localhost:3002/api/github/repos
+  curl http://localhost:3002/api/v1/github/repos
   ```
 
 - **Port Conflicts**: If port 3000 is in use, change it in `.env.local`. Remember to update any relevant configurations.
@@ -224,13 +224,13 @@ Customize your workspace:
 
 - **Documentation**: Continue with our [configuration guide](../guide/configuration.md)
 - **Examples**: Check [practical examples](../examples/react-sharing.md)
-- **Issues**: [Report bugs on GitHub](https://github.com/rafa-mori/kortex/issues)
+- **Issues**: [Report bugs on GitHub](https://github.com/rafa-mori/pulseissues)
 
 ## 🎯 Next Steps
 
-Now that you have Kortex running:
+Now that you have Pulse running:
 
-1. **[Learn Core Concepts](concepts.md)** - Understand how Kortex works
+1. **[Learn Core Concepts](concepts.md)** - Understand how Pulse works
 2. **[Configure Integrations](../guide/configuration.md)** - Set up your services
 3. **[Explore Features](../features/extraction.md)** - Discover advanced capabilities
 4. **[See Examples](../examples/react-sharing.md)** - Real-world use cases

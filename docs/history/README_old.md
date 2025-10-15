@@ -1,8 +1,8 @@
-# ![![Kortex Banner](/docs/assets/top_banner_md_c.png)](/docs/assets/top_banner_md_c.png)
+# ![![Pulse Banner](/docs/assets/top_banner_md_c.png)](/docs/assets/top_banner_md_c.png)
 
 ---
 
-## Kortex Dashboard
+## PulseDashboard
 
 Sistema de monitoramento e manipulação de tarefas AI executadas em servidores MCP.
 

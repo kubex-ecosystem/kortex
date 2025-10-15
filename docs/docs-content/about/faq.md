@@ -1,12 +1,12 @@
 # Frequently Asked Questions
 
-Common questions and answers about Kortex, troubleshooting, and best practices.
+Common questions and answers about Pulse, troubleshooting, and best practices.
 
 ## 🚀 Getting Started
 
-### Q: What is Kortex?
+### Q: What is Pulse?
 
-**A:** Kortex is a modern web dashboard for managing and monitoring MCP (Model Context Protocol) servers. It provides real-time monitoring, integration with GitHub and Azure DevOps, and a comprehensive interface for managing distributed server infrastructure.
+**A:** Pulse is a modern web dashboard for managing and monitoring MCP (Model Context Protocol) servers. It provides real-time monitoring, integration with GitHub and Azure DevOps, and a comprehensive interface for managing distributed server infrastructure.
 
 ### Q: What are the system requirements?
 
@@ -17,25 +17,25 @@ Common questions and answers about Kortex, troubleshooting, and best practices.
 - **Memory**: 512MB RAM minimum for optimal performance
 - **Network**: Internet connection for GitHub/Azure DevOps integrations
 
-### Q: Can I use Kortex without external integrations?
+### Q: Can I use Pulse without external integrations?
 
-**A:** Yes! Kortex works as a standalone MCP server monitor. GitHub and Azure DevOps integrations are optional features that enhance functionality but aren't required for basic server monitoring.
+**A:** Yes! Pulse works as a standalone MCP server monitor. GitHub and Azure DevOps integrations are optional features that enhance functionality but aren't required for basic server monitoring.
 
-### Q: Is Kortex free to use?
+### Q: Is Pulse free to use?
 
-**A:** Yes, Kortex is open-source and free to use. You can deploy it anywhere without licensing costs. However, you may incur costs from hosting providers (Vercel, AWS, etc.) and API usage from GitHub/Azure DevOps.
+**A:** Yes, Pulse is open-source and free to use. You can deploy it anywhere without licensing costs. However, you may incur costs from hosting providers (Vercel, AWS, etc.) and API usage from GitHub/Azure DevOps.
 
 ## 🔧 Installation & Setup
 
-### Q: How do I install Kortex?
+### Q: How do I install Pulse?
 
 **A:** There are several installation methods:
 
 1. **Clone and run locally**:
 
    ```bash
-   git clone https://github.com/your-org/kortex.git
-   cd kortex
+   git clone https://github.com/your-org/pulse.git
+   cd pulse
    npm install
    npm run dev
    ```
@@ -49,7 +49,7 @@ Common questions and answers about Kortex, troubleshooting, and best practices.
 3. **Docker deployment**:
 
    ```bash
-   docker run -p 3000:3000 kortex:latest
+   docker run -p 3000:3000 pulselatest
    ```
 
 ### Q: The build fails with "Module not found" errors. How do I fix this?
@@ -174,7 +174,7 @@ GITHUB_TOKEN=ghp_your_token_here
 3. **Check browser console** for errors
 4. **Test with browser dev tools** → Network tab → WS filter
 
-### Q: Can I use Kortex without WebSockets?
+### Q: Can I use Pulse without WebSockets?
 
 **A:** Yes, you can disable WebSockets and use polling instead:
 
@@ -189,7 +189,7 @@ However, real-time features will be limited to polling intervals.
 
 ### Q: How do I customize the theme or colors?
 
-**A:** Kortex uses Tailwind CSS. You can customize colors in several ways:
+**A:** Pulse uses Tailwind CSS. You can customize colors in several ways:
 
 1. **Modify tailwind.config.js**:
 
@@ -279,16 +279,16 @@ const Dashboard = () => (
 3. **Rotate tokens regularly**
 4. **Use minimal required permissions**
 
-### Q: Does Kortex collect any user data?
+### Q: Does Pulse collect any user data?
 
-**A:** No, Kortex is a client-side application that:
+**A:** No, Pulse is a client-side application that:
 
 - Runs entirely in your browser or on your infrastructure
 - Only communicates with APIs you configure
 - Doesn't send data to external analytics services
 - Stores preferences locally in browser storage
 
-### Q: How do I secure my Kortex deployment?
+### Q: How do I secure my Pulse deployment?
 
 **A:** Security best practices:
 
@@ -312,7 +312,7 @@ const Dashboard = () => (
 
 ## 🚀 Performance & Scaling
 
-### Q: Kortex is slow or unresponsive. How do I optimize performance?
+### Q: Pulse is slow or unresponsive. How do I optimize performance?
 
 **A:** Performance optimization strategies:
 
@@ -327,13 +327,13 @@ const Dashboard = () => (
    ```javascript
    // Cache API responses
    const cache = new Map();
-   
+
    const getCachedData = async (key, fetcher, ttl = 300000) => {
      const cached = cache.get(key);
      if (cached && Date.now() - cached.timestamp < ttl) {
        return cached.data;
      }
-     
+
      const data = await fetcher();
      cache.set(key, { data, timestamp: Date.now() });
      return data;
@@ -343,7 +343,7 @@ const Dashboard = () => (
 3. **Limit concurrent requests**
 4. **Use lazy loading** for components
 
-### Q: Can Kortex handle multiple organizations or projects?
+### Q: Can Pulse handle multiple organizations or projects?
 
 **A:** Yes, but it requires configuration:
 
@@ -364,16 +364,16 @@ const Dashboard = () => (
 
 3. **Consider performance impact** of monitoring multiple sources
 
-### Q: How do I monitor Kortex itself?
+### Q: How do I monitor Pulse itself?
 
-**A:** Implement monitoring for your Kortex deployment:
+**A:** Implement monitoring for your Pulse deployment:
 
 1. **Health check endpoint**:
 
    ```typescript
-   // pages/api/health.ts
+   // pages/api/v1/health.ts
    export default function handler(req, res) {
-     res.status(200).json({ 
+     res.status(200).json({
        status: 'healthy',
        timestamp: new Date().toISOString()
      });
@@ -386,7 +386,7 @@ const Dashboard = () => (
 
 ## 🔄 Deployment & Updates
 
-### Q: How do I update Kortex to the latest version?
+### Q: How do I update Pulse to the latest version?
 
 **A:** Update process depends on deployment method:
 
@@ -407,29 +407,29 @@ const Dashboard = () => (
 3. **Docker deployment**:
 
    ```bash
-   docker pull kortex:latest
-   docker stop kortex
-   docker run -d --name kortex kortex:latest
+   docker pull pulselatest
+   docker stop pulse
+   docker run -d --name pulseppulseatest
    ```
 
-### Q: Can I run multiple instances of Kortex?
+### Q: Can I run multiple instances of Pulse?
 
 **A:** Yes, for high availability:
 
 1. **Load balancer setup**:
 
    ```nginx
-   upstream kortex {
-     server kortex-1:3000;
-     server kortex-2:3000;
-     server kortex-3:3000;
+   upstream pulse{
+     server pulse1:3000;
+     server pulse2:3000;
+     server pulse3:3000;
    }
    ```
 
 2. **Shared state considerations**: Each instance maintains its own local state
 3. **Database for shared data** if needed across instances
 
-### Q: How do I backup Kortex configuration?
+### Q: How do I backup Pulse configuration?
 
 **A:** Backup important configuration:
 
@@ -437,7 +437,7 @@ const Dashboard = () => (
 
    ```bash
    # Export current env vars
-   env | grep NEXT_PUBLIC > kortex-config-backup.env
+   env | grep NEXT_PUBLIC > pulseconfig-backup.env
    ```
 
 2. **Custom configuration files**
@@ -469,7 +469,7 @@ const Dashboard = () => (
    ```bash
    # Test GitHub
    curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user
-   
+
    # Test Azure DevOps
    curl -u ":$AZURE_DEVOPS_TOKEN" \
      https://dev.azure.com/$ORG/_apis/projects?api-version=7.0
@@ -518,4 +518,4 @@ const Dashboard = () => (
 
 ---
 
-*Still need help? Check our [troubleshooting guide](../guide/troubleshooting.md) or [open an issue](https://github.com/your-org/kortex/issues) on GitHub.*
+*Still need help? Check our [troubleshooting guide](../guide/troubleshooting.md) or [open an issue](https://github.com/your-org/pulseissues) on GitHub.*

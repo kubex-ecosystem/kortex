@@ -44,7 +44,7 @@ export const RealTimeStatus: React.FC<RealTimeStatusProps> = ({
       case 'partial':
         return <Activity className="w-4 h-4 text-yellow-500" />;
       case 'offline':
-        return <Loader2 className="w-4 h-4 text-blue-500 animate-spin" />;
+        return <Loader2 className="w-4 h-4 text-primary animate-spin" />;
       case 'demo':
         return <WifiOff className="w-4 h-4 text-gray-500" />;
       default:
@@ -59,7 +59,7 @@ export const RealTimeStatus: React.FC<RealTimeStatusProps> = ({
       case 'partial':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-800';
       case 'offline':
-        return 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-800';
+        return 'bg-primary-subtle text-primary-foreground border-primary dark:bg-primary/20 dark:text-primary dark:border-primary';
       case 'demo':
         return 'bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-900/20 dark:text-gray-300 dark:border-gray-700';
       default:
@@ -103,7 +103,7 @@ export const RealTimeStatus: React.FC<RealTimeStatusProps> = ({
           ) : isDemoMode ? (
             <span className="text-gray-500">Demo</span>
           ) : (
-            <span className="text-blue-500">Connecting</span>
+            <span className="text-primary">Connecting</span>
           )}
         </span>
       </div>
@@ -137,7 +137,7 @@ export const RealTimeStatus: React.FC<RealTimeStatusProps> = ({
                     service.status === 'connected' 
                       ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
                       : service.status === 'connecting'
-                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
+                      ? 'bg-primary-subtle text-primary-foreground dark:bg-primary/20 dark:text-primary'
                       : service.status === 'error'
                       ? 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300'
                       : 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300'
@@ -189,7 +189,7 @@ export const RealTimeStatus: React.FC<RealTimeStatusProps> = ({
             {!isConnected ? (
               <button
                 onClick={connect}
-                className="inline-flex items-center px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors"
+                className="inline-flex items-center px-3 py-1.5 bg-primary hover:bg-primary-hover text-white rounded-md text-sm font-medium transition-colors"
               >
                 <Activity className="w-4 h-4 mr-1" />
                 Connect

@@ -57,7 +57,7 @@ export const MCPSettings: React.FC<MCPSettingsProps> = ({ onSave, initialConfig 
             name="baseURL"
             value={config.connectionConfig?.baseURL}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-primary dark:bg-gray-800 dark:text-white"
             required
           />
         </div>
@@ -71,7 +71,7 @@ export const MCPSettings: React.FC<MCPSettingsProps> = ({ onSave, initialConfig 
             name="apiKey"
             value={config.connectionConfig?.apiKey}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-primary dark:bg-gray-800 dark:text-white"
           />
         </div>
         <div>
@@ -84,7 +84,7 @@ export const MCPSettings: React.FC<MCPSettingsProps> = ({ onSave, initialConfig 
             name="timeout"
             value={config.connectionConfig?.connectionTimeout || 5000}
             onChange={handleChange}
-            className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+            className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-blue-500 focus:border-primary dark:bg-gray-800 dark:text-white"
           />
         </div>
         <div>
@@ -97,11 +97,11 @@ export const MCPSettings: React.FC<MCPSettingsProps> = ({ onSave, initialConfig 
             name="enableWebSocket"
             checked={config.connectionConfig?.enableWebSocket}
             onChange={e => setConfig(prev => ({ ...prev, connectionConfig: { ...prev.connectionConfig, enableWebSocket: e.target.checked } }))}
-            className="mt-1 block h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700"
+            className="mt-1 block h-4 w-4 text-primary border-gray-300 rounded focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700"
           />
         </div>
         <div className="flex justify-end">
-          <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700">
+          <button type="submit" className="px-4 py-2 bg-primary text-white rounded-md shadow-sm hover:bg-primary-hover">
             Save
           </button>
         </div>
