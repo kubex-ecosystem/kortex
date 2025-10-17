@@ -1,4 +1,4 @@
-# 🎉 Documentação Kortex - Setup Completo
+# 🎉 Documentação Pulse - Setup Completo
 
 ## ✅ Status Final
 
@@ -128,8 +128,8 @@ Os warnings mostrados no build são normais e indicam:
 - 🌐 **i18n Ready**: Preparado para múltiplos idiomas
 
 ---
-**Setup realizado em**: $(date)  
-**UV Package Manager**: ✅ Ativo  
-**Python Environment**: ✅ Isolado  
-**MkDocs Material**: ✅ v9.6.15  
+**Setup realizado em**: $(date)
+**UV Package Manager**: ✅ Ativo
+**Python Environment**: ✅ Isolado
+**MkDocs Material**: ✅ v9.6.15
 **Status**: 🟢 **OPERACIONAL**
